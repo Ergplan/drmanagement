@@ -110,7 +110,17 @@ export async function listEvents(db: Db, siteId: string, limit = 30): Promise<Ev
 
 export async function proposeEvent(
   db: Db,
-  a: { siteId: string; programId: string; start: Date; end: Date; targetKw: number; plan: Plan; createdBy: string },
+  a: {
+    siteId: string;
+    programId: string;
+    start: Date;
+    end: Date;
+    targetKw: number;
+    plan: Plan;
+    createdBy: string;
+    source?: string;
+    externalId?: string | null;
+  },
 ): Promise<string> {
   // Invariant 1, cloud side: refuse to store a plan that names an excluded asset.
   const classes = new Map(
@@ -136,6 +146,8 @@ export async function proposeEvent(
       forecastPeakKva: a.plan.forecastPeakKva,
       plannedPeakKva: a.plan.plannedPeakKva,
       createdBy: a.createdBy,
+      source: a.source ?? 'ergos',
+      externalId: a.externalId ?? null,
     });
     await tx.insert(s.drEventLog).values({
       eventId: id,

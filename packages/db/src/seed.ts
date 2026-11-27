@@ -234,6 +234,17 @@ export async function seed() {
       baselineParams: { days: 10, adjust_hours_before: 2, cap: 0.2 },
     };
     await tx.insert(s.drProgram).values(prog).onConflictDoUpdate({ target: s.drProgram.id, set: prog });
+    // DISCOM / OpenADR events: settled on the CBL most DISCOM programmes use (high 5 of the last 10 like days).
+    const discom = {
+      id: 'discom',
+      siteId: SITE_ID,
+      name: 'DISCOM demand response (OpenADR or notice)',
+      kind: 'discom',
+      noticeMin: 120,
+      baselineMethod: 'x_of_y',
+      baselineParams: { x: 5, y: 10 },
+    };
+    await tx.insert(s.drProgram).values(discom).onConflictDoUpdate({ target: s.drProgram.id, set: discom });
 
     const opp = [
       {

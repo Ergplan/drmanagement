@@ -51,6 +51,9 @@ importers:
       '@types/node':
         specifier: ^22
         version: 22.20.7
+      modbus-serial:
+        specifier: 8.0.25
+        version: 8.0.25
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
@@ -72,6 +75,9 @@ importers:
       '@drm/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@drm/grid':
+        specifier: workspace:*
+        version: link:../../packages/grid
       '@node-rs/argon2':
         specifier: 2.2.2
         version: 2.2.2
@@ -210,6 +216,21 @@ importers:
       yaml:
         specifier: 2.9.1
         version: 2.9.1
+    devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.20.7
+      tsx:
+        specifier: 4.23.15
+        version: 4.23.15
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 5.1.2
+        version: 5.1.2(@types/node@22.20.7)(vite@8.4.0(@types/node@22.20.7)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+
+  packages/grid:
     devDependencies:
       '@types/node':
         specifier: ^22

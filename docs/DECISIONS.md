@@ -25,3 +25,7 @@
 - 2026-11-27: The day-matching adjustment window ends before any pre-conditioning starts, so pre-cooling or pre-charging cannot inflate the baseline.
 - 2026-11-27: The edge restores every commandable load when it starts, because it cannot know what an earlier run left curtailed (a real device keeps its last command).
 - 2026-11-27: Hospital energy benchmark 10,000–20,000 kWh per bed a year and 200–300 kWh/m² (CAHO 2017, private multi-speciality), stored in reference/site.yaml with its source.
+- 2026-11-27: Minute-level cloud jobs (OpenADR poll, escalation) run from a signed edge call every 5 minutes, not Vercel Cron, so the plan tier does not matter and nothing runs when the edge is offline (the edge is the site's heartbeat anyway).
+- 2026-11-27: OpenADR and DISCOM signals never become commands directly: each creates a proposed event with ergOS's plan under programme 'discom' (baseline high 5 of 10 like days) that needs the full approval chain. The VEN is behind a feature flag (OPENADR_VTN_URL).
+- 2026-11-27: Ask ergOS uses the Anthropic Messages API (model from ASSISTANT_MODEL) with read-only tools only; there is no write tool, so it cannot create intents, approvals or commands (invariant 8).
+- 2026-11-27: Point mapping is recorded in the database for review, but the edge still takes it from edge.config.yaml (invariant 10); the page prints the override lines to copy.

@@ -27,3 +27,8 @@
 | Street View frame rate measured only under software WebGL (SwiftShader, no GPU in the build box): 110–210 ms a frame; the 60 fps laptop / 30 fps phone target needs a GPU measurement with ?bench=1 | User or Stage 8 on real hardware |
 | Street View: no baked AO, KTX2/Draco or LOD yet (no imported models to compress; geometry is procedural and light) | When CC0 models are added |
 | Screen recording of the tour for the stage report | Needs a GPU browser session |
+| Ask ergOS graded only with a stand-in model (plumbing: login, tool loop, logging); the 10-question check (scripts/ask-eval.mjs) needs ASSISTANT_API_KEY | User sets the key, then run the script |
+| OpenADR VEN is not certified and does not report back (no reports/opt-in to the VTN) | When MVVNL publishes a VTN |
+| Modbus actuate() reports ok when the write is queued, not when the device confirms it | Before any real actuation (site commissioning) |
+| Hindi notice wording needs a native review | With the hospital |
+| WhatsApp/SMS providers not chosen (console adapter) | Provider and keys from the hospital |

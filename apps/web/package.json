@@ -13,6 +13,7 @@
     "@drm/control": "workspace:*",
     "@drm/db": "workspace:*",
     "@drm/domain": "workspace:*",
+    "@drm/grid": "workspace:*",
     "@node-rs/argon2": "2.2.2",
     "@react-three/drei": "10.7.9",
     "@react-three/fiber": "9.8.2",

@@ -199,6 +199,9 @@ export function SafetyScreen() {
           <div>
             <div className="ttl-s">Hospital override</div>
             <div className="note">Any wall switch or BMS command wins over ergOS.</div>
+            <a className="note" href="/commissioning">
+              Commissioning and point mapping →
+            </a>
           </div>
         </div>
       </Card>

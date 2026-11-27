@@ -101,6 +101,18 @@ export class ModbusTcpDriver implements Driver {
     }
   }
 
+  /** Close the TCP connection (probe and shutdown). */
+  close(): Promise<void> {
+    this.connected = false;
+    return new Promise((r) => {
+      try {
+        this.client.close(() => r());
+      } catch {
+        r();
+      }
+    });
+  }
+
   read(_now: Date): Reading[] {
     return [...this.cache.values()];
   }
@@ -118,10 +130,5 @@ export class ModbusTcpDriver implements Driver {
   health(): 'ok' | 'degraded' | 'down' {
     const age = Date.now() - this.lastOkMs;
     return age < 30_000 ? 'ok' : age < 120_000 ? 'degraded' : 'down';
-  }
-
-  close() {
-    this.client.close(() => {});
-    this.connected = false;
   }
 }

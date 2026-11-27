@@ -346,7 +346,49 @@ export const drEvent = pgTable('dr_event', {
   forecastPeakKva: doublePrecision('forecast_peak_kva'),
   plannedPeakKva: doublePrecision('planned_peak_kva'),
   createdBy: text('created_by').notNull(),
+  /** where the event came from: ergos | manual | discom | openadr */
+  source: text('source').notNull().default('ergos'),
+  /** id in the source system (OpenADR event id, DISCOM notice number); unique per source */
+  externalId: text('external_id'),
   createdAt: created(),
+});
+
+/** Grid signals received (OpenADR VEN, DISCOM email or manual entry), before and after they become events. */
+export const gridSignal = pgTable(
+  'grid_signal',
+  {
+    id: bigint('id', { mode: 'number' }).primaryKey().generatedAlwaysAsIdentity(),
+    siteId: text('site_id')
+      .notNull()
+      .references(() => site.id),
+    source: text('source').notNull(), // openadr | discom_email | manual
+    externalId: text('external_id').notNull(),
+    receivedAt: ts('received_at').notNull().defaultNow(),
+    start: ts('start'),
+    end: ts('end'),
+    targetKw: doublePrecision('target_kw'),
+    payload: jsonb('payload').notNull().default({}),
+    eventId: text('event_id'),
+    status: text('status').notNull(), // proposed | rejected | duplicate
+    note: text('note'),
+  },
+  (t) => [uniqueIndex('grid_signal_source_ext_idx').on(t.source, t.externalId)],
+);
+
+/** One row per Ask ergOS call (invariant 8: read-only; logged for review). */
+export const assistantCall = pgTable('assistant_call', {
+  id: bigint('id', { mode: 'number' }).primaryKey().generatedAlwaysAsIdentity(),
+  userId: text('user_id').notNull(),
+  promptVersion: text('prompt_version').notNull(),
+  model: text('model').notNull(),
+  question: text('question').notNull(),
+  answer: text('answer'),
+  tools: jsonb('tools').notNull().default([]),
+  inputTokens: integer('input_tokens'),
+  outputTokens: integer('output_tokens'),
+  ms: integer('ms'),
+  error: text('error'),
+  at: ts('at').notNull().defaultNow(),
 });
 
 /** Approved, executable plan steps that the edge pulls (invariant 2). */

@@ -6,7 +6,7 @@ Updated every stage; Stage 0 writes the first full version.
 - apps/web (Vercel): Next.js screens, Street View, API routes, cron routes
 - PostgreSQL 17 on the GCP VM (docker-compose.db.yml, TLS, app role drm_app)
 - apps/edge (GCP VM drmanagement, Docker): drivers (sim now), ceiling loop, interlocks, dispatcher, DR executor, heat pump scheduler, forecast, uplink + offline buffer, Playwright PDF renderer
-- packages: domain (maths), control (safety logic), drivers, db, contracts
+- packages: domain (maths), control (safety logic), drivers, db, contracts, grid (OpenADR 3.0 VEN client, local test VTN, DISCOM notice parser)
 
 ## Control critical path (runs at the edge, every tick, no cloud needed)
 `apps/edge/src/index.ts tick()`:
@@ -47,6 +47,9 @@ Outbound only from the edge: POST /api/edge/ingest every 10 s, GET /api/edge/int
 - GET /api/edge/reports (HMAC; claims jobs, returns 15-minute print URLs), POST /api/edge/reports/ack {id, pdfBase64|error}
 - GET /api/cron/daily (Vercel Cron 01:00 IST, Bearer CRON_SECRET): settle ended events, queue monthly (1st) and weekly (Monday) reports
 - GET /api/street (building, floors, nodes with points, asset actions)
+- POST /api/ask {question} (read-only assistant; 30 an hour a user), GET/POST /api/grid/signals (DISCOM inbox: notice text or manual entry), POST /api/grid/poll, POST /api/notifications/ack, GET /api/commissioning, POST /api/points/:id/mapping
+- GET /api/edge/housekeeping (HMAC; every 5 min from the edge: OpenADR VTN poll, 10-minute escalation)
+- Pages /commissioning (point mapping + checklist)
 - Page /print/:id (session or report token): A4 report HTML
 - POST /api/edge/ingest (HMAC: x-drm-device, x-drm-timestamp, x-drm-signature over `${ts}.${body}`)
 
@@ -69,3 +72,4 @@ Outbound only from the edge: POST /api/edge/ingest every 10 s, GET /api/edge/int
 - Stage 4: edge control in packages/control (interlocks, dispatcher, ceiling, heat-pump scheduler, DR executor, planner, approval workflow) wired into apps/edge/src/control.ts; intents and acks routes; DR events data layer (packages/db/src/dr.ts); notifications adapter; Demand ceiling, Load flexibility, DR optimizer, Dispatch plan and Clinical safety screens. Interlock limits, the ladder's commands, heat-pump windows and holidays now come from reference YAML via site.facts.
 - Stage 5: settlement (domain `settle`, db `settleEvent`), report jobs rendered to PDF at the edge (monthly, weekly duty, event, bill audit), Reports & M&V screen with benchmarks, emissions, M&V method, settlements and the opportunity workflow; CSV export on tables; Vercel Cron; edge restores every load on start. New folders: apps/web/app/print, apps/web/components/print.
 - Stage 6: Street View (apps/web/street: Scene, Building, Equipment, Nodes, Flows, Controls, StreetView; route app/street lazy-loads the scene with ssr:false). Tour (glide between stops, 'Follow the power' route of all 26 nodes, floor chevrons), Walk (Rapier capsule, WASD/arrows or touch pad, floor teleports, nearest stop opens), Dollhouse (orbit, floor slicer). Right panel with live point values, flexible kW, interlocks, DR target and the node's 24-hour chart; bottom strip with site kVA vs ceiling, solar, hot water, cost and the Simulated data badge; deep links ?node=&mode=; ?bench=1 frame timing; Lite and Night toggles; reduced motion; 2D list fallback without WebGL2. Phone layout: the menu becomes a horizontal strip.
+- Stage 7: Ask ergOS (apps/web/lib/assistant: versioned prompt, 10 read-only tools, model module with retries and an assistant_call row per call; sidebar box); packages/grid (new folder) with the OpenADR 3.0 VEN, test VTN and DISCOM email parser; grid signals become proposed events (programme 'discom', X-of-Y baseline) through the normal approval chain; edge housekeeping call; Hindi notice text and 10-minute escalation with acknowledgement; `pnpm edge:probe`; commissioning and point-mapping page. Tables grid_signal, assistant_call; dr_event.source/external_id.

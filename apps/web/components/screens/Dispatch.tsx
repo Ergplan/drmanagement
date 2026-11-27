@@ -2,6 +2,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { CsvButton } from '@/components/CsvButton';
+import { GridInbox } from '@/components/GridInbox';
 import { Card, Kpi, NoData } from '@/components/ui';
 import type { ControlResp } from '@/lib/control-types';
 import { istTime, istWhen, num } from '@/lib/format';
@@ -101,6 +102,7 @@ export function DispatchScreen() {
     return (
       <Card title="Dispatch plan">
         <div className="note">No DR events yet. Build one in the DR optimizer and send it for approval.</div>
+        <GridInbox onEvent={setSel} />
       </Card>
     );
   const st = STATUS[e.status] ?? { label: e.status, cls: 'pill' };
@@ -295,6 +297,12 @@ export function DispatchScreen() {
           </table>
         </Card>
       </div>
+      <GridInbox
+        onEvent={(id) => {
+          setSel(id);
+          setNonce((x) => x + 1);
+        }}
+      />
     </>
   );
 }

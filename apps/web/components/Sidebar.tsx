@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { NAV, type NavKey } from '@/lib/nav';
+import { AskBox } from './AskBox';
 import styles from './Sidebar.module.css';
 
 /** Ported from design/canvas/Sidebar.dc.html. "Street view" is the new tab added after the canvas was approved. */
@@ -29,18 +30,7 @@ export function Sidebar({ active }: { active: NavKey }) {
           );
         })}
       </div>
-      <div className={styles.ask}>
-        <div className={styles.askTitle}>Ask ergOS</div>
-        <Link href="/ceiling" className={styles.bubble}>
-          Can we stay under 600 kVA this June?
-        </Link>
-        <Link href="/thermal" className={styles.bubble}>
-          How full is the hot-water store?
-        </Link>
-        <Link href="/tariff" className={styles.bubble}>
-          Why is the October bill so high?
-        </Link>
-      </div>
+      <AskBox />
       <div className={styles.seq}>
         <div className={styles.askTitle}>Control sequence</div>
         <div className={styles.seqMain}>Observe · Predict · Optimise · Approve and verify</div>

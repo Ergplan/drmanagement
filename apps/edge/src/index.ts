@@ -8,7 +8,7 @@ import { Collector } from './collector';
 import { env, loadConfig } from './config';
 import { EdgeControl } from './control';
 import { DriverSet } from './drivers';
-import { pullIntents, sendAcks } from './intents';
+import { pullIntents, sendAcks, signedHeaders } from './intents';
 import { renderPending } from './reports';
 import { sendBatch } from './uplink';
 
@@ -120,4 +120,19 @@ setInterval(
       });
   },
   Number(process.env.EDGE_REPORTS_MS ?? 30_000),
+);
+// Cloud housekeeping (OpenADR VTN poll, notice escalation), triggered from here so nothing depends on Vercel Cron.
+setInterval(
+  () => {
+    fetch(new URL('/api/edge/housekeeping', uplink.cloudUrl), {
+      headers: signedHeaders(uplink, ''),
+      signal: AbortSignal.timeout(60_000),
+    })
+      .then(async (r) => {
+        const j = (await r.json()) as { grid?: { results?: unknown[] }; escalated?: number };
+        if (j.grid?.results?.length || j.escalated) console.log(`housekeeping: ${JSON.stringify(j)}`);
+      })
+      .catch((e: Error) => console.error(`housekeeping: ${e.message}`));
+  },
+  Number(process.env.EDGE_HOUSEKEEPING_MS ?? 300_000),
 );
