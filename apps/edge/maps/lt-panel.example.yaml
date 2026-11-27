@@ -1,0 +1,7 @@
+# Example Modbus TCP map for an LT panel meter behind an RS-485/TCP gateway. Copy, edit registers to the meter's
+# manual, then point a driver at it in edge.config.yaml and move points to that driver under points.overrides.
+points:
+  - { pointId: lt-main.kw, unitId: 1, register: 3059, type: holding, decode: float32 }
+  - { pointId: lt-main.kva, unitId: 1, register: 3075, type: holding, decode: float32 }
+  - { pointId: lt-main.pf, unitId: 1, register: 3083, type: holding, decode: float32 }
+actuations: [] # panel meters are measurement-only

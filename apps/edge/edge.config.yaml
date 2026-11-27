@@ -1,0 +1,9 @@
+# Which driver serves each point. Switching a point to a real meter is a change here, not in code (invariant 10).
+site: globe-lko
+drivers:
+  sim: { type: sim, seed: 42, scenario: normal }
+  # main-meter: { type: dlms, host: 10.0.0.20, port: 4059 }        # Release with real meters
+  # lt-panels:  { type: modbus-tcp, host: 10.0.0.21, map: maps/lt.yaml }
+points:
+  default: sim
+  overrides: {}

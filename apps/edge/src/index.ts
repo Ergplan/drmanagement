@@ -1,37 +1,69 @@
-import { blockIndexIST } from '@drm/domain';
+/**
+ * Edge runtime (VM now, on-site gateway later). Reads drivers every 10 s, keeps 1-minute readings, IST blocks and
+ * days in a local outbox, and uplinks signed batches. Stage 4 adds the ceiling loop, interlocks and dispatcher here,
+ * so they keep running when the cloud is unreachable.
+ */
+import { Outbox } from './buffer';
+import { Collector } from './collector';
+import { env, loadConfig } from './config';
+import { DriverSet } from './drivers';
 import { sendBatch } from './uplink';
 
-/**
- * Edge runtime. Stage 0: heartbeat only. Stage 2 adds drivers, simulator, buffer and uplink of readings;
- * Stage 4 adds the ceiling loop, interlocks and dispatcher (all local, independent of the cloud).
- */
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 const started = Date.now();
+const cfg = loadConfig();
+const uplink = { cloudUrl: env('CLOUD_URL'), deviceId: env('DEVICE_ID'), deviceSecret: env('DEVICE_SECRET') };
+const drivers = new DriverSet(cfg);
+const outbox = new Outbox();
+const collector = new Collector({
+  readings: (rows) => outbox.pushMany('reading', rows),
+  block: (b) => outbox.push('block', b),
+  day: (d) => outbox.push('day', d),
+});
 
-function env(name: string): string {
-  const v = process.env[name];
-  if (!v) {
-    console.error(`missing ${name}`);
-    process.exit(1);
-  }
-  return v;
+const TICK_MS = Number(process.env.EDGE_TICK_MS ?? 10_000);
+const UPLINK_MS = Number(process.env.EDGE_UPLINK_MS ?? 10_000);
+let failures = 0;
+
+function tick() {
+  const now = new Date();
+  drivers.poll(now);
+  collector.tick(now, drivers.read(now));
 }
 
-const cfg = { cloudUrl: env('CLOUD_URL'), deviceId: env('DEVICE_ID'), deviceSecret: env('DEVICE_SECRET') };
-
-async function beat() {
+async function flush() {
+  const readings = outbox.take('reading', 6000);
+  const blocks = outbox.take('block', 200);
+  const days = outbox.take('day', 30);
+  const events = outbox.take('event', 500);
   try {
-    const ack = await sendBatch(cfg, {
-      version: VERSION,
-      uptimeS: Math.round((Date.now() - started) / 1000),
-      drivers: { sim: 'ok' },
-      bufferedBatches: 0,
+    await sendBatch(uplink, {
+      health: {
+        version: VERSION,
+        uptimeS: Math.round((Date.now() - started) / 1000),
+        drivers: drivers.health(),
+        bufferedBatches: outbox.size(),
+      },
+      live: collector.live(new Date()),
+      readings: readings.map((r) => r.payload) as never,
+      blocks: blocks.map((r) => r.payload) as never,
+      days: days.map((r) => r.payload) as never,
+      events: events.map((r) => r.payload) as never,
     });
-    console.log(`heartbeat ok · block ${blockIndexIST(new Date())} · ${ack.batchId}`);
+    outbox.ack([...readings, ...blocks, ...days, ...events].map((r) => r.id));
+    if (failures)
+      console.log(`uplink restored after ${failures} failed attempts; ${outbox.size()} rows still buffered`);
+    failures = 0;
   } catch (e) {
-    console.error('heartbeat failed', (e as Error).message);
+    failures += 1;
+    if (failures === 1 || failures % 30 === 0)
+      console.error(`uplink failed (${failures}); buffering locally: ${(e as Error).message}`);
   }
 }
 
-await beat();
-setInterval(beat, 30_000);
+console.log(
+  `edge ${VERSION} · ${uplink.deviceId} → ${uplink.cloudUrl} · drivers ${[...drivers.drivers.keys()].join(', ')}`,
+);
+tick();
+setInterval(tick, TICK_MS);
+setInterval(() => void flush(), UPLINK_MS);

@@ -20,7 +20,8 @@
     "@node-rs/argon2": "2.2.2",
     "drizzle-orm": "0.45.4",
     "postgres": "4.1.1",
-    "yaml": "2.9.1"
+    "yaml": "2.9.1",
+    "@drm/contracts": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22",

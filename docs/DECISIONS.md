@@ -10,3 +10,6 @@
 - 2026-11-27: Vercel functions region bom1 (Mumbai), nearest to Lucknow.
 - 2026-11-27: Secrets are set by the user in Vercel and on the VM; they never pass through chat.
 - 2026-11-27: Database moved from Neon to PostgreSQL 17 on the GCP VM (user). Port 5432 open to the internet for the VM's tag only, TLS required (self-signed certificate for the static IP, verified by the app via PG_CA_CERT), SCRAM passwords, app uses role drm_app. Narrow the firewall if Vercel Static IPs are bought.
+- 2026-11-27: Simulator calibration fits only what the bills support: per-month MD (evening factor), May–Sep and Nov energy; cooling rates are physical priors; heat-wave response 6%/°C.
+- 2026-11-27: Backfill reuses the live driver + collector minute by minute, so history and live data come from one code path.
+- 2026-11-27: Edge offline buffer uses Node's built-in node:sqlite (no native dependency).

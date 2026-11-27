@@ -12,3 +12,6 @@
 | Database availability depends on the VM (single instance, no replica) | Stage 8 adds nightly backups to Cloud Storage; a replica if the pilot goes live |
 | Port 5432 reachable from the internet (TLS + SCRAM only) | Narrow when Vercel Static IPs or a private tunnel are adopted |
 | Oct 2026 bill total is ₹7,000 above its energy + demand + FPPAS + duty lines (another charge not in the extract) | Check the bill's other-charges line |
+| DLMS (IS 15959) for the MVVNL meter, BACnet/IP for the BMS, OCPP for EV chargers, MQTT gateways | Stage 7 real-driver harness |
+| Summer daily load shape is fitted with a strong evening factor; daily totals and peaks match bills | Re-fit from real meter data |
+| Dec–Apr and Oct energy targets are assumptions (no bill / disputed bill) | Load the hospital's other bills |
