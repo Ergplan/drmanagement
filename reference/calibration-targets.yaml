@@ -1,0 +1,16 @@
+# What the simulator is calibrated to, month by month (calendar months, IST). Grid energy in kVAh per day, maximum demand in kVA.
+# "bill" values come from the MVVNL bills; "assumed" values fill months with no bill on file and are marked so.
+months:
+  2025-12: {kvah_per_day: 6100, md_kva: 441.3, source: {kvah: assumed, md: bill}}
+  2026-01: {kvah_per_day: 5900, md_kva: 392.1, source: {kvah: assumed, md: bill}}
+  2026-02: {kvah_per_day: 5900, md_kva: 409.5, source: {kvah: assumed, md: bill}}
+  2026-03: {kvah_per_day: 6000, md_kva: 424.8, source: {kvah: assumed, md: bill}}
+  2026-04: {kvah_per_day: 6250, md_kva: 495.9, source: {kvah: assumed, md: bill}}
+  2026-05: {kvah_per_day: 6150, md_kva: 501.9, source: {kvah: "bill (May-Sep average 6,207)", md: bill}}
+  2026-06: {kvah_per_day: 6350, md_kva: 585.0, source: {kvah: "bill (May-Sep average 6,207)", md: "bill (585 billed for May-Sep; assumed to occur in June)"}}
+  2026-07: {kvah_per_day: 6250, md_kva: 565.0, source: {kvah: "bill (May-Sep average 6,207)", md: assumed}}
+  2026-08: {kvah_per_day: 6200, md_kva: 560.0, source: {kvah: "bill (May-Sep average 6,207)", md: assumed}}
+  2026-09: {kvah_per_day: 6100, md_kva: 555.0, source: {kvah: "bill (May-Sep average 6,207)", md: assumed}}
+  2026-10: {kvah_per_day: 6450, md_kva: 555.0, source: {kvah: "assumed (Oct bill disputed)", md: "bill (555 billed for 13 Oct-16 Nov)"}}
+  2026-11: {kvah_per_day: 6617, md_kva: 510.0, source: {kvah: "bill (Nov: 6,617 per day)", md: "assumed: typical evening ~470 kVA, month maximum on a warm early-November evening"}}
+hot_june_evening_uncontrolled_kva: {target: 642, tolerance: [630, 655], source: design/canvas/Guard.dc.html}

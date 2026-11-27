@@ -9,7 +9,14 @@ import Credentials from 'next-auth/providers/credentials';
  * Users live in app_user (argon2 hashes) from Stage 1. Until DATABASE_URL is configured, the demo accounts below
  * accept DEMO_PASSWORD so the site can be opened before the VM database is connected.
  */
-export const ROLES = ['facility_manager', 'medical_superintendent', 'duty_engineer', 'accounts', 'joulewise_ops', 'viewer'] as const;
+export const ROLES = [
+  'facility_manager',
+  'medical_superintendent',
+  'duty_engineer',
+  'accounts',
+  'joulewise_ops',
+  'viewer',
+] as const;
 export type Role = (typeof ROLES)[number];
 
 const DEMO: Record<string, { name: string; role: Role }> = {
