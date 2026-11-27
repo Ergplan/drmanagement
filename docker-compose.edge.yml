@@ -1,0 +1,10 @@
+# Edge stack for the VM (and later the on-site gateway). Outbound connections only.
+services:
+  edge:
+    build: { context: ., dockerfile: apps/edge/Dockerfile }
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - edge-data:/app/apps/edge/data
+volumes:
+  edge-data:

@@ -14,5 +14,13 @@ driver.read -> interlocks.evaluate -> ceiling.step (intents) / dr-executor (appr
 ## Edge <-> cloud
 Outbound only from the edge: POST /api/edge/ingest every 10 s, GET /api/edge/intents every 5 s. HMAC per device.
 
+## Deployment
+- Vercel team Aayuda Energy, project drmanagement, root apps/web, functions bom1, domain globe.joulewise.tech (Vercel DNS).
+- Edge: docker-compose.edge.yml on GCP VM drmanagement.
+
+## API surface
+- GET /api/health
+- POST /api/edge/ingest (HMAC: x-drm-device, x-drm-timestamp, x-drm-signature over `${ts}.${body}`)
+
 ## What changed
-- (per stage)
+- Stage 0: monorepo scaffold; web shell (Sidebar, Topbar, 13 routes, login); domain blocks; contracts; edge heartbeat.

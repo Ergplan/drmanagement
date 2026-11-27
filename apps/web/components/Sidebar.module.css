@@ -1,0 +1,23 @@
+.nav { width: 100%; border-radius: 36px; padding: 18px 14px 20px; display: flex; flex-direction: column; gap: 20px;
+  background: linear-gradient(168deg, rgba(38,150,72,.94) 0%, rgba(86,184,74,.9) 34%, rgba(168,216,76,.88) 70%, rgba(226,236,120,.9) 100%);
+  border: 1px solid rgba(255,255,255,.55);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 -30px 60px -40px rgba(255,255,255,.7), 0 26px 52px -30px rgba(27,90,51,.65); }
+.brand { background: rgba(255,255,255,.9); border: 1px solid #fff; border-radius: 24px; padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 10px 24px -16px rgba(16,35,26,.5); }
+.brand img { width: 140px; height: auto; display: block; }
+.brandTitle { font-size: 15px; font-weight: 700; letter-spacing: -.01em; color: #10231a; line-height: 1.25; }
+.brandSub { font-size: 12px; color: #3d4f45; }
+.items { display: flex; flex-direction: column; gap: 3px; }
+.item { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px; border-radius: 999px; color: #0b2412; font-size: 14.5px; font-weight: 500; text-decoration: none; }
+.item:hover { background: rgba(255,255,255,.35); }
+.on { font-weight: 700; background: rgba(255,255,255,.95); box-shadow: 0 8px 20px -12px rgba(16,35,26,.55); }
+.on:hover { background: rgba(255,255,255,.95); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(11,36,18,.35); flex: none; }
+.on .dot { background: #1f7a3c; }
+.badge { margin-left: auto; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: rgba(255,255,255,.7); color: #1b5a33; }
+.ask { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.askTitle { font-size: 12.5px; font-weight: 600; color: #0b2412; padding-left: 6px; }
+.bubble { display: block; min-height: 44px; padding: 11px 16px; border-radius: 22px 22px 22px 6px; background: rgba(255,255,255,.88); color: #10231a; font-size: 13.5px; line-height: 1.35; text-decoration: none; }
+.seq { border-radius: 24px; padding: 16px; background: rgba(255,255,255,.3); border: 1px solid rgba(255,255,255,.65); backdrop-filter: blur(16px); display: flex; flex-direction: column; gap: 6px; }
+.seqMain { font-size: 14.5px; font-weight: 700; color: #0b2412; line-height: 1.35; }
+.seqNote { font-size: 12.5px; color: #0b2412; line-height: 1.45; }
+.copy { font-size: 11.5px; color: #0b2412; line-height: 1.45; padding: 0 8px; }

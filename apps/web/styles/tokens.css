@@ -1,0 +1,22 @@
+/* Design tokens from design/canvas/lib/eoc.css and eoc.js (Energy Orchestration Centre, day mode). */
+:root {
+  --ink: #10231a;
+  --ink-2: #33443b;
+  --muted: #4f5e56;
+  --faint: #c3cbc5;
+  --line: rgba(16, 35, 26, 0.1);
+  --green: #1f7a3c;
+  --green-ok: #2e9a55;
+  --amber: #b4541a;
+  --red: #b3261e;
+  --lilac: #6a4fb3;
+  --solar: #eda100;
+  --grid: #2a78d6;
+  --hp: #1f9a50;
+  --bg: #eef1ec;
+}
+html, body { margin: 0; padding: 0; background: var(--bg); }
+a { color: inherit; }
+:focus-visible { outline: 3px solid #1f7a3c; outline-offset: 2px; }
+/* next/font exposes Manrope as a CSS variable; point the design's font stacks at it. */
+.eoc, .btn, body { font-family: var(--font-manrope), "Segoe UI", system-ui, sans-serif; }

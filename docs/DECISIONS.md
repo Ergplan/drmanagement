@@ -5,3 +5,7 @@
 - 2026-11-27: Control loop runs at the edge (VM now, on-site gateway later) so the ceiling and interlocks keep working without the cloud.
 - 2026-11-27: TypeScript across cloud and edge so the tariff/block engine is one implementation.
 - 2026-11-27: Full product testing in Stage 8; control and domain unit-tested as written.
+- 2026-11-27: Stage 0 auth uses demo accounts (one per role) with a shared DEMO_PASSWORD until the database exists in Stage 1.
+- 2026-11-27: TypeScript pinned to 5.9 (7.x is the native compiler; Next.js tooling compatibility not verified).
+- 2026-11-27: Vercel functions region bom1 (Mumbai), nearest to Lucknow.
+- 2026-11-27: Secrets are set by the user in Vercel and on the VM; they never pass through chat.
