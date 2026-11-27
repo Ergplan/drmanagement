@@ -42,7 +42,7 @@ describe('edge ↔ cloud contract', () => {
     expect(IntentAck.parse({ id: 'c2', result: 'accepted', detail: null }).result).toBe('accepted');
   });
 
-  it('signed requests verify with the cloud rule HMAC(secret, `${ts}.${body}`)', () => {
+  it('signed requests verify with the cloud rule HMAC(secret, ts + "." + body)', () => {
     const cfg = { cloudUrl: 'http://x', deviceId: 'edge-globe-lko-01', deviceSecret: 's3cret' };
     const body = '{"acks":[]}';
     const h = signedHeaders(cfg, body) as Record<string, string>;
