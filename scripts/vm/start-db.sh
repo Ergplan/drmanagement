@@ -20,8 +20,11 @@ if [ ! -f /data/pg-certs/server.crt ]; then
     -subj "/CN=$IP" -addext "subjectAltName=IP:$IP" >/dev/null 2>&1
   sudo chown 999:999 /data/pg-certs/server.key /data/pg-certs/server.crt   # postgres user inside the image
   sudo chmod 600 /data/pg-certs/server.key
+  sudo chmod 644 /data/pg-certs/server.crt
   echo "Created a TLS certificate for $IP (valid 3 years)."
 fi
+# The umask above would leave these 700 root; the postgres user (uid 999) must be able to enter them.
+sudo chmod 755 /data /data/pg-certs
 
 docker compose -f docker-compose.db.yml up -d
 echo -n "Waiting for Postgres"; for _ in $(seq 1 30); do
