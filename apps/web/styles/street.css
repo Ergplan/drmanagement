@@ -1,0 +1,36 @@
+/* Street View overlays (glass, matching the dashboard) */
+.st-wrap { position: relative; height: calc(100vh - 168px); min-height: 560px; border-radius: 32px; overflow: hidden; border: 1px solid rgba(255,255,255,.9); box-shadow: 0 24px 48px -30px rgba(16,60,36,.45); background: #e9f0f2; }
+.st-canvas { position: absolute; inset: 0; z-index: 0; }
+.st-top, .st-map, .st-wrap > .st-panel, .st-strip, .st-pad, .st-help { z-index: 20; }
+.st-glass { background: linear-gradient(155deg, rgba(255,255,255,.86), rgba(255,255,255,.62)); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); border: 1px solid rgba(255,255,255,.95); border-radius: 22px; box-shadow: 0 16px 36px -24px rgba(16,60,36,.5); }
+.st-top { position: absolute; left: 14px; top: 14px; right: 380px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 10px; }
+.st-top .seg button, .st-chip { border: 0; background: rgba(16,35,26,.06); border-radius: 999px; padding: 7px 12px; font: 600 13px var(--font-manrope), Manrope, system-ui; color: #10231a; cursor: pointer; min-height: 34px; }
+.st-top .seg button[aria-pressed="true"], .st-chip[aria-pressed="true"] { background: #10231a; color: #fff; }
+.st-top input[type="search"] { border: 1px solid rgba(16,35,26,.15); border-radius: 999px; padding: 7px 12px; font: 500 13px var(--font-manrope), system-ui; min-width: 160px; background: rgba(255,255,255,.8); }
+.st-map { position: absolute; left: 14px; top: 74px; bottom: 86px; width: 230px; padding: 10px; overflow: auto; }
+.st-map h4 { margin: 6px 4px; font: 700 11px var(--font-manrope), system-ui; letter-spacing: .06em; text-transform: uppercase; color: #3d5a4a; }
+.st-map button { display: flex; width: 100%; gap: 8px; align-items: center; text-align: left; border: 0; background: transparent; border-radius: 12px; padding: 6px 8px; font: 500 12.5px var(--font-manrope), system-ui; color: #10231a; cursor: pointer; }
+.st-map button:hover, .st-map button[aria-current="true"] { background: rgba(31,122,60,.12); }
+.st-map .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.st-wrap > .st-panel { position: absolute; right: 14px; top: 14px; bottom: 86px; width: 352px; padding: 16px 18px; overflow: auto; display: flex; flex-direction: column; gap: 10px; }
+.st-panel h3 { margin: 0; font: 600 18px var(--font-manrope), system-ui; letter-spacing: -0.01em; }
+.st-fig { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.st-fig div { background: rgba(255,255,255,.7); border-radius: 14px; padding: 8px 10px; }
+.st-fig b { display: block; font: 500 19px var(--font-manrope), system-ui; }
+.st-fig span { font-size: 11.5px; color: #3d5a4a; }
+.st-strip { position: absolute; left: 14px; right: 14px; bottom: 14px; padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; font: 500 13px var(--font-manrope), system-ui; }
+.st-strip b { font-weight: 700; }
+.st-label { font: 600 11.5px var(--font-manrope), Manrope, system-ui; background: rgba(255,255,255,.92); color: #10231a; border: 2px solid; border-radius: 999px; padding: 3px 9px; white-space: nowrap; cursor: pointer; transform: translateY(-4px); }
+.st-label.on { background: #10231a; color: #fff; }
+.st-room { font: 600 10.5px var(--font-manrope), system-ui; color: #3d5a4a; background: rgba(255,255,255,.75); padding: 2px 7px; border-radius: 8px; white-space: nowrap; pointer-events: none; text-transform: capitalize; }
+.st-pad { position: absolute; left: 260px; bottom: 96px; display: grid; grid-template-columns: repeat(3, 52px); gap: 6px; }
+.st-pad button { height: 52px; border-radius: 16px; border: 0; background: rgba(255,255,255,.85); font: 700 18px system-ui; touch-action: none; }
+.st-help { position: absolute; left: 260px; top: 74px; padding: 8px 12px; font: 500 12px var(--font-manrope), system-ui; }
+@media (max-width: 900px) {
+  .st-wrap { height: calc(100vh - 120px); }
+  .st-map { display: none; }
+  .st-top { right: 14px; }
+  .st-wrap > .st-panel { top: auto; left: 14px; right: 14px; width: auto; bottom: 74px; max-height: 42%; }
+  .st-pad { left: 14px; bottom: 50%; }
+  .st-help { display: none; }
+}

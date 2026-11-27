@@ -24,3 +24,6 @@
 | Occupancy-normalised kWh per occupied bed-day needs the HIS census feed | HIS integration |
 | Baseline adjustment for temperature and OT load (agreement clause 2.1 (d)) beyond the same-day level factor | After a summer of real meter data |
 | Event settlement and the monthly PDF from production need the VM database, the edge with its pdf service, and CRON_SECRET in Vercel | User runs the VM setup (docs/vm/SETUP.md) |
+| Street View frame rate measured only under software WebGL (SwiftShader, no GPU in the build box): 110–210 ms a frame; the 60 fps laptop / 30 fps phone target needs a GPU measurement with ?bench=1 | User or Stage 8 on real hardware |
+| Street View: no baked AO, KTX2/Draco or LOD yet (no imported models to compress; geometry is procedural and light) | When CC0 models are added |
+| Screen recording of the tour for the stage report | Needs a GPU browser session |

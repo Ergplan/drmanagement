@@ -99,3 +99,7 @@
 .flow-h { stroke-dasharray: 9 7; animation: eoc-flow 1.6s linear infinite; }
 @keyframes eoc-flow { to { stroke-dashoffset: -26; } }
 @media (prefers-reduced-motion: reduce) { .flow-e, .flow-h { animation: none; } }
+@media (max-width: 760px) {
+  .eoc-stage { padding: 10px; gap: 10px; }
+  .eoc-side { max-width: none; flex-basis: 100%; min-width: 0; }
+}

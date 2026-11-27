@@ -21,3 +21,11 @@
 .seqMain { font-size: 14.5px; font-weight: 700; color: #0b2412; line-height: 1.35; }
 .seqNote { font-size: 12.5px; color: #0b2412; line-height: 1.45; }
 .copy { font-size: 11.5px; color: #0b2412; line-height: 1.45; padding: 0 8px; }
+
+/* Phones: the menu becomes one scrollable row of screens; brand, Ask ergOS and notes are hidden. */
+@media (max-width: 760px) {
+  .nav { padding: 8px; border-radius: 22px; }
+  .brand, .ask, .seq, .copy { display: none; }
+  .items { display: flex; flex-direction: row; overflow-x: auto; gap: 4px; scrollbar-width: none; }
+  .item { white-space: nowrap; flex: none; }
+}
