@@ -32,3 +32,4 @@
 | Modbus actuate() reports ok when the write is queued, not when the device confirms it | Before any real actuation (site commissioning) |
 | Hindi notice wording needs a native review | With the hospital |
 | WhatsApp/SMS providers not chosen (console adapter) | Provider and keys from the hospital |
+| DEMO_ADMIN=1 bypasses separation of duties (one person can approve, sign and arm) | Switch off before go-live with real meters |

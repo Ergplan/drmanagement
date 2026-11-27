@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ActAs } from './ActAs';
 import { Clock } from './Clock';
 import { LiveStatus } from './LiveStatus';
 import styles from './Topbar.module.css';
@@ -23,6 +24,7 @@ export function Topbar({ heading }: { heading: string }) {
             MVVNL 9567-481-000 · HV-1 · 11 kV · 600 kVA
           </div>
         </div>
+        <ActAs />
         <LiveStatus />
         <Link className="btn btn-green" href="/optimizer">
           Simulate event

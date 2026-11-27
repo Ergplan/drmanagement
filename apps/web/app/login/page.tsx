@@ -28,8 +28,8 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
           </p>
         </div>
         <label className={styles.field}>
-          <span className="lbl">Email</span>
-          <input name="email" type="email" autoComplete="username" required className={styles.input} />
+          <span className="lbl">Email or username</span>
+          <input name="email" type="text" autoComplete="username" required className={styles.input} />
         </label>
         <label className={styles.field}>
           <span className="lbl">Password</span>
@@ -37,7 +37,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
         </label>
         {error ? (
           <p className={styles.err} role="alert">
-            That email and password did not match.
+            That sign-in and password did not match.
           </p>
         ) : null}
         <button type="submit" className="btn btn-green">
