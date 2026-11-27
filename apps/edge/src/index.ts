@@ -9,11 +9,13 @@ import { env, loadConfig } from './config';
 import { EdgeControl } from './control';
 import { DriverSet } from './drivers';
 import { pullIntents, sendAcks, signedHeaders } from './intents';
+import { singleInstance } from './lock';
 import { renderPending } from './reports';
 import { sendBatch } from './uplink';
 
 const VERSION = '0.3.0';
 const started = Date.now();
+singleInstance(`${process.env.EDGE_BUFFER ?? new URL('../data/outbox.sqlite', import.meta.url).pathname}.lock`);
 const cfg = loadConfig();
 const uplink = { cloudUrl: env('CLOUD_URL'), deviceId: env('DEVICE_ID'), deviceSecret: env('DEVICE_SECRET') };
 const drivers = new DriverSet(cfg);
@@ -130,7 +132,8 @@ setInterval(
     })
       .then(async (r) => {
         const j = (await r.json()) as { grid?: { results?: unknown[] }; escalated?: number };
-        if (j.grid?.results?.length || j.escalated) console.log(`housekeeping: ${JSON.stringify(j)}`);
+        if (j.grid?.results?.some((x) => (x as { status?: string }).status !== 'duplicate') || j.escalated)
+          console.log(`housekeeping: ${JSON.stringify(j)}`);
       })
       .catch((e: Error) => console.error(`housekeeping: ${e.message}`));
   },

@@ -32,3 +32,4 @@
 - 2026-11-27: Ceiling restores are load-aware: a held load comes back only if projected kVA plus its expected kW (the stage's expect_kw shared across its commands, from control.yaml) stays under Stage 1. The scenario suite found restore/re-shed flapping on a hot evening without it.
 - 2026-11-27: Simulated OT and isolation pressures moved away from the trip limits (OT +18 to +19 Pa, isolation −13 Pa, smaller noise); the earlier values caused nuisance trips every few hours that aborted events. Real nuisance trips are a commissioning item, not something to debounce away.
 - 2026-11-27: Decisions on DR events need an approver role (facility manager, medical superintendent, duty engineer); other roles get 403 before the workflow runs.
+- 2026-11-27: The edge takes a pid lock next to its outbox and refuses to start a second copy; two copies would pull the same intents and double every command (found when stale test processes overlapped).
