@@ -4,11 +4,10 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 [ -f .env.db ] || { echo "Run scripts/vm/start-db.sh first."; exit 1; }
-IP=$(curl -s -H 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip)
 APP_PASSWORD=$(grep '^APP_PASSWORD=' .env.db | cut -d= -f2)
-export DATABASE_URL="postgres://drm_app:${APP_PASSWORD}@${IP}:5432/drm?sslmode=verify-full"
-PG_CA_CERT=$(sudo base64 -w0 /data/pg-certs/server.crt)
-export PG_CA_CERT
+# Same host: TLS over 127.0.0.1 (the certificate is for the public IP, so no CA check on this hop).
+export DATABASE_URL="postgres://drm_app:${APP_PASSWORD}@127.0.0.1:5432/drm?sslmode=require"
+unset PG_CA_CERT
 pnpm install --frozen-lockfile
 pnpm --filter @drm/db migrate
 if [ -z "${DEMO_PASSWORD:-}" ]; then read -r -s -p "Demo user password (the same DEMO_PASSWORD you set in Vercel): " DEMO_PASSWORD; echo; fi

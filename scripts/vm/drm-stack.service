@@ -1,6 +1,6 @@
 # systemd unit: starts the database and the edge stack on boot (installed by scripts/vm/install-ops.sh).
 [Unit]
-Description=Globe Medicare ergOS stack (PostgreSQL + edge + pdf)
+Description=Globe Medicare ergOS stack (PostgreSQL + web + Caddy + edge + pdf)
 Requires=docker.service
 After=docker.service network-online.target
 Wants=network-online.target
@@ -10,8 +10,10 @@ Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/work/drmanagement
 ExecStart=/usr/bin/docker compose -f docker-compose.db.yml up -d
+ExecStart=/usr/bin/docker compose -f docker-compose.app.yml up -d
 ExecStart=/usr/bin/docker compose -f docker-compose.edge.yml up -d
 ExecStop=/usr/bin/docker compose -f docker-compose.edge.yml stop
+ExecStop=/usr/bin/docker compose -f docker-compose.app.yml stop
 ExecStop=/usr/bin/docker compose -f docker-compose.db.yml stop
 TimeoutStartSec=300
 

@@ -1,5 +1,7 @@
 # VM setup · drmanagement (GCP project replanner-513407, asia-south2-b)
 
+> **Everything on the VM (current):** after Steps 1–3, run `bash scripts/vm/go-live.sh`. It starts the database, web app with HTTPS, edge and backups, and prints the DNS record and firewall rule still needed. The Vercel steps further down are kept for reference only.
+
 You work only from **Cloud Shell** (the >_ icon at the top of the Google Cloud console). Paste each block as one piece. Every block is safe to run twice.
 
 What needs fixing on the VM as it is now:

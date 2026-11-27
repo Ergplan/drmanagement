@@ -1,0 +1,5 @@
+# HTTPS for the dashboard. Caddy fetches and renews the certificate automatically once DNS points here.
+{$SITE_HOST:globe.joulewise.tech} {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3100
+}

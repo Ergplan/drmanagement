@@ -8,18 +8,25 @@ import * as schema from './schema';
  */
 let cached: ReturnType<typeof make> | undefined;
 
-function make(url: string) {
+function make(url: string, mode: string | null) {
   const ca = process.env.PG_CA_CERT ? Buffer.from(process.env.PG_CA_CERT, 'base64').toString('utf8') : undefined;
+  const local = /@(localhost|127\.0\.0\.1)[:/]/.test(url);
+  // verify-full with the CA (remote, e.g. Vercel); require = TLS without CA check (same host, e.g. the VM's own
+  // web container over 127.0.0.1); disable or a bare localhost URL = plain TCP (tests).
+  const ssl =
+    mode === 'disable'
+      ? false
+      : ca && mode !== 'require'
+        ? { ca, rejectUnauthorized: true }
+        : mode === 'require' || !local
+          ? ('require' as const)
+          : false;
   const sql = postgres(url, {
     max: Number(process.env.PG_POOL_MAX ?? 5),
     idle_timeout: 20,
     connect_timeout: 10,
     prepare: true,
-    ssl: ca
-      ? { ca, rejectUnauthorized: true }
-      : url.includes('sslmode=disable') || /localhost|127\.0\.0\.1/.test(url)
-        ? false
-        : 'require',
+    ssl,
   });
   return { sql, db: drizzle(sql, { schema }) };
 }
@@ -27,7 +34,8 @@ function make(url: string) {
 export function getDb() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error('DATABASE_URL is not set');
-  cached ??= make(url.replace(/[?&]sslmode=verify-full/, ''));
+  const mode = /[?&]sslmode=([a-z-]+)/.exec(url)?.[1] ?? null;
+  cached ??= make(url.replace(/[?&]sslmode=[a-z-]+/, ''), mode);
   return cached;
 }
 

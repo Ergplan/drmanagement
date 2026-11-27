@@ -1,20 +1,24 @@
-# Edge stack for the VM (and later the on-site gateway). Outbound connections only.
+# Edge stack on the VM (and later the on-site gateway). Outbound connections only.
+# Host networking: the edge reaches the web app on 127.0.0.1:3100 and the PDF browser on 127.0.0.1:3000;
+# neither port is published beyond the VM.
 services:
   edge:
     build: { context: ., dockerfile: apps/edge/Dockerfile }
     restart: unless-stopped
+    network_mode: host
     env_file: .env
     environment:
-      PDF_WS_ENDPOINT: ws://pdf:3000/
+      PDF_WS_ENDPOINT: ws://127.0.0.1:3000/
     volumes:
       - edge-data:/app/apps/edge/data
     depends_on: [pdf]
-  # Headless Chromium for report PDFs; only the edge talks to it (no published port).
+  # Headless Chromium for report PDFs.
   pdf:
     image: mcr.microsoft.com/playwright:v1.65.1-noble
     restart: unless-stopped
     init: true
     user: pwuser
-    command: ["npx", "-y", "playwright@1.65.1", "run-server", "--port", "3000", "--host", "0.0.0.0"]
+    network_mode: host
+    command: ["npx", "-y", "playwright@1.65.1", "run-server", "--port", "3000", "--host", "127.0.0.1"]
 volumes:
   edge-data:

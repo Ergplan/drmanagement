@@ -1,0 +1,20 @@
+# Web app + HTTPS on the VM (replaces Vercel; see docs/DECISIONS.md). Host networking: the web app listens on
+# 127.0.0.1:3100 only, Caddy is the one public entry on 80/443 and gets the certificate from Let's Encrypt.
+services:
+  web:
+    build: { context: ., dockerfile: apps/web/Dockerfile, args: { GIT_SHA: "${GIT_SHA:-vm}" } }
+    restart: unless-stopped
+    network_mode: host
+    env_file: .env.app
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./scripts/vm/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on: [web]
+volumes:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,9 @@
+[Unit]
+Description=Run the ergOS daily job at 01:00 IST
+
+[Timer]
+OnCalendar=*-*-* 19:30:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target

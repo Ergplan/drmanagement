@@ -1,0 +1,8 @@
+[Unit]
+Description=ergOS daily job (settle events, queue monthly/weekly reports)
+After=drm-stack.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/work/drmanagement
+ExecStart=/bin/bash -c 'curl -fsS -H "authorization: Bearer $(grep ^CRON_SECRET= .env.app | cut -d= -f2)" http://127.0.0.1:3100/api/cron/daily'

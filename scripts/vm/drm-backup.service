@@ -5,5 +5,5 @@ After=drm-stack.service
 [Service]
 Type=oneshot
 WorkingDirectory=/work/drmanagement
-EnvironmentFile=/work/drmanagement/.env.backup
+EnvironmentFile=-/work/drmanagement/.env.backup
 ExecStart=/bin/bash /work/drmanagement/scripts/vm/backup.sh
