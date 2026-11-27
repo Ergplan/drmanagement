@@ -9,5 +9,8 @@ node_modules/
 .vercel
 apps/edge/data/
 .env.db
+.env.backup
+.env.app
 test-results/
 playwright-report/
+.env.local
