@@ -1,5 +1,6 @@
 'use client';
 import { useMemo } from 'react';
+import { CsvButton } from '@/components/CsvButton';
 import { StrataChart } from '@/components/StrataChart';
 import { Bar, Card, Kpi, NoData } from '@/components/ui';
 import { planChart } from '@/lib/charts';
@@ -164,7 +165,12 @@ export function CeilingScreen() {
         )}
       </Card>
 
-      <Card title="Ceiling actions, last 7 days">
+      <Card
+        title="Ceiling actions, last 7 days"
+        aside={
+          <CsvButton name="ceiling-actions" rows={c.data.ceilingActions as unknown as Array<Record<string, unknown>>} />
+        }
+      >
         {c.data.ceilingActions.length ? (
           <table className="tbl">
             <thead>

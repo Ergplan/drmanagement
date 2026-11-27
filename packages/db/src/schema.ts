@@ -5,6 +5,7 @@
 import {
   bigint,
   boolean,
+  customType,
   date,
   doublePrecision,
   index,
@@ -44,6 +45,8 @@ export const eventStatus = pgEnum('event_status', [
   'lapsed',
   'rejected',
 ]);
+
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => 'bytea' });
 
 export const org = pgTable('org', { id: text('id').primaryKey(), name: text('name').notNull(), createdAt: created() });
 
@@ -496,7 +499,13 @@ export const report = pgTable('report', {
   periodFrom: date('period_from'),
   periodTo: date('period_to'),
   blobUrl: text('blob_url'),
-  status: text('status').notNull().default('pending'),
+  status: text('status').notNull().default('pending'), // pending | rendering | ready | failed
+  params: jsonb('params').notNull().default({}),
+  /** PDF bytes when Vercel Blob is not configured (data then stays in the VM database) */
+  pdf: bytea('pdf'),
+  error: text('error'),
+  requestedBy: text('requested_by'),
+  readyAt: ts('ready_at'),
   createdAt: created(),
 });
 

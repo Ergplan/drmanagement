@@ -74,6 +74,20 @@ export class EdgeControl {
     this.ceiling = new Ceiling(cfg, this.dispatcher, (e) => this.emit(e));
   }
 
+  /**
+   * On start the edge does not know what an earlier run left curtailed (a real device keeps its last command).
+   * Put every commandable load back to normal, so nothing stays held without an owner.
+   */
+  safeStart(now: Date) {
+    for (const [assetId, cls] of Object.entries(this.classes))
+      if (Dispatcher.allowed(cls))
+        this.dispatcher.send(
+          { assetId, action: 'restore', reason: 'restore', params: { why: 'edge start' }, force: true },
+          now,
+        );
+    this.dispatcher.active.clear();
+  }
+
   /** One control step. readings: this tick's driver readings; projectedKva from the collector. */
   step(now: Date, readings: Reading[], projectedKva: number | undefined) {
     for (const r of readings) if (r.quality !== 'bad') this.latest.set(r.pointId, { value: r.value, ts: r.ts });

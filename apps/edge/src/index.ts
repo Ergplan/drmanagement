@@ -9,6 +9,7 @@ import { env, loadConfig } from './config';
 import { EdgeControl } from './control';
 import { DriverSet } from './drivers';
 import { pullIntents, sendAcks } from './intents';
+import { renderPending } from './reports';
 import { sendBatch } from './uplink';
 
 const VERSION = '0.3.0';
@@ -101,7 +102,22 @@ async function flush() {
 console.log(
   `edge ${VERSION} · ${uplink.deviceId} → ${uplink.cloudUrl} · drivers ${[...drivers.drivers.keys()].join(', ')}`,
 );
+control.safeStart(new Date());
 tick();
 setInterval(tick, TICK_MS);
 setInterval(() => void flush(), UPLINK_MS);
 setInterval(() => void syncIntents(), Number(process.env.EDGE_INTENTS_MS ?? 5_000));
+// Report PDFs: one render pass at a time, every 30 s.
+let rendering = false;
+setInterval(
+  () => {
+    if (rendering) return;
+    rendering = true;
+    renderPending(uplink)
+      .catch((e: Error) => console.error(`report jobs: ${e.message}`))
+      .finally(() => {
+        rendering = false;
+      });
+  },
+  Number(process.env.EDGE_REPORTS_MS ?? 30_000),
+);

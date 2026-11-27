@@ -1,3 +1,5 @@
+import { avoidedDemandCharge, type TariffSpec } from './tariff';
+
 /** Measurement and verification of a DR event. Pure functions. */
 export interface EventPerformance {
   deliveredKw: number; // average reduction over the event
@@ -41,4 +43,53 @@ export function recommendNomination(pastDeliveredKw: readonly number[], share = 
   const mid = Math.floor(s.length / 2);
   const median = s.length % 2 ? s[mid]! : (s[mid - 1]! + s[mid]!) / 2;
   return Math.floor(median * share);
+}
+
+export interface SettlementInput {
+  /** kW per 15-min interval over the event window */
+  baselineKw: readonly number[];
+  actualKw: readonly number[];
+  nominationKw: number;
+  gridFactor: number; // tCO2 per MWh
+  /** whole IST day, 96 block kVA: metered, and metered with the event window replaced by the baseline */
+  dayActualKva: readonly number[];
+  dayBaselineKva: readonly number[];
+  /** month's billing peak before the event day */
+  monthMdBeforeKva: number;
+  spec: TariffSpec;
+  paymentInrPerKw: number | null;
+  penaltyInrPerKw: number | null;
+}
+
+export interface Settlement extends EventPerformance {
+  peakWithoutKva: number;
+  peakWithKva: number;
+  avoidedDemandInr: number;
+  programmePaymentInr: number;
+  penaltyInr: number;
+  /** energy is moved, not saved, and the tariff has no time-of-day rate: no energy value */
+  energyValueInr: number;
+  valueInr: number;
+}
+
+/** Settlement for one DR event: delivered kW/kWh vs baseline, and its money value from the tariff. */
+export function settle(i: SettlementInput): Settlement {
+  const perf = eventPerformance(i.baselineKw, i.actualKw, 0.25, i.nominationKw, i.gridFactor);
+  const peakWithoutKva = Math.max(0, ...i.dayBaselineKva);
+  const peakWithKva = Math.max(0, ...i.dayActualKva);
+  const avoidedDemandInr = avoidedDemandCharge(peakWithoutKva, peakWithKva, i.monthMdBeforeKva, i.spec);
+  const delivered = Math.max(0, perf.deliveredKw);
+  const programmePaymentInr = (i.paymentInrPerKw ?? 0) * delivered;
+  const penaltyInr = (i.penaltyInrPerKw ?? 0) * Math.max(0, i.nominationKw - delivered);
+  const energyValueInr = 0;
+  return {
+    ...perf,
+    peakWithoutKva,
+    peakWithKva,
+    avoidedDemandInr,
+    programmePaymentInr,
+    penaltyInr,
+    energyValueInr,
+    valueInr: avoidedDemandInr + programmePaymentInr + energyValueInr - penaltyInr,
+  };
 }

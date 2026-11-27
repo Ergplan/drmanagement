@@ -68,6 +68,7 @@ export async function seed() {
         backup: site.backup,
         programme: site.programme,
         emissions: site.emissions,
+        benchmarks: site.benchmarks,
         control: { ceiling: control.ceiling, dr_event: control.dr_event, heat_pumps: control.heat_pumps },
         holidays: y('operations.yaml').holidays_2026,
       },

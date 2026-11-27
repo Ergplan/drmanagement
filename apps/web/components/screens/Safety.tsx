@@ -1,4 +1,5 @@
 'use client';
+import { CsvButton } from '@/components/CsvButton';
 import { Card, Kpi, NoData } from '@/components/ui';
 import type { ControlResp } from '@/lib/control-types';
 import { istWhen, num } from '@/lib/format';
@@ -125,7 +126,16 @@ export function SafetyScreen() {
 
       <Card
         title="Approval, override and refusal history"
-        aside={<span className="note">Every action is logged with who, when and why</span>}
+        aside={
+          <CsvButton
+            name="audit-7-days"
+            rows={
+              [...c.data.audit, ...c.data.interlockEvents, ...c.data.commands] as unknown as Array<
+                Record<string, unknown>
+              >
+            }
+          />
+        }
       >
         {c.data.audit.length || c.data.interlockEvents.length ? (
           <table className="tbl">

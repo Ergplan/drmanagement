@@ -4,7 +4,17 @@ services:
     build: { context: ., dockerfile: apps/edge/Dockerfile }
     restart: unless-stopped
     env_file: .env
+    environment:
+      PDF_WS_ENDPOINT: ws://pdf:3000/
     volumes:
       - edge-data:/app/apps/edge/data
+    depends_on: [pdf]
+  # Headless Chromium for report PDFs; only the edge talks to it (no published port).
+  pdf:
+    image: mcr.microsoft.com/playwright:v1.65.1-noble
+    restart: unless-stopped
+    init: true
+    user: pwuser
+    command: ["npx", "-y", "playwright@1.65.1", "run-server", "--port", "3000", "--host", "0.0.0.0"]
 volumes:
   edge-data:

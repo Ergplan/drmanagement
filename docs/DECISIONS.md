@@ -20,3 +20,8 @@
 - 2026-11-27: The DR planner skips loads whose longest safe hold is shorter than the window (e.g. chiller and AHU, 2 h, for a 2.5 h event) rather than planning a mid-event release; the plan says so.
 - 2026-11-27: Intent pull is a signed GET as locked; acks go in a separate signed POST /api/edge/intents/ack.
 - 2026-11-27: The duty-engineer-armed interlock is an edge setting (ENGINEER_ARMED) until a paging integration reports reachability.
+- 2026-11-27: Report PDFs are kept in the VM database by default (bytea on `report`), so hospital data stays in the jouleWise GCP project as with the database decision; Vercel Blob (locked decision) is used when REPORTS_IN_BLOB=1. Blob URLs are public-but-unguessable, so Blob needs the user's agreement before it is switched on.
+- 2026-11-27: Settlement values the event by the avoided demand charge on the month's peak (tariff engine) plus any programme payment minus shortfall penalty. Shifted energy is valued at zero because the HV-1 tariff has no time-of-day rate.
+- 2026-11-27: The day-matching adjustment window ends before any pre-conditioning starts, so pre-cooling or pre-charging cannot inflate the baseline.
+- 2026-11-27: The edge restores every commandable load when it starts, because it cannot know what an earlier run left curtailed (a real device keeps its last command).
+- 2026-11-27: Hospital energy benchmark 10,000–20,000 kWh per bed a year and 200–300 kWh/m² (CAHO 2017, private multi-speciality), stored in reference/site.yaml with its source.

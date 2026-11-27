@@ -1,5 +1,6 @@
 'use client';
 import { useMemo } from 'react';
+import { CsvButton } from '@/components/CsvButton';
 import { StrataChart } from '@/components/StrataChart';
 import { Card, Kpi, NoData } from '@/components/ui';
 import { billedMd } from '@/lib/charts';
@@ -79,7 +80,25 @@ export function TariffScreen() {
           foot={<span>With duty, before fuel adjustment</span>}
         />
       </div>
-      <Card title="Bills on file">
+      <Card
+        title="Bills on file"
+        aside={
+          <CsvButton
+            name="bills"
+            rows={b.data.bills.map((x) => ({
+              bill: x.label,
+              from: x.periodFrom,
+              to: x.periodTo,
+              days: x.days,
+              kvah: x.kvah,
+              billedKva: x.billedKva,
+              total: x.total,
+              engineTotal: x.recomputed?.total ?? null,
+              excessKvah: x.audit?.excessKvah ?? null,
+            }))}
+          />
+        }
+      >
         <div className="scroll">
           <table className="tbl">
             <thead>

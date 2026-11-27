@@ -116,6 +116,12 @@ cd /work/drmanagement && git pull && bash scripts/vm/start-db.sh
 
 It creates the passwords and TLS certificate on the VM, starts PostgreSQL 17, and prints `DATABASE_URL` and `PG_CA_CERT`. Copy those two into Vercel (Settings → Environment Variables, all environments, type Sensitive). They are printed only in your VM terminal; do not paste them into a chat.
 
+Then load the schema, the site's reference data, the demo users and 35 days of simulated history (takes about a minute; it asks for the demo password you set in Vercel):
+
+```bash
+cd /work/drmanagement && bash scripts/vm/init-data.sh
+```
+
 Then the edge:
 
 ```bash
@@ -128,7 +134,9 @@ Set `CLOUD_URL=https://globe.joulewise.tech`, `DEVICE_ID=edge-globe-lko-01` and 
 docker compose -f docker-compose.edge.yml up -d --build && docker compose -f docker-compose.edge.yml logs -f edge
 ```
 
-Expect `heartbeat ok · block NN · …` every 30 seconds. Ctrl+C stops following the log; the edge keeps running.
+Expect `edge 0.3.0 · edge-globe-lko-01 → https://globe.joulewise.tech · drivers sim` and no `uplink failed` lines. Ctrl+C stops following the log; the edge keeps running. The stack has two containers: `edge` (drivers, control loop, uplink) and `pdf` (headless Chromium that prints report PDFs; it has no open port).
+
+In Vercel also set `CRON_SECRET` (any long random value, type Sensitive) so the daily settlement and report job can run.
 
 ## Starting, stopping and checking the VM
 

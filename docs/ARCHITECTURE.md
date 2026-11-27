@@ -22,6 +22,9 @@ Updated every stage; Stage 0 writes the first full version.
 
 A control-step exception restores every load and keeps the loop running.
 
+## Reports and settlement
+`settleEvent()` (packages/db/src/settlement.ts) builds the programme baseline (`dayMatching` / `xOfY` / `preEvent`) from the edge's 15-minute blocks, excluding other event days, non-like days and incomplete days, with the adjustment window ending before any pre-conditioning; `@drm/domain settle()` gives delivered kW/kWh, performance, avoided demand charge, programme payment/penalty and tCO2. Report jobs: `POST /api/reports` → `report` row (pending) → edge `renderPending()` (apps/edge/src/reports.ts) prints `/print/:id?t=` with Playwright (pdf service in docker-compose.edge.yml) → ack with the PDF → stored in the VM database (or Blob when REPORTS_IN_BLOB=1) → `/api/reports/:id/pdf`.
+
 ## DR workflow (cloud plans and records; edge executes)
 `/api/optimizer` → `planFor()` (apps/web/lib/planning.ts) → `@drm/control plan()` (excludes protected/critical/meter, flexible before conditional, skips loads whose longest hold is shorter than the window) → `POST /api/events` → `proposeEvent()` (refuses excluded assets again) → `POST /api/events/:id` → `decideEvent()` using `@drm/control decide()` (facility manager approves → medical superintendent signs if HVAC → duty engineer arms by 17:00 IST, else lapsed) → on arm a `dr_intent` row (EdgeIntent JSON) → edge `GET /api/edge/intents` → `EdgeControl.accept()` → acks via `POST /api/edge/intents/ack` → `recordAcks()`; `dr_log` events from the edge move the event to running / completed / aborted. Notifications: `notifyRoles()` writes in-app rows and sends email (Resend) or console.
 
@@ -40,6 +43,10 @@ Outbound only from the edge: POST /api/edge/ingest every 10 s, GET /api/edge/int
 - GET /api/control (edge control state + 7-day commands, ceiling actions, interlock events, audit), /api/flexibility, /api/optimizer?date&start&end&target, /api/events, /api/me
 - POST /api/events (facility manager, jouleWise ops), POST /api/events/:id {decision: approve|sign|arm|reject|abort}
 - GET /api/edge/intents, POST /api/edge/intents/ack (HMAC)
+- GET /api/mv, /api/opportunities, /api/reports, /api/reports/:id/pdf, /api/events/:id/settlement[?recompute=1]; POST /api/reports {kind: monthly|weekly|event|bill_audit}, POST /api/opportunities/:id {status}
+- GET /api/edge/reports (HMAC; claims jobs, returns 15-minute print URLs), POST /api/edge/reports/ack {id, pdfBase64|error}
+- GET /api/cron/daily (Vercel Cron 01:00 IST, Bearer CRON_SECRET): settle ended events, queue monthly (1st) and weekly (Monday) reports
+- Page /print/:id (session or report token): A4 report HTML
 - POST /api/edge/ingest (HMAC: x-drm-device, x-drm-timestamp, x-drm-signature over `${ts}.${body}`)
 
 ## Data model (Stage 1)
@@ -59,3 +66,4 @@ Outbound only from the edge: POST /api/edge/ingest every 10 s, GET /api/edge/int
 - Stage 2: drivers package (sim calibrated to bills, Modbus TCP, CSV), edge runtime (registry, collector, SQLite outbox, signed uplink, backfill), batch persistence, live/day/series APIs.
 - Stage 3: monitoring screens (Overview, Live energy, Demand forecast, Solar & backup, Tariffs & cost, HVAC & heat pumps), StrataChart wrapper, live top-bar status, packages/control forecast, bill audit; new folder apps/web/components/screens (one component per screen).
 - Stage 4: edge control in packages/control (interlocks, dispatcher, ceiling, heat-pump scheduler, DR executor, planner, approval workflow) wired into apps/edge/src/control.ts; intents and acks routes; DR events data layer (packages/db/src/dr.ts); notifications adapter; Demand ceiling, Load flexibility, DR optimizer, Dispatch plan and Clinical safety screens. Interlock limits, the ladder's commands, heat-pump windows and holidays now come from reference YAML via site.facts.
+- Stage 5: settlement (domain `settle`, db `settleEvent`), report jobs rendered to PDF at the edge (monthly, weekly duty, event, bill audit), Reports & M&V screen with benchmarks, emissions, M&V method, settlements and the opportunity workflow; CSV export on tables; Vercel Cron; edge restores every load on start. New folders: apps/web/app/print, apps/web/components/print.

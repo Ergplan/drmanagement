@@ -43,3 +43,7 @@ programme:
 emissions:
   grid_factor_tco2_per_mwh: 0.727        # CEA CO2 Baseline Database v20.0 (FY 2023-24), weighted average incl. RE
   source: CEA CO2 Baseline Database v20.0; update to v22.0 (Aug 2026) once its weighted average is confirmed
+benchmarks:                               # Indian private multi-speciality hospitals
+  kwh_per_bed_year: {low: 10000, high: 20000}
+  kwh_per_m2_year: {low: 200, high: 300}
+  source: "CAHO CAHOCON 2017, Dr Satish Kumar, 'Driving Energy Efficiency' (energy intensity benchmarks for Indian hospitals, from government and industry publications)"

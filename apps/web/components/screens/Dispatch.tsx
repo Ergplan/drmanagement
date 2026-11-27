@@ -1,6 +1,7 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { CsvButton } from '@/components/CsvButton';
 import { Card, Kpi, NoData } from '@/components/ui';
 import type { ControlResp } from '@/lib/control-types';
 import { istTime, istWhen, num } from '@/lib/format';
@@ -261,7 +262,22 @@ export function DispatchScreen() {
             </tbody>
           </table>
         </Card>
-        <Card title="All events">
+        <Card
+          title="All events"
+          aside={
+            <CsvButton
+              name="dr-events"
+              rows={events.map((x) => ({
+                id: x.id,
+                start: x.start,
+                end: x.end,
+                targetKw: x.targetKw,
+                status: x.status,
+                expectedKw: x.plan.expectedKw,
+              }))}
+            />
+          }
+        >
           <table className="tbl">
             <tbody>
               {events.map((x) => (

@@ -10,16 +10,17 @@
   },
   "dependencies": {
     "@drm/contracts": "workspace:*",
+    "@drm/control": "workspace:*",
+    "@drm/db": "workspace:*",
+    "@drm/domain": "workspace:*",
+    "@node-rs/argon2": "2.2.2",
+    "@vercel/blob": "2.9.0",
+    "drizzle-orm": "0.45.4",
     "next": "16.4.6",
     "next-auth": "5.0.0-beta.32",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "zod": "4.6.7",
-    "@drm/domain": "workspace:*",
-    "@drm/db": "workspace:*",
-    "@node-rs/argon2": "2.2.2",
-    "drizzle-orm": "0.45.4",
-    "@drm/control": "workspace:*"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "^22",

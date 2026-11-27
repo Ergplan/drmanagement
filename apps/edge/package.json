@@ -16,6 +16,7 @@
     "@drm/db": "workspace:*",
     "@drm/domain": "workspace:*",
     "@drm/drivers": "workspace:*",
+    "playwright-core": "1.65.1",
     "tsx": "4.23.15",
     "yaml": "2.9.1",
     "zod": "4.6.7"

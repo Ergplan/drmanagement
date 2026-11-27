@@ -20,3 +20,7 @@
 | Local abort at the edge without the cloud (a physical or local web button) | Stage 7 gateway UI |
 | DB tests write rows into append-only tables; run them only against a test database, never the VM production database | Stage 8 adds a separate test database on the VM |
 | WhatsApp/SMS adapters (console until a provider and keys exist) | Provider choice with the hospital |
+| Per-m² intensity needs the built-up area | From hospital |
+| Occupancy-normalised kWh per occupied bed-day needs the HIS census feed | HIS integration |
+| Baseline adjustment for temperature and OT load (agreement clause 2.1 (d)) beyond the same-day level factor | After a summer of real meter data |
+| Event settlement and the monthly PDF from production need the VM database, the edge with its pdf service, and CRON_SECRET in Vercel | User runs the VM setup (docs/vm/SETUP.md) |

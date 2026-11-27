@@ -26,7 +26,7 @@ export function SolarScreen() {
       </Card>
     );
   const kwh30 = last30.reduce((a, d) => a + d.solarKwh, 0);
-  const kwp = s.data.kwp ?? 285;
+  const kwp = s.data.kwp;
   return (
     <>
       <div className="grid-k">
@@ -46,7 +46,7 @@ export function SolarScreen() {
           title="Last 30 days"
           value={num(kwh30)}
           unit="kWh"
-          foot={<span>{num(kwh30 / kwp / Math.max(1, last30.length), 2)} kWh/kWp a day</span>}
+          foot={<span>{kwp ? num(kwh30 / kwp / Math.max(1, last30.length), 2) : '–'} kWh/kWp a day</span>}
         />
         <Kpi
           title="Used on site"
