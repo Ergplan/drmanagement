@@ -1,0 +1,576 @@
+_note: 'Flexibility Registry for Globe Medicare. Source: design/canvas/Flexibility.dc.html (modelled from Indian hospital
+  benchmarks, to be confirmed on site survey). dr_class: flexible | conditional | protected | critical. protected and critical
+  assets are NEVER commanded.'
+monthly_flex_kw_at_peak:
+  jan: 75
+  feb: 80
+  mar: 100
+  apr: 160
+  may: 185
+  jun: 190
+  jul: 190
+  aug: 185
+  sep: 180
+  oct: 140
+  nov: 78
+  dec: 75
+assets:
+- id: chiller
+  name: Chiller plant, general zones
+  dr_class: conditional
+  rated_flex_kw: 70
+  flex_kw:
+    nov_evening: 14
+    jun_evening: 70
+  action: Raises the chilled-water set point by 1.5 °C for general zones, and in a summer emergency stops a second chiller
+    starting.
+  never: Touches OT, ICU or isolation cooling, or lets any ward go above 26 °C.
+  minimum_service: Chilled water 8.5 °C at most
+  rebound: About 20% extra for an hour after
+  authority: Facility manager
+  interlock: Clinical zone temperature
+  max_duration: 2 h
+  response_time: 5 min
+  hourly_profile_kw_nov:
+  - 48
+  - 46
+  - 45
+  - 45
+  - 46
+  - 48
+  - 55
+  - 62
+  - 70
+  - 78
+  - 84
+  - 88
+  - 92
+  - 94
+  - 94
+  - 92
+  - 90
+  - 88
+  - 86
+  - 80
+  - 72
+  - 62
+  - 55
+  - 50
+  flex_window_hours:
+  - 12
+  - 21
+  equipment:
+  - name: Chiller 1, screw
+    rating: 160 TR
+    state_sample: 92 TR
+  - name: Chiller 2, screw
+    rating: 160 TR
+    state_sample: Standby
+  - name: Chilled-water pumps
+    rating: 3 × 15 kW
+    state_sample: 2 running
+  - name: Condenser pumps
+    rating: 2 × 18.5 kW
+    state_sample: 1 running
+  - name: Cooling tower fans
+    rating: 2 × 7.5 kW
+    state_sample: 1 running
+  icon: design/canvas/assets/icon-chiller.svg
+- id: ahu
+  name: AHUs and fan coils, non-clinical
+  dr_class: conditional
+  rated_flex_kw: 30
+  flex_kw:
+    nov_evening: 16
+    jun_evening: 30
+  action: Trims fan speed to 70% in OPD, admin and corridors while keeping the minimum fresh air.
+  never: Touches the 6 clinical AHUs, or lets CO₂ rise past 1,000 ppm.
+  minimum_service: 70% fan speed, minimum fresh air
+  rebound: About 10% for 30 min
+  authority: Facility manager
+  interlock: CO₂ under 1,000 ppm
+  max_duration: 2 h
+  response_time: 2 min
+  hourly_profile_kw_nov:
+  - 14
+  - 14
+  - 14
+  - 14
+  - 14
+  - 16
+  - 22
+  - 28
+  - 32
+  - 34
+  - 34
+  - 34
+  - 34
+  - 34
+  - 34
+  - 34
+  - 32
+  - 30
+  - 28
+  - 24
+  - 18
+  - 16
+  - 14
+  - 14
+  flex_window_hours:
+  - 9
+  - 21
+  equipment:
+  - name: OPD AHUs 1 to 3
+    rating: 3 × 11 kW
+    state_sample: 82%
+  - name: Admin AHU
+    rating: 7.5 kW
+    state_sample: 75%
+  - name: Corridor AHUs
+    rating: 2 × 5.5 kW
+    state_sample: 80%
+  - name: Cafeteria AHU
+    rating: 5.5 kW
+    state_sample: 90%
+  icon: design/canvas/assets/icon-ahu.svg
+- id: heatpump
+  name: Heat pumps, hot water
+  dr_class: flexible
+  rated_flex_kw: 30
+  flex_kw:
+    nov_evening: 0
+    jun_evening: 30
+  action: Runs both heat pumps at 100% in solar hours to fill the 12,000 L store, then locks them off from 17:30 to 22:00.
+  never: Lets the store serve water below 60 °C, or skips the weekly 70 °C disinfection cycle.
+  minimum_service: Store above 60%
+  rebound: None, the store is pre-charged
+  authority: Facility manager
+  interlock: Outlet 60 °C or more
+  max_duration: 5 h
+  response_time: 1 min
+  hourly_profile_kw_nov:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 30
+  - 30
+  - 30
+  - 30
+  - 30
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  flex_window_hours:
+  - 10
+  - 15
+  equipment:
+  - name: Heat pump 1, air source
+    rating: 15 kW · 51 kW heat
+    state_sample: 100%
+  - name: Heat pump 2, air source
+    rating: 15 kW · 51 kW heat
+    state_sample: 100%
+  - name: Hot-water tanks
+    rating: 2 × 6,000 L
+    state_sample: 98% at 65 °C
+  - name: Circulation pump
+    rating: 1.1 kW
+    state_sample: Running
+  icon: design/canvas/assets/icon-heatpump.svg
+- id: laundry
+  name: Laundry and kitchen
+  dr_class: flexible
+  rated_flex_kw: 28
+  flex_kw:
+    nov_evening: 22
+    jun_evening: 28
+  action: Holds new wash, dry and ironing cycles for the event and runs them after 21:00.
+  never: Delays patient meal service or a cycle already running.
+  minimum_service: Meal service protected
+  rebound: Full load after the event
+  authority: Housekeeping head
+  interlock: Meal times locked
+  max_duration: 2.5 h
+  response_time: 15 min
+  hourly_profile_kw_nov:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 4
+  - 14
+  - 22
+  - 26
+  - 26
+  - 24
+  - 22
+  - 22
+  - 24
+  - 22
+  - 20
+  - 22
+  - 18
+  - 10
+  - 4
+  - 0
+  - 0
+  - 0
+  flex_window_hours:
+  - 7
+  - 21
+  equipment:
+  - name: Washer-extractors
+    rating: 2 × 7.5 kW
+    state_sample: 1 running
+  - name: Tumble dryers
+    rating: 2 × 6 kW
+    state_sample: Idle
+  - name: Flatwork ironer
+    rating: 6 kW
+    state_sample: Running
+  - name: Kitchen dishwasher
+    rating: 4 kW
+    state_sample: Idle
+  icon: design/canvas/assets/icon-laundry.svg
+- id: pump
+  name: Water pumping, STP and RO
+  dr_class: flexible
+  rated_flex_kw: 16
+  flex_kw:
+    nov_evening: 14
+    jun_evening: 16
+  action: Tops up the overhead tanks by 17:00, then pauses transfer pumps, RO and one STP blower.
+  never: Lets the overhead tanks fall below 40%, or touches fire pumps.
+  minimum_service: Overhead tanks above 40%
+  rebound: Full load after the event
+  authority: Maintenance lead
+  interlock: Tank level
+  max_duration: 4 h
+  response_time: 1 min
+  hourly_profile_kw_nov:
+  - 8
+  - 6
+  - 6
+  - 6
+  - 6
+  - 10
+  - 16
+  - 18
+  - 16
+  - 14
+  - 12
+  - 12
+  - 12
+  - 12
+  - 12
+  - 12
+  - 14
+  - 16
+  - 16
+  - 14
+  - 12
+  - 10
+  - 8
+  - 8
+  flex_window_hours:
+  - 0
+  - 24
+  equipment:
+  - name: Transfer pumps
+    rating: 2 × 7.5 kW
+    state_sample: 1 running
+  - name: STP blowers
+    rating: 2 × 3.7 kW
+    state_sample: 2 running
+  - name: RO plant
+    rating: 3.7 kW
+    state_sample: Running
+  icon: design/canvas/assets/icon-pump.svg
+- id: ev
+  name: EV charging, admin lights, plugs
+  dr_class: flexible
+  rated_flex_kw: 16
+  flex_kw:
+    nov_evening: 12
+    jun_evening: 16
+  action: Pauses the two EV chargers and dims admin lighting to 60%.
+  never: Dims wards, corridors or emergency lighting.
+  minimum_service: Emergency lighting untouched
+  rebound: None
+  authority: Admin head
+  interlock: Emergency circuits separate
+  max_duration: 4 h
+  response_time: 1 min
+  hourly_profile_kw_nov:
+  - 4
+  - 4
+  - 4
+  - 4
+  - 4
+  - 4
+  - 6
+  - 10
+  - 14
+  - 16
+  - 16
+  - 16
+  - 16
+  - 16
+  - 16
+  - 16
+  - 14
+  - 12
+  - 12
+  - 10
+  - 6
+  - 4
+  - 4
+  - 4
+  flex_window_hours:
+  - 8
+  - 22
+  equipment:
+  - name: EV chargers
+    rating: 2 × 7.4 kW
+    state_sample: 1 charging
+  - name: Admin lighting
+    rating: 8 kW
+    state_sample: 100%
+  - name: Admin plug loads
+    rating: 6 kW
+    state_sample: Normal
+  icon: design/canvas/assets/icon-ev.svg
+- id: clinicalhvac
+  name: 'Clinical air: OT, ICU, isolation'
+  dr_class: protected
+  rated_flex_kw: 0
+  flex_kw:
+    nov_evening: 0
+    jun_evening: 0
+  action: Monitors pressure, temperature and humidity, and aborts any event that would move them.
+  never: Changes a set point, fan speed or air-change rate in a clinical room.
+  minimum_service: Full duty
+  rebound: –
+  authority: Medical superintendent
+  interlock: Pressure, temperature, humidity
+  max_duration: –
+  response_time: –
+  hourly_profile_kw_nov:
+  - 30
+  - 30
+  - 30
+  - 30
+  - 30
+  - 30
+  - 30
+  - 31
+  - 32
+  - 32
+  - 32
+  - 32
+  - 32
+  - 32
+  - 32
+  - 32
+  - 32
+  - 31
+  - 31
+  - 31
+  - 30
+  - 30
+  - 30
+  - 30
+  flex_window_hours:
+  - 0
+  - 0
+  equipment:
+  - name: OT AHUs 1 to 4
+    rating: 4 × 11 kW
+    state_sample: +15 Pa
+  - name: ICU and NICU AHUs
+    rating: 2 × 7.5 kW
+    state_sample: 22 °C
+  - name: Isolation exhaust
+    rating: 2 × 2.2 kW
+    state_sample: −12 Pa
+  icon: design/canvas/assets/icon-clinicalhvac.svg
+- id: icu
+  name: ICU, OT, ventilators, life support
+  dr_class: critical
+  rated_flex_kw: 0
+  flex_kw:
+    nov_evening: 0
+    jun_evening: 0
+  action: Measures it only, so the ceiling can plan around it.
+  never: Sends any command to these circuits.
+  minimum_service: Full duty
+  rebound: –
+  authority: Never curtailed
+  interlock: Hard-wired exclusion
+  max_duration: –
+  response_time: –
+  hourly_profile_kw_nov:
+  - 36
+  - 36
+  - 36
+  - 36
+  - 36
+  - 36
+  - 40
+  - 46
+  - 52
+  - 54
+  - 54
+  - 54
+  - 52
+  - 52
+  - 50
+  - 48
+  - 46
+  - 44
+  - 44
+  - 42
+  - 40
+  - 38
+  - 36
+  - 36
+  flex_window_hours:
+  - 0
+  - 0
+  equipment:
+  - name: ICU and NICU, 24 beds
+    rating: Essential bus
+    state_sample: 38 kW
+  - name: OT 1 to 4
+    rating: Essential bus
+    state_sample: 46 kW
+  - name: UPS
+    rating: 2 × 200 kVA
+    state_sample: 46% load
+  icon: design/canvas/assets/icon-icu.svg
+- id: imaging
+  name: MRI, CT, cath lab, X-ray
+  dr_class: critical
+  rated_flex_kw: 0
+  flex_kw:
+    nov_evening: 0
+    jun_evening: 0
+  action: Keeps 30 kVA spare under the sanction so an unplanned scan never trips the ceiling.
+  never: Delays a scan or touches magnet cooling.
+  minimum_service: Full duty
+  rebound: –
+  authority: Never curtailed
+  interlock: Magnet cooling protected
+  max_duration: –
+  response_time: –
+  hourly_profile_kw_nov:
+  - 14
+  - 12
+  - 12
+  - 12
+  - 12
+  - 14
+  - 22
+  - 36
+  - 52
+  - 58
+  - 60
+  - 60
+  - 58
+  - 58
+  - 56
+  - 52
+  - 46
+  - 40
+  - 34
+  - 28
+  - 22
+  - 18
+  - 16
+  - 14
+  flex_window_hours:
+  - 0
+  - 0
+  equipment:
+  - name: MRI 1.5 T
+    rating: Cold head 9 kW, always on
+    state_sample: Scanning
+  - name: CT, 128 slice
+    rating: 90 kVA peak
+    state_sample: Idle
+  - name: Cath lab
+    rating: 80 kVA peak
+    state_sample: Case running
+  - name: Digital X-ray
+    rating: 50 kVA peak
+    state_sample: Idle
+  icon: design/canvas/assets/icon-imaging.svg
+- id: medgas
+  name: Medical gas, blood bank, fire
+  dr_class: critical
+  rated_flex_kw: 0
+  flex_kw:
+    nov_evening: 0
+    jun_evening: 0
+  action: Measures it only.
+  never: Sends any command to these circuits.
+  minimum_service: Full duty
+  rebound: –
+  authority: Never curtailed
+  interlock: Hard-wired exclusion
+  max_duration: –
+  response_time: –
+  hourly_profile_kw_nov:
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  - 22
+  flex_window_hours:
+  - 0
+  - 0
+  equipment:
+  - name: Medical vacuum and air plant
+    rating: 14 kW
+    state_sample: Normal
+  - name: Blood bank and cold chain
+    rating: 6 kW
+    state_sample: Normal
+  - name: Fire pumps
+    rating: Diesel driven
+    state_sample: Standby
+  icon: design/canvas/assets/icon-medgas.svg

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manual · Cover</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+<link rel="stylesheet" href="lib/manual.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="m-page" style="padding-top: 48px">
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <img src="/_blob/1a38319755293cfa8eaf5dc1d205e1c2" alt="jouleWise" style="width: 150px; height: auto; display: block">
+    <img src="/_blob/51c7f07bc570f970457a1875b68eacd3" alt="Globe Healthcare" style="height: 52px; width: auto; display: block">
+  </div>
+  <div class="m-body" style="gap: 14px; padding-top: 22px">
+    <div class="m-kicker">Product implementation manual</div>
+    <h1 style="margin: 0; font-size: 50px; font-weight: 300; letter-spacing: -.04em; line-height: 1.02">Energy Orchestration Centre</h1>
+    <p class="m-lede" style="font-size: 18px; max-width: 560px">Demand response and energy flexibility at Globe Medicare, a 200-bed hospital in Lucknow, run on jouleWise ergOS.</p>
+    <div class="m-card" style="padding: 10px 14px 4px; border-radius: 30px">
+      <dc-import name="HotWaterIso" hint-size="100%,440px"></dc-import>
+    </div>
+    <div class="m-grid3">
+      <div class="m-card" style="gap: 2px"><span class="m-small">Prepared for</span><span style="font-size: 14px; font-weight: 700">Globe Medicare</span><span class="m-small">A-4-5 Nirala Nagar, Lucknow, UP · 0522-3500000 · info@globehealthcare.org</span></div>
+      <div class="m-card" style="gap: 2px"><span class="m-small">Prepared by</span><span style="font-size: 14px; font-weight: 700">jouleWise Advisory Services Pvt. Ltd.</span><span class="m-small">ATS Bouquet, Sector 132, Noida</span></div>
+      <div class="m-card" style="gap: 2px"><span class="m-small">Under</span><span style="font-size: 14px; font-weight: 700">DR and flexibility agreement</span><span class="m-small">Dated 20 Feb 2026 · v1.0, 27 Nov 2026</span></div>
+    </div>
+  </div>
+  <dc-import name="ManualFooter" page="{{ pg }}" hint-size="666px,62px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() { return { pg: 1 }; }
+}
+</script>
+</body>
+</html>

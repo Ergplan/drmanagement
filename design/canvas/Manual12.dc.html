@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manual · 9 Dashboard · 10 M&amp;V</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/manual.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="m-page">
+  <dc-import name="ManualHeader" section="9 · Dashboard · 10 · M&amp;V" hint-size="666px,56px"></dc-import>
+  <div class="m-body" style="gap: 12px">
+    <div class="m-title-row"><span class="m-num m-num-blue">9</span><h1 class="m-h1" style="font-size: 26px">Using the dashboard</h1></div>
+    <p class="m-p">Twelve screens, one question each. Start at Overview; every number links to the screen that explains it.</p>
+    <div class="m-grid3" style="gap: 8px">
+      <sc-for list="{{ screens }}" as="s" hint-placeholder-count="12">
+        <div class="m-card" style="padding: 9px 11px; gap: 2px; border-radius: 16px">
+          <div style="display: flex; align-items: center; gap: 8px"><span class="m-num m-num-s m-num-blue" style="width: 24px; height: 24px; border-radius: 8px; font-size: 11px">{{ s.n }}</span><span style="font-size: 13px; font-weight: 700">{{ s.name }}</span></div>
+          <div style="font-size: 11.5px; line-height: 1.4; color: #1f3329">{{ s.q }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div class="m-title-row" style="margin-top: 6px"><span class="m-num m-num-lilac">10</span><h1 class="m-h1" style="font-size: 26px">Measurement and verification</h1></div>
+    <p class="m-p">A saving counts only after it is measured against a fair baseline. Clause 2.1 (d) sets the method.</p>
+    <div class="m-grid3" style="gap: 10px">
+      <div class="m-card" style="padding: 12px 14px; gap: 4px"><span style="font-size: 13.5px; font-weight: 700">Baseline</span><span style="font-size: 12px; line-height: 1.45">15-minute, the high 5 of the last 10 similar days, adjusted for temperature, occupancy and OT load.</span></div>
+      <div class="m-card" style="padding: 12px 14px; gap: 4px"><span style="font-size: 13.5px; font-weight: 700">Each event</span><span style="font-size: 12px; line-height: 1.45">Verified kW, kWh shifted, rebound after the event and heat pump use, block by block.</span></div>
+      <div class="m-card" style="padding: 12px 14px; gap: 4px"><span style="font-size: 13.5px; font-weight: 700">Every month</span><span style="font-size: 12px; line-height: 1.45">kWh per occupied bed-day and per m², demand charge, PF, solar and emissions.</span></div>
+    </div>
+    <div class="m-grid3" style="gap: 10px">
+      <div class="m-card" style="gap: 2px; padding: 12px 14px"><span class="m-small">Today, per occupied bed-day</span><span class="m-stat">41.6 kWh</span><span class="m-small">at 82% occupancy</span></div>
+      <div class="m-card" style="gap: 2px; padding: 12px 14px"><span class="m-small">Per bed a year</span><span class="m-stat">12,450 kWh</span><span class="m-small">benchmark 10,000 to 20,000</span></div>
+      <div class="m-card" style="gap: 2px; padding: 12px 14px"><span class="m-small">Grid CO₂ a year</span><span class="m-stat">1,520 t</span><span class="m-small">at CEA 0.727 t per MWh</span></div>
+    </div>
+    <div class="m-call m-call-note"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1f4f8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.6v.3"></path></svg></span><span><b>Reporting calendar</b><span class="t">Event report the next day at 09:00 · monthly performance report on the 1st · quarterly M&amp;V, settlement-ready, in the first week of each quarter. Per-m² figures need the built-up area from the Hospital.</span></span></div>
+  </div>
+  <dc-import name="ManualFooter" page="{{ pg }}" hint-size="666px,62px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = [
+      ['Overview', 'How are we doing right now?'], ['Live energy', 'Where is the power going?'], ['Demand ceiling', 'Are we safe under 600 kVA?'],
+      ['Demand forecast', 'What will tonight’s peak be?'], ['Flexibility registry', 'What can we hold back?'], ['DR optimizer', 'What is an event worth?'],
+      ['Dispatch plan', 'What does each asset do, when?'], ['HVAC & heat pumps', 'Is the store charged?'], ['Solar & backup', 'Is solar and backup healthy?'],
+      ['Tariffs & cost', 'Is the bill right?'], ['Clinical safety', 'Are all interlocks healthy?'], ['Reports & M&V', 'What has been proved?']
+    ];
+    return { pg: 11, screens: s.map(([name, q], i) => ({ n: i + 1, name, q })) };
+  }
+}
+</script>
+</body>
+</html>

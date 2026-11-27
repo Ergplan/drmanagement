@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manual · 1 Programme at a glance</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/manual.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="m-page m-tight">
+  <dc-import name="ManualHeader" section="1 · Programme at a glance" hint-size="666px,56px"></dc-import>
+  <div class="m-body" style="gap: 12px">
+    <div class="m-title-row"><span class="m-num">1</span><h1 class="m-h1">Programme at a glance</h1></div>
+    <p class="m-lede">Globe Medicare has appointed jouleWise to design, deploy, integrate and operate a 600 kW demand flexibility programme, heat pumps included once commissioned.</p>
+
+    <div class="m-grid3">
+      <div class="m-card" style="gap: 2px"><span class="m-small">Target</span><span class="m-stat">600 kW</span><span class="m-small">aggregated flexible demand</span></div>
+      <div class="m-card" style="gap: 2px"><span class="m-small">Term</span><span class="m-stat">12 months</span><span class="m-small">1 Feb 2026 to 31 Jan 2027, extendable</span></div>
+      <div class="m-card" style="gap: 2px"><span class="m-small">Fee</span><span class="m-stat">₹10,000</span><span class="m-small">a year + GST · hardware extra</span></div>
+    </div>
+
+    <div class="m-h2">Three outcomes</div>
+    <div class="m-grid3">
+      <div class="m-card"><span class="m-num m-num-s m-num-red">1</span><span style="font-size: 14.5px; font-weight: 700">Never pass the sanction</span><span class="m-small" style="font-size: 13px">Hold every demand interval under 570 kVA, against 600 kVA sanctioned.</span></div>
+      <div class="m-card"><span class="m-num m-num-s">2</span><span style="font-size: 14.5px; font-weight: 700">Store the sun</span><span class="m-small" style="font-size: 13px">Run heat pumps at full output in solar hours and keep them off at the peak.</span></div>
+      <div class="m-card"><span class="m-num m-num-s m-num-lilac">3</span><span style="font-size: 14.5px; font-weight: 700">Trim the peak safely</span><span class="m-small" style="font-size: 13px">Hold non-clinical loads in short events to reach the 450 kVA floor.</span></div>
+    </div>
+
+    <div class="m-h2">Scope of services, clause 2.1</div>
+    <div class="m-grid2" style="gap: 10px">
+      <sc-for list="{{ scope }}" as="s" hint-placeholder-count="6">
+        <div class="m-card m-step" style="display: grid; padding: 12px 14px; gap: 10px"><span class="m-num m-num-s m-num-blue">{{ s.k }}</span><span><span style="font-size: 13.5px; font-weight: 700">{{ s.t }}</span><span style="font-size: 12.5px; line-height: 1.45; color: #1f3329; display: block">{{ s.d }}</span></span></div>
+      </sc-for>
+    </div>
+
+    <div class="m-grid2" style="gap: 10px">
+      <div class="m-call m-call-note"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1f4f8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.6v.3"></path></svg></span><span><b>Note</b><span class="t">600 kW is a programme target, not a reduction promised for every event. Each event commits only verified, available capacity (clause 6.1).</span></span></div>
+      <div class="m-call m-call-action"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1b5a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.7 2.7L16.5 9.5"></path></svg></span><span><b>Action · both parties · by 15 Dec 2026</b><span class="t">The six-month demonstration window closed on 31 Jul 2026 and the term ends on 31 Jan 2027. Agree a revised demonstration plan and a written extension that covers the summer 2027 peak.</span></span></div>
+    </div>
+  </div>
+  <dc-import name="ManualFooter" page="{{ pg }}" hint-size="666px,62px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = [
+      ['a', 'Flexibility assessment', 'Find, verify and add up controllable loads across seasons.'],
+      ['b', 'Technology platform', 'ergOS: forecasts, baselines, monitoring, secure APIs, dispatch.'],
+      ['c', 'Automated demand response', 'Scheduled or automatic changes within Hospital-approved limits.'],
+      ['d', 'Measurement and verification', '15-minute baselines, verified kW and kWh, event reports.'],
+      ['e', 'Demonstration', 'Five simulated events, then live trials once approved.'],
+      ['f', 'Grid readiness', 'Ready for DISCOM demand response programmes via APIs.']
+    ];
+    return { pg: 3, scope: s.map(([k, t, d]) => ({ k, t, d })) };
+  }
+}
+</script>
+</body>
+</html>

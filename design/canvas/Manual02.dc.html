@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manual · About this manual</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/manual.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="m-page">
+  <dc-import name="ManualHeader" section="About this manual" hint-size="666px,56px"></dc-import>
+  <div class="m-body">
+    <h1 class="m-h1">About this manual</h1>
+    <p class="m-lede">This manual explains how jouleWise installs, runs and verifies the Energy Orchestration Centre at Globe Medicare. Each section answers one question, in the order the work happens.</p>
+
+    <div class="m-card" style="gap: 8px">
+      <div class="m-h2" style="margin-bottom: 2px">Contents</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; grid-auto-flow: column; grid-template-rows: repeat({{ rows }}, auto); column-gap: 22px; row-gap: 8px">
+        <sc-for list="{{ toc }}" as="t" hint-placeholder-count="12">
+          <div style="display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center">
+            <span class="m-num m-num-s">{{ t.n }}</span>
+            <span style="display: flex; flex-direction: column; line-height: 1.3"><span style="font-size: 13.5px; font-weight: 700">{{ t.title }}</span><span style="font-size: 12px; color: #3d4f45">{{ t.q }}</span></span>
+            <span style="font-size: 13px; font-weight: 700">{{ t.p }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div class="m-h2">How to read the call-outs</div>
+    <div class="m-grid2">
+      <div class="m-call m-call-action"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1b5a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.7 2.7L16.5 9.5"></path></svg></span><span><b>Action</b><span class="t">Something a named person must do, with a date.</span></span></div>
+      <div class="m-call m-call-safety"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#8a1f12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5 4.5 5.5v6c0 4.7 3.2 8.4 7.5 10 4.3-1.6 7.5-5.3 7.5-10v-6z"></path><path d="M12 8v5M12 16.2v.3"></path></svg></span><span><b>Safety</b><span class="t">A clinical rule that overrides every saving.</span></span></div>
+      <div class="m-call m-call-note"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1f4f8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.6v.3"></path></svg></span><span><b>Note</b><span class="t">Background that explains a number or a choice.</span></span></div>
+      <div class="m-call m-call-owner"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#6b4a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></span><span><b>Owner</b><span class="t">Who is accountable for the step.</span></span></div>
+    </div>
+
+    <div class="m-card" style="gap: 6px; background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(236,232,250,.8))">
+      <div class="m-h2" style="font-size: 15px">Copyright and confidentiality</div>
+      <p class="m-small" style="font-size: 12.5px; margin: 0">© 2026 jouleWise Advisory Services Pvt. Ltd. and Globe Medicare. All rights reserved. ergOS, the Energy Orchestration Centre, this manual's methods, software and design are the property of jouleWise Advisory Services Pvt. Ltd. Hospital operational data, the Globe Medicare name and logo are the property of Globe Medicare. This manual is confidential under clause 5 of the agreement dated 20 February 2026. No part of it may be copied, shared, published or used outside the Globe Medicare demand response programme without the written consent of both parties.</p>
+    </div>
+  </div>
+  <dc-import name="ManualFooter" page="{{ pg }}" hint-size="666px,62px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const toc = [
+      ['Programme at a glance', 'What are we doing, and why?', 3],
+      ['Site baseline', 'What does the hospital use today?', 4],
+      ['How ergOS works', 'What connects to what?', 5],
+      ['Metering and integration', 'Which points do we need?', 6],
+      ['Clinical safety framework', 'What can never be touched?', 7],
+      ['Demand ceiling procedure', 'How do we stay under 600 kVA?', 8],
+      ['Solar soak and heat pumps', 'How do we store the sun?', 9],
+      ['Running a DR event', 'Who does what, minute by minute?', 10],
+      ['Using the dashboard', 'Where do I look?', 11],
+      ['Measurement and verification', 'How is a saving proved?', 11],
+      ['Support and escalation', 'Who do I call?', 12]
+    ];
+    return { pg: 2, rows: Math.ceil(toc.length / 2), toc: toc.map(([title, q, p], i) => ({ n: i + 1, title, q, p })) };
+  }
+}
+</script>
+</body>
+</html>

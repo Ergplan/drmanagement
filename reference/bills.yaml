@@ -1,0 +1,12 @@
+# Bills on file (MVVNL a/c 9567-481-000). Amounts in INR.
+bills:
+  - {label: Sep 2026, period: [2026-05-01, 2026-09-30], kvah: 949613, kvah_per_day: 6207, billed_kva: "585 x 4", pf: 0.94, energy: 7901000, demand: 1006000, fuel_adj: -239000, duty: 650000, total: 3381000, note: after 59.37 L credit}
+  - {label: Oct 2026, period: [2026-09-30, 2026-10-13], kvah: 243750, kvah_per_day: 18750, billed_kva: 540, pf: 0.93, energy: 2028000, demand: 232000, fuel_adj: -118000, duty: 161000, total: 2310000, note: "suspect: ~3x normal daily kVAh; est. 13.1 L over-billed; also 4,01,910 kVAh on UPP72963 in first day"}
+  - {label: Nov 2026, period: [2026-10-13, 2026-11-16], kvah: 224970, kvah_per_day: 6617, kwh: 213000, billed_kva: 555, pf: 0.94, energy: 1872000, demand: 239000, fuel_adj: -194000, duty: 144000, total: 2061000}
+billed_demand_kva_last_12:                # Dec 2025 .. Nov 2026
+  months: [Dec, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov]
+  kva: [441.3, 392.1, 409.5, 424.8, 495.9, 501.9, 585, 585, 585, 585, 540, 555]
+opportunities:
+  - {id: oct-dispute, value_inr: 1310000, kind: one-off}
+  - {id: pf-retune-0.99, value_inr_per_month: 92000}
+  - {id: solar-soak, value_inr_per_month: 9890}

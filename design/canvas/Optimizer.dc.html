@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Orchestration Centre · DR optimizer</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1b5a33}a:hover{color:#0e3d22}
+</style>
+</helmet>
+<div class="eoc eoc-stage">
+<div class="eoc-side"><dc-import name="Sidebar" active="optimizer" hint-size="100%,1340px"></dc-import></div>
+<main class="eoc-main">
+  <dc-import name="Topbar" heading="DR optimizer" hint-size="100%,96px"></dc-import>
+
+  <section class="grid-2" style="align-items: stretch">
+    <div class="glass glass-lime pad-l stack" style="gap: 16px; border-radius: 36px">
+      <div class="between"><span class="ttl">Demand response simulator</span><span class="pill">Scenario only</span></div>
+      <div class="row" style="align-items: baseline"><span class="num-xl">{{ targetLabel }}</span><label for="eoc-target" style="font-size: 15px; color: #3d4f45">target reduction tonight</label></div>
+      <input id="eoc-target" class="range" type="range" min="0" max="78" step="2" value="{{ target }}" onChange="{{ setTarget }}">
+      <div class="between note" style="margin-top: -10px"><span>0 kW</span><span>78 kW available at 17:30</span></div>
+      <div role="group" aria-label="Event duration" class="row" style="gap: 8px">
+        <span style="font-size: 14px; color: #3d4f45">From 17:30 for</span>
+        <sc-for list="{{ durations }}" as="d" hint-placeholder-count="3">
+          <button type="button" class="seg" aria-pressed="{{ d.on }}" onClick="{{ d.pick }}">{{ d.label }}</button>
+        </sc-for>
+      </div>
+      <div class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px">
+        <div><div class="lbl">Energy shifted</div><div class="num-m">{{ energy }}</div></div>
+        <div><div class="lbl">Evening peak after</div><div class="num-m">{{ peakAfter }}</div></div>
+        <div><div class="lbl">Demand charge avoided</div><div class="num-m">{{ avoided }}</div></div>
+      </div>
+      <div style="font-size: 14px; line-height: 1.45; padding: 12px 16px; border-radius: 18px; background: rgba(255,255,255,.72); border: 1px solid #ffffff">{{ verdict }}</div>
+      <div class="note">Not a dispatch command. Value is the ₹430 a kVA demand charge above the 450 kVA floor. The tariff has no time-of-day rate, so shifted energy alone earns nothing. Excludes duty and any DISCOM incentive.</div>
+    </div>
+
+    <div class="glass pad-l stack" style="gap: 14px; border-radius: 36px">
+      <div class="ttl">Dispatch order</div>
+      <div class="note" style="margin-top: -6px">Least clinical impact first · heat pumps are already off after 17:30</div>
+      <sc-for list="{{ dispatch }}" as="a" hint-placeholder-count="5">
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 12px; align-items: center">
+          <div class="stack" style="gap: 6px; min-width: 0">
+            <div style="font-size: 14px; font-weight: 600">{{ a.name }}</div>
+            <div class="track"><div class="fill" style="width: {{ a.pct }}; background: {{ a.color }}"></div></div>
+          </div>
+          <div style="font-size: 14px; text-align: right">{{ a.text }}</div>
+        </div>
+      </sc-for>
+      <div class="kv">
+        <div><div>Clinical loads touched</div>None</div>
+        <div><div>Abort if</div>Any interlock trips</div>
+        <div><div>Rebound</div>Staggered after 20:00</div>
+        <div><div>Ceiling</div>570 kVA stays armed</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">Tonight's plan</span><a class="note" href="Dispatch.dc.html" style="font-weight: 600; color: #1b5a33">Full dispatch plan, asset by asset →</a></div>
+    <div role="img" aria-label="Plan from 16:00 to 22:00: pre-pump and pre-cool from 16:30, event from 17:30 to 20:00, staggered restore to 21:00, laundry recovery after 21:00" style="display: grid; grid-template-columns: 2fr 4fr 10fr 4fr 4fr; height: 64px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,.95)">
+      <div style="background: rgba(255,255,255,.55)"></div>
+      <div style="background: rgba(196,226,250,.95); display: flex; flex-direction: column; justify-content: center; padding: 0 12px"><span style="font-size: 13px; font-weight: 700">16:30 Pre-condition</span><span style="font-size: 12px; color: #33443b">Fill tanks, cool 1 °C</span></div>
+      <div style="background: linear-gradient(90deg, #c4baf2, #f1c4e6); display: flex; flex-direction: column; justify-content: center; padding: 0 16px"><span style="font-size: 13.5px; font-weight: 700">17:30 to 20:00 · event</span><span style="font-size: 12px; color: #33273f">Pumps, EV, admin, laundry, AHU trim held</span></div>
+      <div style="background: rgba(214,240,220,.95); display: flex; flex-direction: column; justify-content: center; padding: 0 12px"><span style="font-size: 13px; font-weight: 700">20:00 Restore</span><span style="font-size: 12px; color: #33443b">One load every 10 min</span></div>
+      <div style="background: rgba(255,255,255,.6); display: flex; flex-direction: column; justify-content: center; padding: 0 12px"><span style="font-size: 13px; font-weight: 700">21:00 Recovery</span><span style="font-size: 12px; color: #33443b">Laundry runs</span></div>
+    </div>
+    <div class="between note"><span>16:00</span><span>18:00</span><span>20:00</span><span>22:00</span></div>
+  </section>
+
+  <section class="grid-2" style="align-items: stretch">
+    <div class="glass pad-l stack" style="gap: 12px">
+      <div class="ttl">Approval</div>
+      <div class="stack" style="gap: 10px">
+        <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: center"><span class="dot" style="width: 14px; height: 14px; background: #1f7a3c"></span><div><div class="ttl-s" style="font-size: 14px">Proposed by ergOS</div><div class="note">14:15 · forecast P50 470 kVA</div></div><span class="tag tag-flex">Done</span></div>
+        <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: center"><span class="dot" style="width: 14px; height: 14px; background: #eda100"></span><div><div class="ttl-s" style="font-size: 14px">Facility manager</div><div class="note">Checks plant and laundry schedule</div></div><span class="tag tag-cond">Waiting</span></div>
+        <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: center"><span class="dot" style="width: 14px; height: 14px; background: #c3cbc5"></span><div><div class="ttl-s" style="font-size: 14px">Medical superintendent</div><div class="note">Clinical sign-off, needed for any HVAC step</div></div><span class="tag" style="background: rgba(16,35,26,.08)">Not needed</span></div>
+        <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: center"><span class="dot" style="width: 14px; height: 14px; background: #c3cbc5"></span><div><div class="ttl-s" style="font-size: 14px">Duty engineer arms</div><div class="note">By 17:00, or the event lapses</div></div><span class="tag" style="background: rgba(16,35,26,.08)">Next</span></div>
+      </div>
+      <a class="btn btn-green" href="Safety.dc.html" style="align-self: flex-start">Send for approval</a>
+    </div>
+    <div class="glass pad-l stack" style="gap: 12px">
+      <div class="ttl">Demonstration phase</div>
+      <div class="note" style="font-size: 13.5px">The agreement asks for five simulated end-to-end events in the first six months, before any live dispatch.</div>
+      <div class="row" style="gap: 10px">
+        <span class="pill" style="background: #10231a; color: #ffffff">1 · tonight</span><span class="pill">2</span><span class="pill">3</span><span class="pill">4</span><span class="pill">5</span>
+      </div>
+      <div class="kv">
+        <div><div>Phase ends</div>31 Jul 2026 per contract</div>
+        <div><div>Live trials</div>After joint review</div>
+        <div><div>Heat pumps</div>Included once commissioned</div>
+        <div><div>DISCOM programme</div>Ready for MVVNL DR APIs</div>
+      </div>
+      <div class="note">The demonstration window in the agreement has passed. Agree a revised date with the Hospital.</div>
+    </div>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { target: 60, hours: 2.5 };
+    this._setTarget = (e) => this.setState({ target: Number(e.target.value) });
+  }
+  renderVals() {
+    const t = this.state.target, h = this.state.hours;
+    const inr = (n) => '₹' + Math.round(n).toLocaleString('en-IN');
+    const assets = [['Water pumping, STP and RO', 14, '#1f7a3c'], ['EV charging, admin lighting and plugs', 12, '#1f7a3c'], ['Laundry and kitchen', 22, '#1f7a3c'], ['AHUs and FCUs, non-clinical', 16, '#b47a00'], ['Chiller plant, general zones', 14, '#b47a00']];
+    let left = t;
+    const dispatch = assets.map(([name, cap, color]) => { const use = Math.max(0, Math.min(cap, left)); left -= use; return { name, color, pct: Math.round(use / cap * 100) + '%', text: use + ' of ' + cap + ' kW' }; });
+    const during = Math.round(470 - t / 0.94);
+    const peak = t === 0 ? 470 : Math.max(447, during);
+    const billable = Math.max(450, peak);
+    const avoided = (470 - billable) * 430;
+    const chiller = t > 64;
+    const verdict = t === 0 ? 'No event: tonight sets a 470 kVA peak, 20 kVA over the floor, and adds ₹8,600 to the bill.'
+      : billable > 450 ? 'The peak still lands above the 450 kVA floor. About 19 kW reaches it.'
+      : chiller ? 'Floor reached, but this target reaches the chiller plant and needs clinical sign-off. 19 kW is enough for the bill.'
+      : 'Floor reached without touching cooling. Anything beyond about 19 kW is margin against forecast error, not extra bill value this month.';
+    return {
+      target: t, targetLabel: t + ' kW', setTarget: this._setTarget,
+      durations: [2, 2.5, 3].map((d) => ({ label: d + ' h', on: String(d === h), pick: () => this.setState({ hours: d }) })),
+      energy: Math.round(t * h) + ' kWh', peakAfter: peak + ' kVA', avoided: inr(avoided), verdict, dispatch
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Orchestration Centre · Demand ceiling</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+<script src="lib/strata-charts.min.js"></script>
+<script src="lib/eoc.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1b5a33}a:hover{color:#0e3d22}
+</style>
+</helmet>
+<div class="eoc eoc-stage">
+<div class="eoc-side"><dc-import name="Sidebar" active="guard" hint-size="100%,1340px"></dc-import></div>
+<main class="eoc-main">
+  <dc-import name="Topbar" heading="Demand ceiling" hint-size="100%,96px"></dc-import>
+
+  <section class="grid-2" style="align-items: stretch">
+    <div class="glass glass-lilac pad-l" style="display: flex; flex-direction: column; gap: 16px; border-radius: 36px">
+      <div class="between"><span class="ttl">The rule</span><span class="pill pill-ok">Live control · not a DR event</span></div>
+      <div class="num-xl" style="font-size: 54px">Never above 570<span class="unit">kVA</span></div>
+      <div style="font-size: 15px; line-height: 1.5; color: #33273f">ergOS projects every demand interval a minute at a time and sheds non-clinical load before the meter can record more than 570 kVA. That keeps a 30 kVA reserve under the 600 kVA sanction for an unplanned CT, cath lab or second chiller start.</div>
+      <div class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px">
+        <div><div class="lbl" style="color: #33273f">Sanctioned load</div><div class="num-m">600 kVA</div></div>
+        <div><div class="lbl" style="color: #33273f">Summer billed, Jun–Sep</div><div class="num-m">585 kVA</div></div>
+        <div><div class="lbl" style="color: #33273f">Headroom left</div><div class="num-m" style="color: #8a1f12">15 kVA</div></div>
+      </div>
+    </div>
+
+    <div class="glass glass-alert pad-l stack" style="gap: 14px; border-radius: 36px">
+      <div class="between"><span class="ttl">Why it has to be strict</span><span class="pill pill-bad">UP rules, 2026</span></div>
+      <div class="stack" style="gap: 12px">
+        <div style="display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start"><span class="num-s" style="color: #8a1f12">1</span><div><div class="ttl-s">Excess is charged twice</div><div class="note" style="font-size: 13.5px">Demand above 600 kVA pays the ₹430 demand charge plus the same again as penalty: ₹860 per excess kVA.</div></div></div>
+        <div style="display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start"><span class="num-s" style="color: #8a1f12">2</span><div><div class="ttl-s">One spike can reset the sanction</div><div class="note" style="font-size: 13.5px">In July 2026 UPPCL raised sanctioned loads in its billing system to each consumer's highest monthly demand of the year. Three straight months over also merges the excess into the sanction.</div></div></div>
+        <div style="display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start"><span class="num-s" style="color: #8a1f12">3</span><div><div class="ttl-s">The floor rises with it</div><div class="note" style="font-size: 13.5px">You are always billed at least 75% of sanction. A higher sanction raises the winter bill even when the hospital uses less.</div></div></div>
+        <div style="display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start"><span class="num-s" style="color: #8a1f12">4</span><div><div class="ttl-s">Your meter has already logged 1,260 kVA</div><div class="note" style="font-size: 13.5px">Interim meter SI40022822 recorded that maximum between 23 May and 14 Sep. MVVNL billed 585. A reading like that is enough to trigger rules 1 to 3.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">A hot June evening, with and without the ceiling</span><span class="note">Modelled design day · 15-minute grid kVA</span></div>
+    <div class="row note" style="gap: 6px 18px; color: #33443b">
+      <span class="row" style="gap: 6px"><span class="dot" style="background: #2a78d6"></span>Grid demand with ergOS</span>
+      <span class="row" style="gap: 6px"><span class="dot" style="background: radial-gradient(circle, #6a4fb3 1.2px, transparent 1.5px) 0 0 / 4px 4px"></span>Held back by ergOS</span>
+      <span class="row" style="gap: 6px"><span aria-hidden="true" style="width: 16px; border-top: 2px solid #b3261e"></span>Sanction 600</span>
+      <span class="row" style="gap: 6px"><span aria-hidden="true" style="width: 16px; border-top: 2px dashed #10231a"></span>Ceiling 570</span>
+      <span class="row" style="gap: 6px"><span aria-hidden="true" style="width: 16px; border-top: 2px dotted #b4541a"></span>Stage 1 at 520</span>
+    </div>
+    <div class="chart-host" ref="{{ refs.chart }}" style="min-height: 400px"></div>
+    <div class="grid-k">
+      <div><div class="lbl">Peak without control</div><div class="num-m" style="color: #8a1f12">642 kVA</div><div class="note">19:45 · 13 blocks over 600</div></div>
+      <div><div class="lbl">Peak with ergOS</div><div class="num-m">555 kVA</div><div class="note">15 kVA under the ceiling</div></div>
+      <div><div class="lbl">Most load held at once</div><div class="num-m">94 kVA</div><div class="note">Half of the 190 kW ladder</div></div>
+      <div><div class="lbl">Energy deferred</div><div class="num-m">357 kVAh</div><div class="note">Recovered after 21:00</div></div>
+    </div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">Shed ladder</span><span class="note">Triggered on projected interval demand · least clinical impact first</span></div>
+    <div class="scroll">
+      <table class="tbl" style="min-width: 760px">
+        <thead><tr><th>Stage</th><th>Trigger</th><th>Action</th><th class="r">Sheds</th><th class="r">Within</th><th>Restores</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-flex">Stage 1</span></td><td>Projected over 520 kVA</td><td>Heat pumps off, laundry and kitchen hold, pumping and RO pause, EV and admin lighting dim</td><td class="r">90 kW</td><td class="r">2 min</td><td>Stagger, 10 min apart</td></tr>
+          <tr><td><span class="tag tag-cond">Stage 2</span></td><td>Projected over 545 kVA</td><td>General-zone chilled water +1.5 °C, AHU fans to minimum fresh air in OPD, admin, corridors</td><td class="r">75 kW</td><td class="r">8 min</td><td>Ramp back over 20 min</td></tr>
+          <tr><td><span class="tag tag-crit">Stage 3</span></td><td>Projected over 565 kVA</td><td>Lock out a second general-zone chiller start and page the duty engineer</td><td class="r">25 kW</td><td class="r">Immediate</td><td>Engineer releases</td></tr>
+          <tr><td><span class="tag tag-prot">Never</span></td><td>Any level</td><td>ICU, OT, imaging, ventilation for clinical rooms, medical gas, blood bank, fire, UPS. DG sets are never started for the ceiling.</td><td class="r">0 kW</td><td class="r">–</td><td>–</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">The ladder totals 190 kW (about 202 kVA) in summer, or 160 kW after 15:00 when the heat pumps are already off. The worst modelled evening needs 94 kVA of it.</div>
+  </section>
+
+  <section class="grid-2" style="align-items: stretch">
+    <div class="glass pad-l stack" style="gap: 12px">
+      <div class="ttl">What a breach would cost</div>
+      <div class="scroll">
+        <table class="tbl" style="min-width: 480px">
+          <thead><tr><th>Scenario</th><th class="r">That month</th><th class="r">Every year after</th></tr></thead>
+          <tbody>
+            <tr><td><div class="ttl-s" style="font-size: 14px">One hot evening at 642 kVA</div><div class="note">Penalty on 42 kVA plus demand charge above 570; sanction reset to 642, floor to 482</div></td><td class="r num-s">₹49,020</td><td class="r num-s">₹54,180</td></tr>
+            <tr><td><div class="ttl-s" style="font-size: 14px">The 1,260 kVA reading, if billed</div><div class="note">Penalty on 660 kVA plus demand charge above 585; sanction reset to 1,260, floor to 945</div></td><td class="r num-s" style="color: #8a1f12">₹5.74 L</td><td class="r num-s" style="color: #8a1f12">₹21.96 L</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note">Annual figures use the last 12 months of billed demand. Extra security deposit for a higher sanction is not included. Your deposit today is ₹27 lakh.</div>
+    </div>
+    <div class="glass glass-mint pad-l stack" style="gap: 12px">
+      <div class="ttl">Ceiling status</div>
+      <div class="stack" style="gap: 8px">
+        <div class="between" style="font-size: 14px; padding: 8px 0; border-bottom: 1px solid rgba(16,35,26,.08)"><span>Projected interval demand</span><span class="num-s">268 kVA</span></div>
+        <div class="between" style="font-size: 14px; padding: 8px 0; border-bottom: 1px solid rgba(16,35,26,.08)"><span>Highest this month</span><span class="num-s">473 kVA</span></div>
+        <div class="between" style="font-size: 14px; padding: 8px 0; border-bottom: 1px solid rgba(16,35,26,.08)"><span>Stage activations this year</span><span class="num-s">0 · ceiling armed 27 Nov</span></div>
+        <div class="between" style="font-size: 14px; padding: 8px 0; border-bottom: 1px solid rgba(16,35,26,.08)"><span>Main meter</span><span class="num-s">UPP72963 · reading OK</span></div>
+        <div class="between" style="font-size: 14px; padding: 8px 0"><span>Duty engineer override</span><span class="num-s">Armed</span></div>
+      </div>
+      <div class="note">Ask MVVNL to confirm in writing that the 1,260 kVA reading is void, and that the sanction stays at 600 kVA.</div>
+    </div>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2300}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this._els = {};
+    const r = (k) => (el) => { this._els[k] = el; };
+    this._refs = { chart: r('chart') };
+  }
+  componentDidMount() { this._mount(); }
+  componentDidUpdate() { this._mount(); }
+  componentWillUnmount() { if (this._board) { try { this._board.destroy(); } catch (e) {} } }
+  _mount() {
+    const el = this._els.chart;
+    if (!el || this._host === el) return;
+    this._host = el;
+    if (!window.EOC) { el.textContent = 'The chart library did not load.'; return; }
+    const p = window.EOC.mount('guard', this._els);
+    if (p) p.then((b) => { this._board = b; });
+  }
+  renderVals() { return { refs: this._refs }; }
+}
+</script>
+</body>
+</html>

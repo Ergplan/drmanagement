@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manual · 11 Support and escalation</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/manual.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="m-page">
+  <dc-import name="ManualHeader" section="11 · Support and escalation" hint-size="666px,56px"></dc-import>
+  <div class="m-body" style="gap: 10px">
+    <div class="m-title-row"><span class="m-num">11</span><h1 class="m-h1">Support and escalation</h1></div>
+
+    <div class="m-grid3" style="gap: 10px">
+      <div class="m-card" style="padding: 12px 14px; gap: 4px"><div style="display: flex; align-items: center; gap: 8px"><span class="m-num m-num-s">1</span><span style="font-size: 13.5px; font-weight: 700">On site, 24×7</span></div><span style="font-size: 12px; line-height: 1.45">Duty engineer. Sees every alert, can override any action at once.</span></div>
+      <div class="m-card" style="padding: 12px 14px; gap: 4px"><div style="display: flex; align-items: center; gap: 8px"><span class="m-num m-num-s m-num-blue">2</span><span style="font-size: 13.5px; font-weight: 700">jouleWise operations</span></div><span style="font-size: 12px; line-height: 1.45">Ceiling alarms answered within 30 minutes, 24×7. Other issues within 4 hours.</span></div>
+      <div class="m-card" style="padding: 12px 14px; gap: 4px"><div style="display: flex; align-items: center; gap: 8px"><span class="m-num m-num-s m-num-lilac">3</span><span style="font-size: 13.5px; font-weight: 700">jouleWise engineering</span></div><span style="font-size: 12px; line-height: 1.45">Software, integration and model changes, next business day.</span></div>
+    </div>
+
+    <div class="m-card" style="gap: 4px; padding: 12px 14px">
+      <div class="m-h2" style="font-size: 15px">Contacts</div>
+      <table class="m-tbl">
+        <thead><tr><th>Role</th><th>Name</th><th>Phone</th><th>Email</th></tr></thead>
+        <tbody>
+          <tr><td>Globe Medicare, facility manager</td><td>[NAME]</td><td>[PHONE]</td><td>[EMAIL]</td></tr>
+          <tr><td>Globe Medicare, medical superintendent</td><td>[NAME]</td><td>[PHONE]</td><td>[EMAIL]</td></tr>
+          <tr><td>Globe Medicare, duty engineer desk</td><td>24×7 desk</td><td>[PHONE]</td><td>–</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="m-grid2">
+      <div class="m-call m-call-owner"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#6b4a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></span><span><b>Change control</b><span class="t">Any change to limits, exclusions or schedules is requested in writing, approved by the facility manager (and the medical superintendent for clinical areas) and logged in ergOS.</span></span></div>
+      <div class="m-call m-call-note"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1f4f8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.6v.3"></path></svg></span><span><b>Agreement, clause 6.2</b><span class="t">Either party may end the agreement with 30 days’ written notice. Indian law applies, with New Delhi courts having jurisdiction.</span></span></div>
+    </div>
+  </div>
+  <dc-import name="ManualFooter" page="{{ pg }}" hint-size="666px,62px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() { return { pg: 12 }; }
+}
+</script>
+</body>
+</html>

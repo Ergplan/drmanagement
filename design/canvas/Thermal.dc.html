@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Orchestration Centre · HVAC and heat pumps</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+<script src="lib/strata-charts.min.js"></script>
+<script src="lib/eoc.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1b5a33}a:hover{color:#0e3d22}
+</style>
+</helmet>
+<div class="eoc eoc-stage">
+<div class="eoc-side"><dc-import name="Sidebar" active="thermal" hint-size="100%,1340px"></dc-import></div>
+<main class="eoc-main">
+  <dc-import name="Topbar" heading="HVAC &amp; heat pumps" hint-size="100%,96px"></dc-import>
+
+  <section class="glass pad-l" style="border-radius: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 22px; align-items: center">
+    <div style="grid-column: span 2; min-width: 0">
+      <dc-import name="HotWaterIso" hint-size="100%,560px"></dc-import>
+    </div>
+    <div class="stack" style="gap: 16px">
+      <span class="pill pill-ok" style="align-self: flex-start"><span class="dot" style="background: #2e9a55"></span>Solar soak running · 100%</span>
+      <div class="num-xl">30<span class="unit">kW heat pumps</span></div>
+      <div style="font-size: 15px; line-height: 1.5; color: #33443b">Both heat pumps run at full output from 10:00 to 15:00, while the roof is making 120 to 170 kW. They store the day's hot water at 65 °C, then stay locked off through the evening peak.</div>
+      <div class="kv">
+        <div><div>Heat pump energy</div>150 kWh a day, all in solar hours</div>
+        <div><div>Heat stored</div>about 510 kWh at COP 3.4</div>
+        <div><div>Store now</div>98% · 12,000 L at 65 °C</div>
+        <div><div>Evening peak relief</div>22 kW off 17:30 to 21:30</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">Heat pump schedule</span><span class="note">Set by ergOS each morning from the solar forecast and the store level</span></div>
+    <div role="img" aria-label="24-hour schedule: off from midnight to 10:00 while the store supplies hot water, 100% from 10:00 to 15:00 on solar, standby from 15:00 to 17:30, locked off from 17:30 to 22:00, off overnight" style="display: grid; grid-template-columns: 10fr 5fr 2.5fr 4.5fr 2fr; height: 52px; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,.95)">
+      <div style="background: rgba(255,255,255,.6); display: flex; align-items: center; padding: 0 14px; font-size: 13px; font-weight: 600; color: #3d4f45">00–10 · store supplies</div>
+      <div style="background: linear-gradient(90deg, #f6c64a, #8bc63a); display: flex; align-items: center; padding: 0 14px; font-size: 13px; font-weight: 700; color: #10231a">10–15 · 100% on solar</div>
+      <div style="background: rgba(214,240,220,.9); display: flex; align-items: center; padding: 0 10px; font-size: 12.5px; font-weight: 600; color: #1b5a33">Standby</div>
+      <div style="background: rgba(255,226,218,.95); display: flex; align-items: center; padding: 0 14px; font-size: 13px; font-weight: 700; color: #8a1f12">17:30–22 · locked off</div>
+      <div style="background: rgba(255,255,255,.6); display: flex; align-items: center; padding: 0 10px; font-size: 12.5px; font-weight: 600; color: #3d4f45">Off</div>
+    </div>
+    <div class="note">Standby tops up only if the store falls below 60%. A weekly 70 °C disinfection cycle runs inside the solar window, and the store never serves water below 60 °C.</div>
+    <div class="chart-host" ref="{{ refs.chart }}" style="min-height: 340px"></div>
+    <div class="grid-3" style="gap: 14px">
+      <div class="chart-host" ref="{{ refs.c1 }}" style="min-height: 150px"></div>
+      <div class="chart-host" ref="{{ refs.c2 }}" style="min-height: 150px"></div>
+      <div class="glass pad stack" style="gap: 8px; border-radius: 26px">
+        <div class="ttl-s">What it is worth</div>
+        <div class="num-m">₹9,890<span class="unit">a month</span></div>
+        <div class="note" style="font-size: 13px">23 kVA off the evening peak, in any month the evening sets the bill. The tariff is flat, so moving the energy saves no kWh on its own, and all solar is already used on site.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid-3">
+    <div class="glass pad stack">
+      <div class="between"><span class="ttl-s">Chiller plant</span><span class="lbl">2 × 160 TR, water-cooled</span></div>
+      <div class="num-l">92<span class="unit">TR</span></div>
+      <div class="note">Load now on chiller 1 · chiller 2 on standby</div>
+      <div class="kv">
+        <div><div>Plant draw</div>72 kW</div>
+        <div><div>Efficiency</div>0.78 kW per TR</div>
+        <div><div>Chilled water</div>7.0 °C out · 11.6 °C back</div>
+        <div><div>Condenser water</div>29.5 °C in</div>
+      </div>
+    </div>
+    <div class="glass pad stack">
+      <div class="between"><span class="ttl-s">Air handling</span><span class="lbl">14 AHUs</span></div>
+      <div class="num-l">31<span class="unit">kW</span></div>
+      <div class="note">Fan power now · 6 clinical AHUs locked</div>
+      <div class="kv">
+        <div><div>OT 1 to 4</div>Locked · 21 °C · 55% RH · +15 Pa</div>
+        <div><div>ICU, NICU</div>Locked · 22 °C · 12 air changes</div>
+        <div><div>Isolation</div>Locked · −10 Pa</div>
+        <div><div>OPD, admin, corridors</div>Flexible · fan trim to 70%</div>
+      </div>
+    </div>
+    <div class="glass pad stack">
+      <div class="between"><span class="ttl-s">Pre-cooling rule</span><span class="lbl">General zones only</span></div>
+      <div class="num-l">−1<span class="unit">°C</span></div>
+      <div class="note">Before an event, from 16:30 to 17:30</div>
+      <div class="kv">
+        <div><div>During an event</div>Chilled water +1.5 °C</div>
+        <div><div>Comfort limit</div>26 °C in OPD and wards</div>
+        <div><div>Abort</div>Any clinical room drifts</div>
+        <div><div>Summer value</div>45 kW, Stage 2 of the ceiling</div>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2200}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this._els = {};
+    const r = (k) => (el) => { this._els[k] = el; };
+    this._refs = { chart: r('chart'), c1: r('c1'), c2: r('c2') };
+  }
+  componentDidMount() { this._mount(); }
+  componentDidUpdate() { this._mount(); }
+  componentWillUnmount() { if (this._board) { try { this._board.destroy(); } catch (e) {} } }
+  _mount() {
+    const el = this._els.chart;
+    if (!el || this._host === el) return;
+    this._host = el;
+    if (!window.EOC) { el.textContent = 'The chart library did not load.'; return; }
+    const p = window.EOC.mount('heat', this._els);
+    if (p) p.then((b) => { this._board = b; });
+  }
+  renderVals() { return { refs: this._refs }; }
+}
+</script>
+</body>
+</html>

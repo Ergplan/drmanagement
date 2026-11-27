@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manual · 3 How ergOS works</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/manual.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="m-page m-tight">
+  <dc-import name="ManualHeader" section="3 · How ergOS works" hint-size="666px,56px"></dc-import>
+  <div class="m-body" style="gap: 12px">
+    <div class="m-title-row"><span class="m-num">3</span><h1 class="m-h1">How ergOS works</h1></div>
+    <p class="m-lede">Data flows up from the plant to ergOS. Commands flow back down only to approved, non-clinical equipment.</p>
+
+    <div class="m-card" style="gap: 7px">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="m-num m-num-s m-num-blue">A</span><span class="m-h2" style="font-size: 15px">On site: meters, BMS and plant</span></div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{ field }}" as="f" hint-placeholder-count="8">
+          <div style="border-radius: 14px; padding: 6px 10px; background: rgba(222,236,252,.75); border: 1px solid #ffffff"><div style="font-size: 12.5px; font-weight: 700; line-height: 1.3">{{ f.n }}</div><div style="font-size: 11.5px; color: #3d4f45">{{ f.p }}</div></div>
+        </sc-for>
+      </div>
+    </div>
+    <div aria-hidden="true" style="display: flex; justify-content: center; gap: 120px; font-size: 12px; font-weight: 700; color: #3d4f45; margin: -7px 0"><span>↑ data every 15 s to 1 min</span><span>↓ commands, approved assets only</span></div>
+    <div class="m-card" style="gap: 6px; background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(214,240,220,.8))">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="m-num m-num-s">B</span><span class="m-h2" style="font-size: 15px">ergOS edge gateway, electrical room</span></div>
+      <p class="m-p" style="font-size: 13px">Reads every point, keeps 30 days of data, and runs the 570 kVA demand ceiling locally, so the ceiling holds even if the internet drops.</p>
+    </div>
+    <div aria-hidden="true" style="text-align: center; font-size: 12px; font-weight: 700; color: #3d4f45; margin: -7px 0">↑↓ encrypted link</div>
+    <div class="m-card" style="gap: 7px; background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(232,224,250,.8))">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="m-num m-num-s m-num-lilac">C</span><span class="m-h2" style="font-size: 15px">ergOS platform</span></div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{ modules }}" as="m" hint-placeholder-count="6">
+          <div style="border-radius: 14px; padding: 6px 10px; background: rgba(255,255,255,.75); border: 1px solid #ffffff"><div style="font-size: 12.5px; font-weight: 700">{{ m.n }}</div><div style="font-size: 11.5px; color: #3d4f45; line-height: 1.35">{{ m.d }}</div></div>
+        </sc-for>
+      </div>
+    </div>
+    <div aria-hidden="true" style="text-align: center; font-size: 12px; font-weight: 700; color: #3d4f45; margin: -7px 0">↑↓ dashboard, alerts, approvals</div>
+    <div class="m-card" style="gap: 8px; background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(250,238,200,.75))">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="m-num m-num-s" style="color: #6b4a00">D</span><span class="m-h2" style="font-size: 15px">People who decide</span></div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; font-size: 12.5px">
+        <div><b>Facility manager</b><div style="color: #3d4f45">Approves events and plant limits</div></div>
+        <div><b>Medical superintendent</b><div style="color: #3d4f45">Signs clinical exclusions, any HVAC step</div></div>
+        <div><b>Duty engineer</b><div style="color: #3d4f45">Arms events, can override anytime</div></div>
+        <div><b>jouleWise operations</b><div style="color: #3d4f45">Runs ergOS, reports, support</div></div>
+      </div>
+    </div>
+
+    <div class="m-grid2">
+      <div class="m-call m-call-safety"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#8a1f12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5 4.5 5.5v6c0 4.7 3.2 8.4 7.5 10 4.3-1.6 7.5-5.3 7.5-10v-6z"></path><path d="M12 8v5M12 16.2v.3"></path></svg></span><span><b>Safety</b><span class="t">Energy controls run on a network kept separate from clinical systems. ergOS never connects to a medical device, and reads the HIS only.</span></span></div>
+      <div class="m-call m-call-note"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1f4f8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.6v.3"></path></svg></span><span><b>Security, clause 5.2</b><span class="t">Role-based access, MFA for remote users, encryption in transit and at rest, audit logs and backups. Incidents reported to the Hospital promptly.</span></span></div>
+    </div>
+  </div>
+  <dc-import name="ManualFooter" page="{{ pg }}" hint-size="666px,62px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const field = [['Main meter UPP72963', 'Modbus · 15 s'], ['8 LT feeder meters', 'Modbus · 1 min'], ['Chillers and CHW', 'BMS, BACnet'], ['AHUs and FCUs', 'BMS, BACnet'], ['Heat pumps and tanks', 'Modbus'], ['Solar inverters', 'Modbus TCP'], ['UPS and DG status', 'Dry contacts'], ['HIS: beds, OPD, OT', 'Read-only API']];
+    const modules = [['Forecast', '15-min demand, 48 h ahead'], ['Baseline', 'Weather and occupancy adjusted'], ['Demand ceiling', '570 kVA, runs at the edge'], ['Optimiser', 'Lowest-impact dispatch'], ['M&V', 'Verified kW and kWh'], ['Dashboard', '12 screens, every role']];
+    return { pg: 5, field: field.map(([n, p]) => ({ n, p })), modules: modules.map(([n, d]) => ({ n, d })) };
+  }
+}
+</script>
+</body>
+</html>

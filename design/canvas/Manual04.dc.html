@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manual · 2 Site baseline</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/manual.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="m-page m-tight">
+  <dc-import name="ManualHeader" section="2 · Site baseline" hint-size="666px,56px"></dc-import>
+  <div class="m-body">
+    <div class="m-title-row"><span class="m-num">2</span><h1 class="m-h1">Site baseline</h1></div>
+    <p class="m-lede">What the hospital draws today, taken from MVVNL bills for account 9567-481-000.</p>
+
+    <div class="m-grid3">
+      <div class="m-card" style="gap: 2px"><span class="m-small">Sanctioned load</span><span class="m-stat">600 kVA</span><span class="m-small">HV-1 commercial · 11 kV</span></div>
+      <div class="m-card" style="gap: 2px"><span class="m-small">Billed demand, 12 bills</span><span class="m-stat">392–585 kVA</span><span class="m-small">585 from June to September</span></div>
+      <div class="m-card" style="gap: 2px"><span class="m-small">Grid energy a year</span><span class="m-stat">≈22 lakh kVAh</span><span class="m-small">about 6,200 to 6,600 a day</span></div>
+      <div class="m-card" style="gap: 2px"><span class="m-small">Tariff</span><span class="m-stat">₹8.32 · ₹430</span><span class="m-small">per kVAh · per kVA a month</span></div>
+      <div class="m-card" style="gap: 2px"><span class="m-small">Power factor</span><span class="m-stat">0.93–0.94</span><span class="m-small">billed in kVAh, so PF costs money</span></div>
+      <div class="m-card" style="gap: 2px"><span class="m-small">On site</span><span class="m-stat">285 kWp</span><span class="m-small">rooftop solar · 2 heat pumps</span></div>
+    </div>
+
+    <div class="m-card" style="gap: 4px">
+      <div class="m-h2" style="font-size: 16px">Where the energy goes</div>
+      <table class="m-tbl">
+        <thead><tr><th>End use</th><th class="r">November</th><th class="r">June</th><th>Control class</th></tr></thead>
+        <tbody>
+          <tr><td>HVAC: chillers, AHUs, pumps, towers</td><td class="r">34%</td><td class="r">55%</td><td>Conditional</td></tr>
+          <tr><td>Imaging and medical equipment</td><td class="r">17%</td><td class="r">11%</td><td>Critical, excluded</td></tr>
+          <tr><td>Lighting</td><td class="r">14%</td><td class="r">9%</td><td>Admin areas only</td></tr>
+          <tr><td>ICU, OT and critical power</td><td class="r">11%</td><td class="r">8%</td><td>Critical, excluded</td></tr>
+          <tr><td>Kitchen, laundry, CSSD</td><td class="r">9%</td><td class="r">6%</td><td>Flexible</td></tr>
+          <tr><td>Pumping, STP, RO, lifts</td><td class="r">7%</td><td class="r">5%</td><td>Flexible</td></tr>
+          <tr><td>IT, admin plugs, EV charging</td><td class="r">6%</td><td class="r">4%</td><td>Flexible</td></tr>
+          <tr><td>Hot water, heat pumps</td><td class="r">2%</td><td class="r">2%</td><td>Flexible</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="m-call m-call-note"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1f4f8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.6v.3"></path></svg></span><span><b>Note</b><span class="t">The split is modelled from Indian multi-specialty hospital benchmarks and scaled to the bills. Sub-metering in phase 1 replaces it with measured values.</span></span></div>
+    <div class="m-grid2">
+      <div class="m-call m-call-action"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1b5a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.7 2.7L16.5 9.5"></path></svg></span><span><b>Action · accounts · 10 Dec</b><span class="t">Dispute the October bill: 18,750 kVAh a day, about ₹13.1 lakh above normal. Ask MVVNL to void the 1,260 kVA interim reading.</span></span></div>
+      <div class="m-call m-call-action"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1b5a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.7 2.7L16.5 9.5"></path></svg></span><span><b>Action · maintenance · 20 Dec</b><span class="t">Retune the capacitor bank from PF 0.94 to 0.99, worth about ₹11 lakh a year with no load touched.</span></span></div>
+    </div>
+  </div>
+  <dc-import name="ManualFooter" page="{{ pg }}" hint-size="666px,62px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() { return { pg: 4 }; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Metering and DR points. Each is a street-view stop (node) and a set of data points.
+# dr_class follows assets.yaml: flexible | conditional | protected | critical | meter (measurement only).
+# pos is a schematic position on its floor (x, z in metres); look is the camera yaw in degrees.
+nodes:
+  - {id: ht-meter, floor: HT, pos: [-6, 4], look: 90, title: MVVNL main meter UPP72963, asset: null, dr_class: meter, points: [kva, kw, kvar, pf, v_ll, hz, kvah_import, md_kva_month], driver_later: dlms-is15959}
+  - {id: transformers, floor: HT, pos: [-6, 14], look: 90, title: Transformers (rating to confirm on survey), asset: null, dr_class: meter, points: [kva_tx1, kva_tx2, oil_temp_tx1, oil_temp_tx2], driver_later: modbus-tcp}
+  - {id: lt-main, floor: B1, pos: [6, 6], look: 0, title: LT main panel and APFC, asset: null, dr_class: meter, points: [kw, kva, pf, thd_v, thd_i, apfc_steps], driver_later: modbus-tcp}
+  - {id: feeders, floor: B1, pos: [12, 6], look: 0, title: Feeder panels (one meter per feeder), asset: null, dr_class: meter, points: [kw_per_feeder, kwh_today_per_feeder], driver_later: modbus-tcp}
+  - {id: chillers, floor: B1, pos: [24, 10], look: 0, title: Chiller plant, 2 x 160 TR screw, asset: chiller, dr_class: conditional, points: [kw, tr, kw_per_tr, chw_supply_c, chw_return_c, cond_c, setpoint_c], driver_later: bacnet-ip}
+  - {id: chw-pumps, floor: B1, pos: [32, 10], look: 0, title: Chilled and condenser water pumps, asset: chiller, dr_class: conditional, points: [kw, running_count], driver_later: bacnet-ip}
+  - {id: ups, floor: B1, pos: [44, 6], look: 180, title: UPS room, 2 x 200 kVA, asset: icu, dr_class: critical, points: [load_pct, autonomy_min, battery_state], driver_later: modbus-tcp}
+  - {id: dg, floor: B1, pos: [52, 6], look: 180, title: DG sets and AMF panel, asset: null, dr_class: meter, points: [state, fuel_l, last_test], driver_later: modbus-tcp, note: never used for ceiling or DR}
+  - {id: medgas, floor: B1, pos: [52, 18], look: 180, title: Medical gas and vacuum plant, asset: medgas, dr_class: critical, points: [kw, line_pressure_ok], driver_later: modbus-tcp}
+  - {id: stp-ro, floor: B1, pos: [40, 20], look: 270, title: STP, RO and transfer pumps, asset: pump, dr_class: flexible, points: [kw, overhead_tank_pct, running], driver_later: modbus-tcp}
+  - {id: laundry, floor: B1, pos: [18, 20], look: 270, title: Laundry, asset: laundry, dr_class: flexible, points: [kw, machines_running, queue], driver_later: smart-db-relay}
+  - {id: emergency, floor: G, pos: [6, 4], look: 0, title: Emergency and trauma, asset: icu, dr_class: critical, points: [kw], driver_later: modbus-tcp}
+  - {id: opd-ahu, floor: G, pos: [20, 8], look: 0, title: OPD air handling, asset: ahu, dr_class: conditional, points: [kw, fan_pct, co2_ppm, zone_temp_c], driver_later: bacnet-ip}
+  - {id: imaging, floor: G, pos: [36, 16], look: 0, title: Imaging - MRI, CT, X-ray, asset: imaging, dr_class: critical, points: [kva, mri_cold_head_kw, ct_state, xray_state], driver_later: modbus-tcp}
+  - {id: kitchen, floor: G, pos: [50, 18], look: 180, title: Kitchen and cafeteria, asset: laundry, dr_class: flexible, points: [kw, meal_service], driver_later: smart-db-relay}
+  - {id: admin-lighting, floor: G, pos: [58, 6], look: 180, title: Admin offices - lighting and plugs, asset: ev, dr_class: flexible, points: [kw, dim_pct], driver_later: dali}
+  - {id: ot, floor: F1, pos: [24, 12], look: 0, title: OT complex, OT 1 to 4, asset: clinicalhvac, dr_class: protected, points: [kw, pressure_pa_ot1, pressure_pa_ot2, pressure_pa_ot3, pressure_pa_ot4, temp_c, rh_pct], driver_later: bacnet-ip}
+  - {id: icu, floor: F2, pos: [14, 12], look: 0, title: ICU and NICU, asset: icu, dr_class: critical, points: [kw, temp_c, rh_pct], driver_later: bacnet-ip}
+  - {id: cathlab, floor: F2, pos: [40, 12], look: 0, title: Cath lab, asset: imaging, dr_class: critical, points: [kva, case_running], driver_later: modbus-tcp}
+  - {id: isolation, floor: F2, pos: [56, 18], look: 180, title: Isolation rooms, asset: clinicalhvac, dr_class: protected, points: [pressure_pa, exhaust_kw], driver_later: bacnet-ip}
+  - {id: ward, floor: F3, pos: [30, 12], look: 0, title: Ward floor (typical), asset: ahu, dr_class: conditional, points: [kw, zone_temp_c, fcu_state], driver_later: bacnet-ip}
+  - {id: solar, floor: R, pos: [20, 12], look: 0, title: Rooftop solar 285 kWp, asset: null, dr_class: meter, points: [kw, kwh_today, irradiance_wm2, inverter_states], driver_later: modbus-tcp-sunspec}
+  - {id: heatpumps, floor: R, pos: [44, 8], look: 90, title: Heat pumps 2 x 15 kW, asset: heatpump, dr_class: flexible, points: [kw, cop, outlet_c, state], driver_later: modbus-tcp}
+  - {id: hw-tanks, floor: R, pos: [50, 8], look: 90, title: Hot-water store 2 x 6,000 L, asset: heatpump, dr_class: flexible, points: [soc_pct, top_c, bottom_c, outlet_c], driver_later: modbus-tcp}
+  - {id: cooling-towers, floor: R, pos: [56, 18], look: 180, title: Cooling towers, asset: chiller, dr_class: conditional, points: [fan_kw, cond_c], driver_later: bacnet-ip}
+  - {id: ev, floor: P, pos: [40, -10], look: 0, title: EV chargers 2 x 7.4 kW, asset: ev, dr_class: flexible, points: [kw, sessions, state], driver_later: ocpp}

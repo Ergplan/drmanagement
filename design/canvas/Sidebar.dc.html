@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Orchestration Centre side menu</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<nav class="eoc" aria-label="Energy Orchestration Centre" style="width: 100%; border-radius: 36px; padding: 18px 14px 20px; display: flex; flex-direction: column; gap: 20px; background: linear-gradient(168deg, rgba(38,150,72,.94) 0%, rgba(86,184,74,.9) 34%, rgba(168,216,76,.88) 70%, rgba(226,236,120,.9) 100%); border: 1px solid rgba(255,255,255,.55); box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 -30px 60px -40px rgba(255,255,255,.7), 0 26px 52px -30px rgba(27,90,51,.65); font-family: Manrope, 'Segoe UI', system-ui, sans-serif">
+  <div style="background: rgba(255,255,255,.9); border: 1px solid #ffffff; border-radius: 24px; padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 10px 24px -16px rgba(16,35,26,.5)">
+    <img src="/_blob/1a38319755293cfa8eaf5dc1d205e1c2" alt="jouleWise" style="width: 140px; height: auto; display: block">
+    <div style="font-size: 15px; font-weight: 700; letter-spacing: -.01em; color: #10231a; line-height: 1.25">Energy Orchestration Centre</div>
+    <div style="font-size: 12px; color: #3d4f45">ergOS for Globe Medicare</div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 3px">
+    <sc-for list="{{ items }}" as="it" hint-placeholder-count="12">
+      <a href="{{ it.href }}" aria-current="{{ it.current }}" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px; border-radius: 999px; color: #0b2412; font-size: 14.5px; font-weight: {{ it.weight }}; text-decoration: none; background: {{ it.bg }}; box-shadow: {{ it.shadow }}">
+        <span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: {{ it.dot }}"></span>{{ it.label }}
+      </a>
+    </sc-for>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start">
+    <div style="font-size: 12.5px; font-weight: 600; color: #0b2412; padding-left: 6px">Ask ergOS</div>
+    <a href="Guard.dc.html" style="display: block; min-height: 44px; padding: 11px 16px; border-radius: 22px 22px 22px 6px; background: rgba(255,255,255,.88); color: #10231a; font-size: 13.5px; line-height: 1.35; text-decoration: none">Can we stay under 600 kVA this June?</a>
+    <a href="Thermal.dc.html" style="display: block; min-height: 44px; padding: 11px 16px; border-radius: 22px 22px 22px 6px; background: rgba(255,255,255,.88); color: #10231a; font-size: 13.5px; line-height: 1.35; text-decoration: none">How full is the hot-water store?</a>
+    <a href="Tariff.dc.html" style="display: block; min-height: 44px; padding: 11px 16px; border-radius: 22px 22px 22px 6px; background: rgba(255,255,255,.88); color: #10231a; font-size: 13.5px; line-height: 1.35; text-decoration: none">Why is the October bill so high?</a>
+  </div>
+  <div style="border-radius: 24px; padding: 16px; background: rgba(255,255,255,.3); border: 1px solid rgba(255,255,255,.65); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); display: flex; flex-direction: column; gap: 6px">
+    <div style="font-size: 12.5px; font-weight: 600; color: #0b2412">Control sequence</div>
+    <div style="font-size: 14.5px; font-weight: 700; color: #0b2412; line-height: 1.35">Observe · Predict · Optimise · Approve and verify</div>
+    <div style="font-size: 12.5px; color: #0b2412; line-height: 1.45">The demand ceiling runs live. DR events stay simulation-only until the Hospital signs off.</div>
+  </div>
+  <div style="font-size: 11.5px; color: #0b2412; line-height: 1.45; padding: 0 8px">© 2026 jouleWise Advisory Services Pvt. Ltd. All rights reserved.</div>
+</nav>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["overview","live","guard","forecast","flex","optimizer","dispatch","thermal","solar","tariff","safety","reports"],"default":"overview"},"$preview":{"width":264,"height":1440}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const active = this.props.active ?? 'overview';
+    const nav = [
+      ['overview', 'Overview', 'Main.dc.html'],
+      ['live', 'Live energy', 'Live.dc.html'],
+      ['guard', 'Demand ceiling', 'Guard.dc.html'],
+      ['forecast', 'Demand forecast', 'Forecast.dc.html'],
+      ['flex', 'Load flexibility', 'Flexibility.dc.html'],
+      ['optimizer', 'DR optimizer', 'Optimizer.dc.html'],
+      ['dispatch', 'Dispatch plan', 'Dispatch.dc.html'],
+      ['thermal', 'HVAC & heat pumps', 'Thermal.dc.html'],
+      ['solar', 'Solar & backup', 'Solar.dc.html'],
+      ['tariff', 'Tariffs & cost', 'Tariff.dc.html'],
+      ['safety', 'Clinical safety', 'Safety.dc.html'],
+      ['reports', 'Reports & M&V', 'Reports.dc.html']
+    ];
+    return {
+      items: nav.map(([key, label, href]) => {
+        const on = key === active;
+        return { label, href, current: on ? 'page' : 'false', weight: on ? 700 : 500, bg: on ? 'rgba(255,255,255,.95)' : 'transparent', shadow: on ? '0 8px 20px -12px rgba(16,35,26,.55)' : 'none', dot: on ? '#1f7a3c' : 'rgba(11,36,18,.35)' };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

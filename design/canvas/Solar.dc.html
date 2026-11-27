@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Orchestration Centre · Solar and backup</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+<script src="lib/strata-charts.min.js"></script>
+<script src="lib/eoc.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1b5a33}a:hover{color:#0e3d22}
+</style>
+</helmet>
+<div class="eoc eoc-stage">
+<div class="eoc-side"><dc-import name="Sidebar" active="solar" hint-size="100%,1340px"></dc-import></div>
+<main class="eoc-main">
+  <dc-import name="Topbar" heading="Solar &amp; backup" hint-size="100%,96px"></dc-import>
+
+  <section class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr))">
+    <div class="glass glass-lime kpi"><div class="lbl">Solar now</div><div class="num-l">121<span class="unit">kW</span></div><div class="note">285 kWp · 42% of rating</div></div>
+    <div class="glass kpi"><div class="lbl">Last 30 days</div><div class="num-l">29,231<span class="unit">kWh</span></div><div class="note">974 kWh a day · 3.4 kWh per kWp</div></div>
+    <div class="glass kpi"><div class="lbl">Used on site</div><div class="num-l">100<span class="unit">%</span></div><div class="note">Net billing · export 0 kWh</div></div>
+    <div class="glass kpi"><div class="lbl">CO₂ avoided, 30 days</div><div class="num-l">21.3<span class="unit">t</span></div><div class="note">At 0.727 t per MWh, CEA</div></div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">Daily yield</span><span class="note">Lucknow smog cut six November days by 22 to 34%</span></div>
+    <div class="chart-host" ref="{{ refs.chart }}" style="min-height: 360px"></div>
+    <div class="kv">
+      <div><div>Expected a year</div>About 400 MWh, 1,400 kWh per kWp</div>
+      <div><div>Share of site energy</div>About 16% a year</div>
+      <div><div>Inverters</div>3 × 100 kW · all online</div>
+      <div><div>Panel cleaning</div>Due 1 Dec · smog film</div>
+    </div>
+  </section>
+
+  <section class="grid-2" style="align-items: stretch">
+    <div class="glass pad-l stack" style="gap: 12px">
+      <div class="between"><span class="ttl">Backup readiness</span><span class="pill pill-ok">Ready</span></div>
+      <div class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr))">
+        <div><div class="lbl">UPS</div><div class="num-m">2 × 200 kVA</div><div class="note">Online · 46% load</div></div>
+        <div><div class="lbl">UPS battery</div><div class="num-m">22 min</div><div class="note">VRLA · 4 years old</div></div>
+        <div><div class="lbl">DG sets</div><div class="num-m">2 × 500 kVA</div><div class="note">Auto mains failure, 10 s</div></div>
+        <div><div class="lbl">Diesel</div><div class="num-m">1,850 L</div><div class="note">About 20 h at site load</div></div>
+      </div>
+      <div class="note" style="font-size: 13.5px">The DG sets cover a grid outage only. ergOS never starts them to hold the demand ceiling or for a DR event, and backup reserve is never counted as flexibility.</div>
+    </div>
+    <div class="glass pad-l stack" style="gap: 12px">
+      <div class="ttl">Autonomy by critical circuit</div>
+      <div class="scroll">
+        <table class="tbl" style="min-width: 440px">
+          <thead><tr><th>Circuit</th><th class="r">Load</th><th class="r">On UPS</th><th class="r">On DG</th></tr></thead>
+          <tbody>
+            <tr><td>ICU and NICU, 24 beds</td><td class="r">38 kW</td><td class="r">22 min</td><td class="r">20 h</td></tr>
+            <tr><td>OT 1 to 4</td><td class="r">46 kW</td><td class="r">22 min</td><td class="r">20 h</td></tr>
+            <tr><td>Imaging, CT and cath lab</td><td class="r">52 kW</td><td class="r">10 min</td><td class="r">20 h</td></tr>
+            <tr><td>Medical gas and vacuum</td><td class="r">14 kW</td><td class="r">40 min</td><td class="r">20 h</td></tr>
+            <tr><td>Emergency lighting</td><td class="r">9 kW</td><td class="r">90 min</td><td class="r">20 h</td></tr>
+            <tr><td>Fire pumps</td><td class="r">–</td><td class="r">–</td><td class="r">Diesel driven</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note">Plant sizes are modelled for a 200-bed hospital and should be confirmed on the site survey.</div>
+    </div>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this._els = {};
+    const r = (k) => (el) => { this._els[k] = el; };
+    this._refs = { chart: r('chart') };
+  }
+  componentDidMount() { this._mount(); }
+  componentDidUpdate() { this._mount(); }
+  componentWillUnmount() { if (this._board) { try { this._board.destroy(); } catch (e) {} } }
+  _mount() {
+    const el = this._els.chart;
+    if (!el || this._host === el) return;
+    this._host = el;
+    if (!window.EOC) { el.textContent = 'The chart library did not load.'; return; }
+    const p = window.EOC.mount('solar', this._els);
+    if (p) p.then((b) => { this._board = b; });
+  }
+  renderVals() { return { refs: this._refs }; }
+}
+</script>
+</body>
+</html>

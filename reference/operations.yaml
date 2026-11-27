@@ -1,0 +1,18 @@
+# Hospital operations calendar that drives the simulator. Typical for a 200-bed private multispeciality
+# hospital in Lucknow; replace with the hospital's own schedules when available.
+occupancy: {beds: 200, mean_pct: 80, weekday_pct: 82, sunday_pct: 74, seasonal: {monsoon_dengue_aug_oct: +6, winter_flu_dec_jan: +4}}
+opd: {days: Mon-Sat, hours: "09:00-17:00", peak: "10:30-13:00", daily_footfall_mean: 650, sunday: emergency only}
+ot: {theatres: 4, elective: "08:00-16:00 Mon-Sat", cases_per_theatre_mean: 3.5, emergency_cases_per_day_mean: 2}
+imaging:
+  mri: {cold_head_kw: 9, always_on: true, scans_per_day_mean: 22, scan_minutes: 35, scan_kva_peak: 70}
+  ct: {scans_per_day_mean: 45, scan_minutes: 12, kva_peak: 90}
+  cath_lab: {cases_per_day_mean: 5, case_minutes: 75, kva_peak: 80}
+  xray: {exposures_per_day_mean: 160, kva_peak: 50, exposure_s: 1}
+kitchen: {meals: {breakfast: "06:30-08:00", lunch: "12:00-13:30", dinner: "19:00-20:30"}, prep_lead_min: 90}
+laundry: {shifts: "07:00-19:00", kg_per_day: 900}
+staff_shifts: ["08:00", "14:00", "20:00"]
+visiting_hours: ["11:00-13:00", "17:00-19:00"]
+holidays_2026: [2026-01-26, 2026-03-04, 2026-08-15, 2026-10-02, 2026-10-20, 2026-11-08, 2026-12-25]   # OPD closed; confirm with hospital
+weather: {source_live: open-meteo (Lucknow 26.85 N, 80.95 E), fallback: climate normals by month, cooling_balance_c: 22}
+power_quality: {pf_mean: 0.94, thd_v_pct: 2.8, thd_i_pct_imaging_burst: 12, voltage_dips_per_month: 3, outages_per_month: 1.5, outage_minutes_mean: 9}
+telemetry_faults: {meter_dropout_per_week: 1, dropout_s: 40, bms_lag_events_per_week: 2}

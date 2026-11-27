@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manual · 6 Demand ceiling procedure</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/manual.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="m-page m-tight">
+  <dc-import name="ManualHeader" section="6 · Demand ceiling procedure" hint-size="666px,56px"></dc-import>
+  <div class="m-body" style="gap: 14px">
+    <div class="m-title-row"><span class="m-num m-num-red">6</span><h1 class="m-h1">Demand ceiling procedure</h1></div>
+    <div class="m-card" style="flex-direction: row; align-items: center; gap: 18px; background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(232,224,250,.85))">
+      <div style="flex: none"><div class="m-small">The rule</div><div style="font-size: 34px; font-weight: 300; letter-spacing: -.03em; line-height: 1">Never above 570 kVA</div></div>
+      <p class="m-p" style="font-size: 13.5px">ergOS projects each demand interval every minute and sheds non-clinical load before the meter can record more than 570 kVA. 30 kVA stays spare under the 600 kVA sanction for an unplanned scan or chiller start.</p>
+    </div>
+
+    <div class="m-grid2" style="gap: 12px; align-items: start">
+      <div class="m-card" style="gap: 8px; padding: 12px 14px">
+        <div class="m-h2" style="font-size: 15px">Why it is strict</div>
+        <sc-for list="{{ why }}" as="w" hint-placeholder-count="4">
+          <div class="m-step" style="grid-template-columns: 26px minmax(0, 1fr); gap: 10px"><span class="m-num m-num-s m-num-red" style="width: 24px; height: 24px; border-radius: 8px; font-size: 11.5px">{{ w.n }}</span><span style="font-size: 12.5px; line-height: 1.45"><b>{{ w.t }}</b> {{ w.d }}</span></div>
+        </sc-for>
+      </div>
+      <div class="m-card" style="gap: 6px; padding: 12px 14px">
+        <div class="m-h2" style="font-size: 15px">The shed ladder</div>
+        <sc-for list="{{ ladder }}" as="l" hint-placeholder-count="5">
+          <div style="display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 10px; align-items: center; padding: 6px 8px; border-radius: 12px; background: {{ l.bg }}; border: 1px solid #ffffff">
+            <span style="font-size: 15px; font-weight: 700; color: {{ l.fg }}">{{ l.kva }}</span>
+            <span style="font-size: 12px; line-height: 1.35"><b>{{ l.stage }}</b> · {{ l.what }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div class="m-card" style="gap: 8px; padding: 12px 14px">
+      <div class="m-h2" style="font-size: 15px">When the ceiling acts</div>
+      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+        <div class="m-step"><span class="m-num m-num-s">{{ s.n }}</span><span style="font-size: 13px; line-height: 1.45"><b>{{ s.who }}.</b> {{ s.t }}</span></div>
+      </sc-for>
+    </div>
+
+    <div class="m-grid2">
+      <div class="m-call m-call-safety"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#8a1f12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5 4.5 5.5v6c0 4.7 3.2 8.4 7.5 10 4.3-1.6 7.5-5.3 7.5-10v-6z"></path><path d="M12 8v5M12 16.2v.3"></path></svg></span><span><b>Safety</b><span class="t">Clinical need wins. If OT or ICU needs the second chiller, start it; ergOS sheds elsewhere first.</span></span></div>
+      <div class="m-call m-call-note"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1f4f8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.6v.3"></path></svg></span><span><b>Note · what a breach costs</b><span class="t">One hot evening at 642 kVA: about ₹49,000 that month and ₹54,000 a year after. The 1,260 kVA reading, if billed: ₹5.7 lakh, then ₹22 lakh a year.</span></span></div>
+    </div>
+  </div>
+  <dc-import name="ManualFooter" page="{{ pg }}" hint-size="666px,62px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const why = [['Excess pays twice.', 'Demand over 600 kVA pays the ₹430 charge plus a 100% penalty.'], ['Three months merges.', 'Three straight months over adds the excess to the sanction.'], ['One spike can reset it.', 'In July 2026 UPPCL raised sanctions to each consumer’s highest monthly demand.'], ['The floor follows.', 'Billing never drops below 75% of sanction, so a higher sanction costs every month.']];
+    const ladder = [
+      ['600', '#8a1f12', 'rgba(246,220,212,.85)', 'Sanction', 'must never be reached'],
+      ['570', '#10231a', 'rgba(255,255,255,.85)', 'Ceiling', 'hard limit held by ergOS'],
+      ['565', '#8a1f12', 'rgba(252,232,226,.8)', 'Stage 3', 'lock second chiller start, page engineer · 25 kW'],
+      ['545', '#6b4a00', 'rgba(250,238,200,.8)', 'Stage 2', 'chilled water +1.5 °C, AHU trim · 75 kW'],
+      ['520', '#1b5a33', 'rgba(214,240,220,.8)', 'Stage 1', 'heat pumps, laundry, pumps, EV, admin · 90 kW']
+    ];
+    const steps = [['Dashboard', 'Shows the projected interval in kVA and the active stage, on every screen.'], ['ergOS', 'Stage 1 and Stage 2 act on their own within 2 to 8 minutes. The facility manager gets an SMS.'], ['Duty engineer', 'At Stage 3, confirm no clinical need for the second chiller, or override and log why.'], ['ergOS', 'Restores loads one at a time, 10 minutes apart, once the projection is back under 520 kVA.'], ['jouleWise', 'Reviews every activation the next morning and adds it to the monthly report.']];
+    return { pg: 8,
+      why: why.map(([t, d], i) => ({ n: i + 1, t, d })),
+      ladder: ladder.map(([kva, fg, bg, stage, what]) => ({ kva, fg, bg, stage, what })),
+      steps: steps.map(([who, t], i) => ({ n: i + 1, who, t })) };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Orchestration Centre · Clinical safety</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1b5a33}a:hover{color:#0e3d22}
+</style>
+</helmet>
+<div class="eoc eoc-stage">
+<div class="eoc-side"><dc-import name="Sidebar" active="safety" hint-size="100%,1340px"></dc-import></div>
+<main class="eoc-main">
+  <dc-import name="Topbar" heading="Clinical safety &amp; override" hint-size="100%,96px"></dc-import>
+
+  <section class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr))">
+    <div class="glass glass-mint kpi"><div class="lbl">Interlocks healthy</div><div class="num-l">9<span class="unit">of 9</span></div><div class="note">Checked every 10 s</div></div>
+    <div class="glass kpi"><div class="lbl">Conditions blocking DR</div><div class="num-l">0</div><div class="note">Events allowed today</div></div>
+    <div class="glass kpi"><div class="lbl">Manual overrides, 7 days</div><div class="num-l">1</div><div class="note">Laundry, 24 Nov</div></div>
+    <div class="glass kpi"><div class="lbl">Stale telemetry</div><div class="num-l">0<span class="unit">points</span></div><div class="note">Oldest 12 s</div></div>
+  </section>
+
+  <section class="grid-2" style="align-items: stretch">
+    <div class="glass pad-l stack" style="gap: 10px; border-radius: 36px">
+      <div class="between"><span class="ttl">Interlocks</span><span class="note">Any trip aborts an event or a ceiling stage</span></div>
+      <sc-for list="{{ locks }}" as="l" hint-placeholder-count="9">
+        <div style="display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(16,35,26,.08)">
+          <span class="dot" style="background: #2e9a55"></span>
+          <div><div style="font-size: 14px; font-weight: 600">{{ l.name }}</div><div class="note">{{ l.rule }}</div></div>
+          <div style="font-size: 14px; text-align: right">{{ l.now }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div class="stack" style="gap: 16px">
+      <div class="glass glass-alert pad-l stack" style="gap: 10px; border-radius: 36px">
+        <div class="ttl">These block any event</div>
+        <div class="stack" style="gap: 6px; font-size: 14px; line-height: 1.45">
+          <div>Mass-casualty or disaster alert declared</div>
+          <div>Emergency OT list running past 17:00</div>
+          <div>Fire alarm, or a DG set running on outage</div>
+          <div>Outdoor temperature above 44 °C</div>
+          <div>Any interlock or telemetry point stale for over 60 s</div>
+          <div>Medical superintendent hold, any reason</div>
+        </div>
+      </div>
+      <div class="glass pad-l stack" style="gap: 10px; border-radius: 36px">
+        <div class="ttl">Restore sequence</div>
+        <div class="note" style="margin-top: -4px">On abort, or at the end of an event</div>
+        <div class="stack" style="gap: 8px; font-size: 14px">
+          <div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px"><span class="num-s">1</span><span>Clinical-adjacent HVAC back to set points at once</span></div>
+          <div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px"><span class="num-s">2</span><span>AHU fans to normal over 5 min</span></div>
+          <div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px"><span class="num-s">3</span><span>Pumps, then laundry and kitchen, 10 min apart</span></div>
+          <div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px"><span class="num-s">4</span><span>EV and admin loads last</span></div>
+          <div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px"><span class="num-s">5</span><span>Ceiling stays armed throughout, so restoring never creates a new peak</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">Approval and override history</span><span class="note">Every action is logged with who, when and why</span></div>
+    <div class="scroll">
+      <table class="tbl" style="min-width: 760px">
+        <thead><tr><th>When</th><th>Action</th><th>By</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>27 Nov · 14:15</td><td>DR event 1 proposed, 60 kW from 17:30</td><td>ergOS</td><td><span class="tag tag-cond">Waiting for facility manager</span></td></tr>
+          <tr><td>27 Nov · 09:00</td><td>Demand ceiling armed at 570 kVA</td><td>Facility manager</td><td><span class="tag tag-flex">Live</span></td></tr>
+          <tr><td>26 Nov · 16:40</td><td>Clinical exclusion list signed, 4 areas, 22 assets</td><td>Medical superintendent</td><td><span class="tag tag-flex">Approved</span></td></tr>
+          <tr><td>24 Nov · 18:05</td><td>Laundry hold overridden for linen shortage</td><td>Housekeeping head</td><td><span class="tag tag-prot">Override</span></td></tr>
+          <tr><td>22 Nov · 11:30</td><td>Heat pump solar soak enabled, 10:00 to 15:00</td><td>Facility manager</td><td><span class="tag tag-flex">Live</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="kv">
+      <div><div>Network</div>Energy controls kept separate from clinical systems</div>
+      <div><div>Access</div>Role-based, MFA for remote access</div>
+      <div><div>Data</div>Encrypted in transit and at rest</div>
+      <div><div>Hospital override</div>Any wall switch or BMS command wins</div>
+    </div>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1780}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const locks = [
+      ['OT 1 to 4 pressure', 'Positive, at least +15 Pa', '+16 to +19 Pa'],
+      ['ICU and NICU temperature', '21 to 23 °C', '22.1 °C'],
+      ['Isolation rooms', 'Negative, −10 Pa or lower', '−12 Pa'],
+      ['Clinical humidity', '45 to 60% RH', '54%'],
+      ['Hot water outlet', '60 °C or more', '64 °C'],
+      ['Medical gas and vacuum', 'Within line pressure', 'Normal'],
+      ['BMS telemetry', 'Fresher than 60 s', '12 s'],
+      ['Main meter feed', 'Fresher than 15 s', '4 s'],
+      ['Duty engineer override', 'Armed and reachable', 'Armed']
+    ];
+    return { locks: locks.map(([name, rule, now]) => ({ name, rule, now })) };
+  }
+}
+</script>
+</body>
+</html>

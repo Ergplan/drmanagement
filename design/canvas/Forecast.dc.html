@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Orchestration Centre · Demand forecast</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+<script src="lib/strata-charts.min.js"></script>
+<script src="lib/eoc.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1b5a33}a:hover{color:#0e3d22}
+</style>
+</helmet>
+<div class="eoc eoc-stage">
+<div class="eoc-side"><dc-import name="Sidebar" active="forecast" hint-size="100%,1340px"></dc-import></div>
+<main class="eoc-main">
+  <dc-import name="Topbar" heading="Demand forecast" hint-size="100%,96px"></dc-import>
+
+  <section class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr))">
+    <div class="glass glass-lilac kpi"><div class="lbl" style="color: #33273f">Tonight's peak, P50</div><div class="num-l">470<span class="unit">kVA</span></div><div class="note" style="color: #33273f">18:30 · P90 489 · 20 over the floor</div></div>
+    <div class="glass kpi"><div class="lbl">Saturday 28 Nov</div><div class="num-l">446<span class="unit">kVA</span></div><div class="note">P90 478 · OPD half day</div></div>
+    <div class="glass kpi"><div class="lbl">Sunday 29 Nov</div><div class="num-l">426<span class="unit">kVA</span></div><div class="note">P90 470 · OPD closed</div></div>
+    <div class="glass glass-mint kpi"><div class="lbl">Chance of passing 570</div><div class="num-l">0<span class="unit">%</span></div><div class="note">Next 48 hours · ceiling idle</div></div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">Next 48 hours</span><span class="note">15-minute grid kVA · P10 to P90 band · metered so far today</span></div>
+    <div class="row note" style="gap: 6px 18px; color: #33443b">
+      <span class="row" style="gap: 6px"><span class="dot" style="background: #2a78d6"></span>Metered</span>
+      <span class="row" style="gap: 6px"><span aria-hidden="true" style="width: 16px; border-top: 2px solid #10231a"></span>P50</span>
+      <span class="row" style="gap: 6px"><span aria-hidden="true" style="width: 16px; border-top: 2px dashed #6a4fb3"></span>P90</span>
+      <span class="row" style="gap: 6px"><span aria-hidden="true" style="width: 16px; border-top: 2px dashed #8fa79a"></span>P10</span>
+      <span class="row" style="gap: 6px"><span aria-hidden="true" style="width: 16px; border-top: 2px dotted #b4541a"></span>450 floor</span>
+      <span class="row" style="gap: 6px"><span aria-hidden="true" style="width: 16px; border-top: 2px solid #b3261e"></span>600 sanction</span>
+    </div>
+    <div class="chart-host" ref="{{ refs.chart }}" style="min-height: 400px"></div>
+  </section>
+
+  <section class="grid-2" style="align-items: stretch">
+    <div class="glass pad-l stack" style="gap: 12px">
+      <div class="ttl">What drives tomorrow</div>
+      <div class="scroll">
+        <table class="tbl" style="min-width: 460px">
+          <thead><tr><th>Input</th><th>Tomorrow</th><th class="r">Effect on peak</th></tr></thead>
+          <tbody>
+            <tr><td>Weather, late-November normal</td><td>26 °C high · 11 °C low</td><td class="r">−18 kVA</td></tr>
+            <tr><td>Bed occupancy</td><td>164 of 200 beds</td><td class="r">+6 kVA</td></tr>
+            <tr><td>OPD footfall</td><td>Half day, about 300</td><td class="r">−14 kVA</td></tr>
+            <tr><td>OT schedule</td><td>6 cases, last ends 16:00</td><td class="r">−4 kVA</td></tr>
+            <tr><td>Imaging bookings</td><td>MRI 9 · CT 20 · cath 2</td><td class="r">−6 kVA</td></tr>
+            <tr><td>Solar, haze forecast</td><td>About 860 kWh, 20% under clear sky</td><td class="r">0 kVA after sunset</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note">Effects are against today's evening peak of 470 kVA.</div>
+    </div>
+    <div class="glass pad-l stack" style="gap: 12px">
+      <div class="ttl">How good is the forecast</div>
+      <div class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr))">
+        <div><div class="lbl">Day-ahead error</div><div class="num-m">5%</div><div class="note">Target, mean absolute</div></div>
+        <div><div class="lbl">Peak timing</div><div class="num-m">±30 min</div><div class="note">Target</div></div>
+        <div><div class="lbl">History used</div><div class="num-m">12 bills</div><div class="note">No interval data yet</div></div>
+      </div>
+      <div class="note" style="font-size: 13.5px">The model runs on billed demand and benchmarks until ergOS has 90 days of 15-minute meter data. These accuracy figures are targets, not results. Weather, OPD and OT inputs come from the hospital's HIS once connected.</div>
+      <div class="kv">
+        <div><div>Next run</div>15:00 · every 15 minutes</div>
+        <div><div>Horizon</div>48 hours</div>
+        <div><div>Peak alert</div>P90 over 520 kVA</div>
+        <div><div>Event suggestion</div>P50 over the 450 floor</div>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1720}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this._els = {};
+    const r = (k) => (el) => { this._els[k] = el; };
+    this._refs = { chart: r('chart') };
+  }
+  componentDidMount() { this._mount(); }
+  componentDidUpdate() { this._mount(); }
+  componentWillUnmount() { if (this._board) { try { this._board.destroy(); } catch (e) {} } }
+  _mount() {
+    const el = this._els.chart;
+    if (!el || this._host === el) return;
+    this._host = el;
+    if (!window.EOC) { el.textContent = 'The chart library did not load.'; return; }
+    const p = window.EOC.mount('forecast', this._els);
+    if (p) p.then((b) => { this._board = b; });
+  }
+  renderVals() { return { refs: this._refs }; }
+}
+</script>
+</body>
+</html>

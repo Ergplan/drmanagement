@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manual running head</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/manual.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<header style="width: 666px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(16,35,26,.2); font-family: Manrope, 'Segoe UI', system-ui, sans-serif; color: #10231a">
+  <div style="display: flex; align-items: center; gap: 14px">
+    <img src="/_blob/1a38319755293cfa8eaf5dc1d205e1c2" alt="jouleWise" style="width: 104px; height: auto; display: block">
+    <span aria-hidden="true" style="width: 1px; height: 26px; background: rgba(16,35,26,.25)"></span>
+    <img src="/_blob/51c7f07bc570f970457a1875b68eacd3" alt="Globe Healthcare" style="height: 30px; width: auto; display: block">
+  </div>
+  <div style="text-align: right; font-size: 12px; line-height: 1.35; color: #3d4f45">
+    <div style="font-weight: 700; color: #10231a">Energy Orchestration Centre · Implementation manual</div>
+    <div>{{ section }}</div>
+  </div>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"section":{"editor":"text","default":"Section"},"$preview":{"width":666,"height":56}}'>
+class Component extends DCLogic {
+  renderVals() { return { section: this.props.section ?? 'Section' }; }
+}
+</script>
+</body>
+</html>

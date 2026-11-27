@@ -1,0 +1,20 @@
+# Modelled building for the 3D street view. Floor uses are typical for a 200-bed Indian multispeciality hospital
+# and MUST be confirmed on the site survey; geometry is schematic, not an as-built drawing.
+# Coordinates in metres: x along the front (east-west), y up, z depth (south = 0 at the street front).
+building:
+  name: Globe Medicare main block
+  footprint: {width_x: 64, depth_z: 26}
+  floor_height_m: 4.2
+  facade: {front: blue glass curtain wall with mullions, canopy: grey louvred canopy "Globe Healthcare" with pink flower mark, corner_tower: grey, sides: grey cladding with windows, boundary: stone wall}
+  source: globehealthcare.org photos (facade); floor uses modelled
+floors:
+  - {id: HT, level: 0, name: HT yard and metering room (outside, west side), uses: [11 kV incomer, MVVNL main meter UPP72963, HT panel, 2 x transformers]}
+  - {id: B1, level: -1, name: Basement plant level, uses: [LT main panel and feeder panels, chiller plant, chilled and condenser water pumps, UPS room, DG set room, medical gas plant, STP, RO plant, water tanks, laundry]}
+  - {id: G, level: 0, name: Ground floor, uses: [emergency and trauma, OPD reception and consulting, imaging (MRI 1.5 T, CT 128 slice, digital X-ray), pharmacy, cafeteria and kitchen, admin offices]}
+  - {id: F1, level: 1, name: First floor, uses: [OT complex (OT 1 to 4), recovery, CSSD]}
+  - {id: F2, level: 2, name: Second floor, uses: [ICU (16 beds), NICU (8 beds), cath lab, isolation rooms]}
+  - {id: F3, level: 3, name: Third floor, uses: [general and private wards]}
+  - {id: F4, level: 4, name: Fourth floor, uses: [general and private wards, oncology day care]}
+  - {id: F5, level: 5, name: Fifth floor, uses: [wards, administration, conference]}
+  - {id: R, level: 6, name: Roof, uses: [285 kWp rooftop solar, 3 string inverters, 2 heat pumps, 2 x 6,000 L hot-water tanks, cooling towers, AHU rooms, lift machine room]}
+  - {id: P, level: 0, name: Parking and forecourt, uses: [2 EV chargers, entrance, ambulance bay]}

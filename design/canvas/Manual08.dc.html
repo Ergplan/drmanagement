@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manual · 5 Clinical safety framework</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/manual.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="m-page">
+  <dc-import name="ManualHeader" section="5 · Clinical safety framework" hint-size="666px,56px"></dc-import>
+  <div class="m-body" style="gap: 14px">
+    <div class="m-title-row"><span class="m-num m-num-red">5</span><h1 class="m-h1">Clinical safety framework</h1></div>
+    <p class="m-lede">Patient care comes before every saving. Each load sits in one of four classes, and the class decides what ergOS may do.</p>
+
+    <div class="m-grid2" style="gap: 10px">
+      <sc-for list="{{ classes }}" as="c" hint-placeholder-count="4">
+        <div class="m-card" style="padding: 12px 14px; gap: 6px; background: {{ c.bg }}">
+          <div style="display: flex; align-items: center; gap: 10px"><span style="width: 40px; height: 40px; border-radius: 14px; display: grid; place-items: center; background: rgba(255,255,255,.9); border: 1px solid #ffffff"><img src="{{ c.icon }}" alt="" style="width: 24px; height: 24px"></span><div><span class="m-tag" style="background: {{ c.tbg }}; color: {{ c.tfg }}">{{ c.name }}</span><div style="font-size: 13.5px; font-weight: 700; margin-top: 2px">{{ c.rule }}</div></div></div>
+          <div style="font-size: 12.5px; line-height: 1.45; color: #1f3329">{{ c.ex }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div class="m-grid2" style="gap: 10px; align-items: start">
+      <div class="m-card" style="gap: 4px; padding: 12px 14px">
+        <div class="m-h2" style="font-size: 15px">Abort an event when</div>
+        <sc-for list="{{ aborts }}" as="a" hint-placeholder-count="7">
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; font-size: 12.5px; line-height: 1.4; padding: 3px 0"><span class="m-num m-num-s m-num-red" style="width: 20px; height: 20px; border-radius: 7px; font-size: 10.5px">{{ a.n }}</span><span>{{ a.t }}</span></div>
+        </sc-for>
+      </div>
+      <div class="m-card" style="gap: 4px; padding: 12px 14px">
+        <div class="m-h2" style="font-size: 15px">Then restore in this order</div>
+        <sc-for list="{{ restore }}" as="r" hint-placeholder-count="5">
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; font-size: 12.5px; line-height: 1.4; padding: 3px 0"><span class="m-num m-num-s" style="width: 20px; height: 20px; border-radius: 7px; font-size: 10.5px">{{ r.n }}</span><span>{{ r.t }}</span></div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div class="m-call m-call-safety"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#8a1f12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5 4.5 5.5v6c0 4.7 3.2 8.4 7.5 10 4.3-1.6 7.5-5.3 7.5-10v-6z"></path><path d="M12 8v5M12 16.2v.3"></path></svg></span><span><b>Safety · clauses 3.1 and 3.2</b><span class="t">Critical medical equipment, ICU and OT loads, life-safety systems, emergency lighting, fire protection and essential backup are excluded from automated curtailment. A heat pump serving a medical or hygiene need is excluded unless the Hospital confirms service continues. Anyone may stop an event with the BMS or a switch; ergOS restores and never re-applies.</span></span></div>
+    <div class="m-call m-call-owner"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#6b4a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></span><span><b>Owner · medical superintendent</b><span class="t">Signs the exclusion list before any control starts, and reviews it every six months or whenever a clinical area changes use.</span></span></div>
+  </div>
+  <dc-import name="ManualFooter" page="{{ pg }}" hint-size="666px,62px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const B = (id) => '/_blob/' + id;
+    const C = [
+      ['Critical', 'Never touched. Wired out of control.', 'ICU, OT, ventilators, MRI, CT, cath lab, medical gas, blood bank, fire, UPS. ergOS measures them only.', B('227b6efec071dd52deff99cd4fd74e2b'), 'linear-gradient(155deg, rgba(255,255,255,.94), rgba(252,228,220,.75))', '#f6dcd4', '#8a1f12'],
+      ['Protected', 'Watched, never changed.', 'Clinical air in OT, ICU and isolation rooms: pressure, temperature, humidity and air changes.', B('41ad9df50aad51ddb5260f3634e00223'), 'linear-gradient(155deg, rgba(255,255,255,.94), rgba(236,228,250,.75))', '#e8def7', '#44297a'],
+      ['Conditional', 'Trimmed inside limits, briefly.', 'Chillers and AHUs for wards, OPD, offices and corridors. Wards stay at or below 26 °C.', B('98e8ce933e4664857c0bd519ca437825'), 'linear-gradient(155deg, rgba(255,255,255,.94), rgba(250,238,200,.7))', '#f7e9c6', '#6b4a00'],
+      ['Flexible', 'Paused or moved, no patient effect.', 'Heat pumps, laundry, kitchen cycles, pumping, EV charging, admin lighting and plugs.', B('81f03651412ac6be7c6e6512ac4fe2e8'), 'linear-gradient(155deg, rgba(255,255,255,.94), rgba(214,240,220,.75))', '#d6f0dc', '#1b5a33']
+    ];
+    const ab = ['Any interlock trips: OT or isolation pressure, ICU temperature, humidity', 'Hot water at an outlet falls below 60 °C', 'Telemetry older than 60 seconds', 'Mass-casualty or disaster alert', 'Fire alarm, or DG running on an outage', 'Outdoor temperature above 44 °C', 'Medical superintendent hold, for any reason'];
+    const rs = ['Clinical-adjacent HVAC back to set points at once', 'AHU fans to normal over 5 minutes', 'Pumps, then laundry and kitchen, 10 minutes apart', 'EV charging and admin lighting last', 'Demand ceiling stays armed throughout'];
+    return { pg: 7,
+      classes: C.map(([name, rule, ex, icon, bg, tbg, tfg]) => ({ name, rule, ex, icon, bg, tbg, tfg })),
+      aborts: ab.map((t, i) => ({ n: i + 1, t })), restore: rs.map((t, i) => ({ n: i + 1, t })) };
+  }
+}
+</script>
+</body>
+</html>

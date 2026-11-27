@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Orchestration Centre · Tariffs and cost</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+<script src="lib/strata-charts.min.js"></script>
+<script src="lib/eoc.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1b5a33}a:hover{color:#0e3d22}
+</style>
+</helmet>
+<div class="eoc eoc-stage">
+<div class="eoc-side"><dc-import name="Sidebar" active="tariff" hint-size="100%,1340px"></dc-import></div>
+<main class="eoc-main">
+  <dc-import name="Topbar" heading="Tariffs &amp; cost" hint-size="100%,96px"></dc-import>
+
+  <section class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr))">
+    <div class="glass kpi"><div class="lbl">Energy</div><div class="num-l">₹8.32</div><div class="note">per kVAh · flat, no time of day</div></div>
+    <div class="glass kpi"><div class="lbl">Demand</div><div class="num-l">₹430</div><div class="note">per kVA a month · floor 450 kVA</div></div>
+    <div class="glass kpi"><div class="lbl">Fuel adjustment, Nov</div><div class="num-l">−9.17<span class="unit">%</span></div><div class="note">On energy and demand</div></div>
+    <div class="glass kpi"><div class="lbl">All-in, Nov bill</div><div class="num-l">₹9.16</div><div class="note">per kVAh with 7.5% duty</div></div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">Bills on file</span><span class="note">MVVNL · account 9567-481-000 · HV-1 MV commercial · 11 kV</span></div>
+    <div class="scroll">
+      <table class="tbl" style="min-width: 980px">
+        <thead><tr><th>Bill</th><th>Period</th><th class="r">kVAh</th><th class="r">kVAh a day</th><th class="r">Billed kVA</th><th class="r">PF</th><th class="r">Energy</th><th class="r">Demand</th><th class="r">Fuel adj.</th><th class="r">Duty</th><th class="r">Bill</th></tr></thead>
+        <tbody>
+          <tr><td class="ttl-s" style="font-size: 14px">Sep 2026</td><td>1 May to 30 Sep</td><td class="r">9,49,613</td><td class="r">6,207</td><td class="r">585 × 4</td><td class="r">0.94</td><td class="r">₹79.01 L</td><td class="r">₹10.06 L</td><td class="r">−₹2.39 L</td><td class="r">₹6.50 L</td><td class="r">₹33.81 L<div class="note">after ₹59.37 L credit</div></td></tr>
+          <tr style="background: rgba(255,226,218,.5)"><td class="ttl-s" style="font-size: 14px">Oct 2026</td><td>30 Sep to 13 Oct</td><td class="r">2,43,750</td><td class="r" style="color: #8a1f12; font-weight: 700">18,750</td><td class="r">540</td><td class="r">0.93</td><td class="r">₹20.28 L</td><td class="r">₹2.32 L</td><td class="r">−₹1.18 L</td><td class="r">₹1.61 L</td><td class="r">₹23.10 L</td></tr>
+          <tr><td class="ttl-s" style="font-size: 14px">Nov 2026</td><td>13 Oct to 16 Nov</td><td class="r">2,24,970</td><td class="r">6,617</td><td class="r">555</td><td class="r">0.94</td><td class="r">₹18.72 L</td><td class="r">₹2.39 L</td><td class="r">−₹1.94 L</td><td class="r">₹1.44 L</td><td class="r">₹20.61 L</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="grid-2" style="align-items: stretch">
+    <div class="glass glass-alert pad-l stack" style="gap: 12px; border-radius: 36px">
+      <div class="between"><span class="ttl">October bill looks wrong</span><span class="pill pill-bad">Raise with MVVNL</span></div>
+      <div class="num-xl">₹13.1<span class="unit">lakh</span></div>
+      <div style="font-size: 14px; line-height: 1.5; color: #4a2a1f">The October bill charges 18,750 kVAh a day for 13 days, nearly three times the 6,200 to 6,600 the hospital uses on every other bill. It would mean an average of 781 kVA on a 600 kVA connection that recorded only 540. About 1.58 lakh kVAh look over-billed, worth ₹13.1 lakh in energy charge before duty.</div>
+      <div class="kv">
+        <div><div>Also check</div>4,01,910 kVAh logged on new meter UPP72963 in its first day, 29 to 30 Sep</div>
+        <div><div>And</div>1,260 kVA maximum on interim meter SI40022822</div>
+      </div>
+    </div>
+    <div class="glass glass-mint pad-l stack" style="gap: 12px; border-radius: 36px">
+      <div class="between"><span class="ttl">Power factor is costing money</span><span class="pill pill-ok">No load touched</span></div>
+      <div class="num-xl">₹92,000<span class="unit">a month</span></div>
+      <div style="font-size: 14px; line-height: 1.5; color: #1f3b2b">MVVNL bills kVAh, not kWh. In November the meter read 2,13,000 kWh but billed 2,24,970 kVAh, at the PF of 0.94 on the bill. Tuning the capacitor bank to 0.99 would bill about 9,800 fewer kVAh and 24 fewer kVA of demand.</div>
+      <div class="kv">
+        <div><div>Energy saved</div>₹81,700 a month</div>
+        <div><div>Demand saved</div>₹10,300 a month</div>
+        <div><div>A year</div>About ₹11 lakh</div>
+        <div><div>Needs</div>APFC retune and harmonic check</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid-2" style="align-items: stretch">
+    <div class="glass pad-l stack" style="border-radius: 36px">
+      <div class="between"><span class="ttl">Billed demand, last 12 bills</span><span class="note">kVA</span></div>
+      <div class="chart-host" ref="{{ refs.chart }}" style="min-height: 320px"></div>
+      <div class="note">Every month from April to November sat above the 450 kVA floor. Jun to Sep was 15 kVA under the sanction.</div>
+    </div>
+    <div class="glass pad-l stack" style="gap: 12px">
+      <div class="ttl">How the HV-1 bill is built</div>
+      <div class="stack" style="gap: 2px">
+        <div class="between" style="padding: 10px 0; border-bottom: 1px solid rgba(16,35,26,.08); font-size: 14px"><span>Billable demand</span><span style="text-align: right">Recorded maximum, or 75% of sanction</span></div>
+        <div class="between" style="padding: 10px 0; border-bottom: 1px solid rgba(16,35,26,.08); font-size: 14px"><span>Over 600 kVA</span><span style="text-align: right">Excess charged again at 100%</span></div>
+        <div class="between" style="padding: 10px 0; border-bottom: 1px solid rgba(16,35,26,.08); font-size: 14px"><span>Three months over</span><span style="text-align: right">Excess merged into the sanction</span></div>
+        <div class="between" style="padding: 10px 0; border-bottom: 1px solid rgba(16,35,26,.08); font-size: 14px"><span>Energy</span><span style="text-align: right">kVAh, so PF changes the units</span></div>
+        <div class="between" style="padding: 10px 0; border-bottom: 1px solid rgba(16,35,26,.08); font-size: 14px"><span>Fuel adjustment</span><span style="text-align: right">Monthly %, −5 to −9% this year</span></div>
+        <div class="between" style="padding: 10px 0; font-size: 14px"><span>Electricity duty</span><span style="text-align: right">7.5% after fuel adjustment</span></div>
+      </div>
+      <div class="kv">
+        <div><div>Demand charge, 12 months</div>₹26.8 lakh</div>
+        <div><div>Due-date rebate</div>1% of rates if paid on time</div>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this._els = {};
+    const r = (k) => (el) => { this._els[k] = el; };
+    this._refs = { chart: r('chart') };
+  }
+  componentDidMount() { this._mount(); }
+  componentDidUpdate() { this._mount(); }
+  componentWillUnmount() { if (this._board) { try { this._board.destroy(); } catch (e) {} } }
+  _mount() {
+    const el = this._els.chart;
+    if (!el || this._host === el) return;
+    this._host = el;
+    if (!window.EOC) { el.textContent = 'The chart library did not load.'; return; }
+    const p = window.EOC.mount('md', this._els);
+    if (p) p.then((b) => { this._board = b; });
+  }
+  renderVals() { return { refs: this._refs }; }
+}
+</script>
+</body>
+</html>

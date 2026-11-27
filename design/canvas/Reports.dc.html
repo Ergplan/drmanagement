@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Orchestration Centre · Reports and M&amp;V</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1b5a33}a:hover{color:#0e3d22}
+</style>
+</helmet>
+<div class="eoc eoc-stage">
+<div class="eoc-side"><dc-import name="Sidebar" active="reports" hint-size="100%,1340px"></dc-import></div>
+<main class="eoc-main">
+  <dc-import name="Topbar" heading="Reports &amp; M&amp;V" hint-size="100%,96px"></dc-import>
+
+  <section class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr))">
+    <div class="glass kpi"><div class="lbl">Site energy, 12 months</div><div class="num-l">2.49<span class="unit">GWh</span></div><div class="note">Grid 2.09 · solar 0.40</div></div>
+    <div class="glass kpi"><div class="lbl">Per occupied bed-day</div><div class="num-l">41.6<span class="unit">kWh</span></div><div class="note">At 82% occupancy</div></div>
+    <div class="glass kpi"><div class="lbl">Per bed a year</div><div class="num-l">12,450<span class="unit">kWh</span></div><div class="note">Benchmark 10,000 to 20,000</div></div>
+    <div class="glass kpi"><div class="lbl">Per m² a year</div><div class="num-l">[AREA]</div><div class="note">Needs built-up area</div></div>
+  </section>
+
+  <section class="grid-2" style="align-items: stretch">
+    <div class="glass glass-lilac pad-l stack" style="gap: 12px; border-radius: 36px">
+      <div class="ttl">Value found so far</div>
+      <div class="scroll">
+        <table class="tbl" style="min-width: 460px">
+          <thead><tr><th>Item</th><th>Status</th><th class="r">Worth</th></tr></thead>
+          <tbody>
+            <tr><td>October bill, over-billed energy</td><td><span class="tag tag-cond">To dispute</span></td><td class="r num-s">₹13.1 L once</td></tr>
+            <tr><td>Power factor 0.94 to 0.99</td><td><span class="tag tag-cond">To approve</span></td><td class="r num-s">₹11 L a year</td></tr>
+            <tr><td>Demand ceiling at 570 kVA</td><td><span class="tag tag-flex">Live</span></td><td class="r num-s">Protects ₹22 L a year</td></tr>
+            <tr><td>Heat pump solar soak</td><td><span class="tag tag-flex">Live</span></td><td class="r num-s">₹9,890 a month</td></tr>
+            <tr><td>Evening DR to the 450 floor</td><td><span class="tag tag-prot">Simulation</span></td><td class="r num-s">₹8,600 tonight</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note" style="color: #33273f">The ceiling's value is exposure avoided, the 1,260 kVA case on the Demand ceiling screen. Nothing here is verified savings until M&amp;V reports confirm it.</div>
+    </div>
+    <div class="glass pad-l stack" style="gap: 12px">
+      <div class="ttl">Emissions</div>
+      <div class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr))">
+        <div><div class="lbl">Grid, 12 months</div><div class="num-m">1,520 t</div><div class="note">CO₂</div></div>
+        <div><div class="lbl">Avoided by solar</div><div class="num-m">290 t</div><div class="note">CO₂ a year</div></div>
+        <div><div class="lbl">Per bed a year</div><div class="num-m">7.6 t</div><div class="note">Grid only</div></div>
+      </div>
+      <div class="note">At CEA's 0.727 t CO₂ per MWh. These figures feed esgOS for BRSR reporting.</div>
+    </div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">Measurement and verification</span><span class="note">Agreement clause 2.1 (d)</span></div>
+    <div class="grid-3" style="gap: 14px">
+      <div class="glass pad stack" style="gap: 6px; border-radius: 26px"><div class="ttl-s">Baseline</div><div class="note" style="font-size: 13.5px">15-minute, high 5 of the last 10 like days, adjusted for temperature, occupancy and OT load in the two hours before an event</div></div>
+      <div class="glass pad stack" style="gap: 6px; border-radius: 26px"><div class="ttl-s">Event result</div><div class="note" style="font-size: 13.5px">Verified kW reduction, kWh shifted, rebound after the event and heat pump use, block by block</div></div>
+      <div class="glass pad stack" style="gap: 6px; border-radius: 26px"><div class="ttl-s">Normalised use</div><div class="note" style="font-size: 13.5px">kWh per occupied bed-day and per m², with weather and occupancy adjustments month by month</div></div>
+    </div>
+    <div class="row" style="gap: 10px">
+      <span class="lbl">Demonstration events</span>
+      <span class="pill" style="background: #10231a; color: #ffffff">1 · tonight</span><span class="pill">2</span><span class="pill">3</span><span class="pill">4</span><span class="pill">5</span>
+    </div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="ttl">Reports</div>
+    <div class="scroll">
+      <table class="tbl" style="min-width: 680px">
+        <thead><tr><th>Report</th><th>Covers</th><th>Ready</th><th class="r"></th></tr></thead>
+        <tbody>
+          <tr><td class="ttl-s" style="font-size: 14px">Bill audit note for MVVNL</td><td>Oct bill, meter change, 1,260 kVA reading</td><td>Now</td><td class="r"><a class="btn btn-glass" href="Tariff.dc.html" style="min-height: 40px">Open</a></td></tr>
+          <tr><td class="ttl-s" style="font-size: 14px">Event report 1</td><td>Tonight, 17:30 to 20:00</td><td>28 Nov, 09:00</td><td class="r"><span class="note">After the event</span></td></tr>
+          <tr><td class="ttl-s" style="font-size: 14px">November performance</td><td>Demand, solar soak, PF, cost</td><td>1 Dec</td><td class="r"><span class="note">Scheduled</span></td></tr>
+          <tr><td class="ttl-s" style="font-size: 14px">Quarterly M&amp;V</td><td>Verified kW and kWh, settlement-ready</td><td>5 Jan 2027</td><td class="r"><span class="note">Scheduled</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1760}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

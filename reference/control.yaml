@@ -1,0 +1,34 @@
+# Control rules. Loaded by backend/eoc/control; changing a value here needs a DECISIONS.md entry.
+ceiling:
+  sanction_kva: 600
+  ceiling_kva: 570                        # never exceeded in any 15-min interval
+  reserve_kva: 30                         # unplanned CT, cath lab or chiller start
+  projection: every 60 s, project the current 15-min block average from elapsed energy + current kVA
+  stages:
+    - {stage: 1, trigger_projected_kva: 520, shed: [heatpump, laundry, pump, ev], expect_kw: 90, response: 2 min, restore: stagger 10 min apart}
+    - {stage: 2, trigger_projected_kva: 545, shed: [chiller, ahu], actions: ["general-zone chilled water +1.5 C", "AHU fans to 70% / minimum fresh air"], expect_kw: 75, response: 8 min, restore: ramp back over 20 min}
+    - {stage: 3, trigger_projected_kva: 565, actions: ["lock out second general-zone chiller start", "page duty engineer"], expect_kw: 25, response: immediate, restore: engineer releases}
+  restore_when_projected_below_kva: 520
+  restore_step_minutes: 10
+interlocks:                               # any trip => abort events, restore all loads, block new commands
+  - {id: ot-pressure, name: OT 1 to 4 pressure, limit: ">= +15 Pa", sample: "+16 to +19 Pa"}
+  - {id: icu-temp, name: ICU and NICU temperature, limit: "21 to 23 C", sample: "22.1 C"}
+  - {id: isolation-pressure, name: Isolation rooms, limit: "<= -10 Pa", sample: "-12 Pa"}
+  - {id: clinical-rh, name: Clinical humidity, limit: "45 to 60 % RH", sample: "54 %"}
+  - {id: hot-water, name: Hot water outlet, limit: ">= 60 C", sample: "64 C"}
+  - {id: med-gas, name: Medical gas and vacuum, limit: within line pressure, sample: Normal}
+  - {id: bms-fresh, name: BMS telemetry, limit: "age < 60 s", sample: "12 s"}
+  - {id: meter-fresh, name: Main meter feed, limit: "age < 15 s", sample: "4 s"}
+  - {id: engineer-armed, name: Duty engineer override, limit: armed and reachable, sample: Armed}
+dr_event:
+  approval_chain: [ergos_proposes, facility_manager_approves, medical_superintendent_signs_if_hvac, duty_engineer_arms_by_1700]
+  lapse_if_not_armed_by: "17:00"
+  phases: [precondition, event, restore, recovery]
+  default_window: {start: "17:30", end: "20:00", target_kw: 60}
+  abort: any interlock trip or duty engineer abort -> restore all, one load every 10 min
+heat_pumps:
+  solar_soak: {start: "10:00", end: "15:00", power_pct: 100}
+  locked_off: {start: "17:30", end: "22:00"}
+  standby_top_up_below_soc_pct: 60
+  weekly_disinfection: {temp_c: 70, inside_solar_window: true}
+excluded_classes: [protected, critical]   # hard rule: no command, ever

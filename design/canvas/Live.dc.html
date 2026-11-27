@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Orchestration Centre · Live energy</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+<script src="lib/strata-charts.min.js"></script>
+<script src="lib/eoc.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1b5a33}a:hover{color:#0e3d22}
+</style>
+</helmet>
+<div class="eoc eoc-stage">
+<div class="eoc-side"><dc-import name="Sidebar" active="live" hint-size="100%,1340px"></dc-import></div>
+<main class="eoc-main">
+  <dc-import name="Topbar" heading="Live energy" hint-size="100%,96px"></dc-import>
+
+  <section class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr))">
+    <div class="glass kpi"><div class="lbl">Active power</div><div class="num-l">249<span class="unit">kW</span></div><div class="note">Grid import</div></div>
+    <div class="glass kpi"><div class="lbl">Apparent power</div><div class="num-l">265<span class="unit">kVA</span></div><div class="note">Billed basis</div></div>
+    <div class="glass kpi"><div class="lbl">Power factor</div><div class="num-l">0.94</div><div class="note">Bills: 0.93 to 0.94</div></div>
+    <div class="glass kpi"><div class="lbl">Reactive</div><div class="num-l">90<span class="unit">kVAr</span></div><div class="note">APFC 4 of 6 steps</div></div>
+    <div class="glass kpi"><div class="lbl">Supply</div><div class="num-l">11.1<span class="unit">kV</span></div><div class="note">50.01 Hz · THD 4.1%</div></div>
+    <div class="glass kpi"><div class="lbl">Solar</div><div class="num-l">121<span class="unit">kW</span></div><div class="note">Export 0 kW</div></div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">Supply by source</span><span class="note">Hover a block for kWh, cost and RE share · Day or week</span></div>
+    <div class="chart-host" ref="{{ refs.chart }}" style="min-height: 460px"></div>
+    <div class="grid-3" style="gap: 14px">
+      <div class="chart-host" ref="{{ refs.c1 }}" style="min-height: 150px"></div>
+      <div class="chart-host" ref="{{ refs.c2 }}" style="min-height: 150px"></div>
+      <div class="chart-host" ref="{{ refs.c3 }}" style="min-height: 150px"></div>
+    </div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">Where the energy goes</span><span class="note">Today 7,314 kWh · grid 6,235 + solar 1,079 (to midnight)</span></div>
+    <div class="scroll">
+      <table class="tbl" style="min-width: 760px">
+        <thead><tr><th>End use</th><th class="r">Today</th><th style="width: 30%">Share today</th><th class="r">Share in June</th><th>DR class</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ uses }}" as="u" hint-placeholder-count="8">
+            <tr>
+              <td><div class="ttl-s" style="font-size: 14px">{{ u.name }}</div><div class="note">{{ u.note }}</div></td>
+              <td class="r num-s" style="font-size: 15px">{{ u.kwh }}</td>
+              <td><div class="row" style="gap: 10px; flex-wrap: nowrap"><div class="track" style="flex: 1"><div class="fill" style="width: {{ u.w }}; background: {{ u.color }}"></div></div><span style="width: 38px; text-align: right">{{ u.share }}</span></div></td>
+              <td class="r">{{ u.june }}</td>
+              <td><span class="tag {{ u.tag }}">{{ u.cls }}</span></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">Split modelled from Indian multi-specialty hospital benchmarks (BEE, CAHO, NCDC survey) and scaled to the MVVNL bills. Sub-metering in phase 1 replaces it with measured values.</div>
+  </section>
+
+  <section class="glass pad-l stack" style="border-radius: 36px">
+    <div class="between"><span class="ttl">Feeders now</span><span class="note">LT panel meters · 1-minute values</span></div>
+    <div class="scroll">
+      <table class="tbl" style="min-width: 680px">
+        <thead><tr><th>Feeder</th><th class="r">kW</th><th class="r">PF</th><th class="r">Today kWh</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Panel A · chiller plant, cooling towers, CHW pumps</td><td class="r">96</td><td class="r">0.92</td><td class="r">1,682</td><td><span class="tag tag-cond">Conditional</span></td></tr>
+          <tr><td>Panel B · AHUs, FCUs, ventilation</td><td class="r">31</td><td class="r">0.90</td><td class="r">805</td><td><span class="tag tag-cond">Part locked</span></td></tr>
+          <tr><td>Panel C · imaging: MRI, CT, cath lab, X-ray</td><td class="r">58</td><td class="r">0.93</td><td class="r">1,243</td><td><span class="tag tag-crit">Excluded</span></td></tr>
+          <tr><td>Essential bus · ICU, OT, UPS, medical gas</td><td class="r">44</td><td class="r">0.96</td><td class="r">805</td><td><span class="tag tag-crit">Excluded</span></td></tr>
+          <tr><td>Panel D · wards and lighting</td><td class="r">62</td><td class="r">0.95</td><td class="r">1,024</td><td><span class="tag tag-flex">Admin only</span></td></tr>
+          <tr><td>Panel E · kitchen, laundry, CSSD</td><td class="r">29</td><td class="r">0.91</td><td class="r">658</td><td><span class="tag tag-flex">Flexible</span></td></tr>
+          <tr><td>Heat pump DB · 2 × 15 kW</td><td class="r">30</td><td class="r">0.97</td><td class="r">135</td><td><span class="tag tag-flex">Solar soak</span></td></tr>
+          <tr><td>Utilities · pumps, STP, RO, lifts, EV</td><td class="r">20</td><td class="r">0.89</td><td class="r">512</td><td><span class="tag tag-flex">Flexible</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2520}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this._els = {};
+    const r = (k) => (el) => { this._els[k] = el; };
+    this._refs = { chart: r('chart'), c1: r('c1'), c2: r('c2'), c3: r('c3') };
+  }
+  componentDidMount() { this._mount(); }
+  componentDidUpdate() { this._mount(); }
+  componentWillUnmount() { if (this._board) { try { this._board.destroy(); } catch (e) {} } }
+  _mount() {
+    const el = this._els.chart;
+    if (!el || this._host === el) return;
+    this._host = el;
+    if (!window.EOC) { el.textContent = 'The chart library did not load.'; return; }
+    const p = window.EOC.mount('day', this._els, { views: ['day', 'week'], height: 320, title: 'Supply by source · 26 and 27 Nov' });
+    if (p) p.then((b) => { this._board = b; });
+  }
+  renderVals() {
+    const T = 7314;
+    const rows = [
+      ['HVAC', 'Chillers, cooling towers, AHUs, pumps', 34, 55, 'Conditional', 'tag-cond', '#2a78d6'],
+      ['Imaging and medical equipment', 'MRI, CT, cath lab, X-ray, lab', 17, 11, 'Excluded', 'tag-crit', '#6a4fb3'],
+      ['Lighting', 'Wards, OPD, corridors, outdoor', 14, 9, 'Admin areas', 'tag-flex', '#eda100'],
+      ['Critical care and OT power', 'ICU, OT, ventilators, monitors, UPS', 11, 8, 'Excluded', 'tag-crit', '#b3261e'],
+      ['Kitchen, laundry, CSSD', 'Cooking, washers, dryers, autoclaves', 9, 6, 'Flexible', 'tag-flex', '#1f9a50'],
+      ['Pumping, STP, RO, lifts', 'Water, sewage treatment, vertical transport', 7, 5, 'Flexible', 'tag-flex', '#5aa9a0'],
+      ['IT, admin plug loads, EV', 'Servers, desks, EV chargers', 6, 4, 'Flexible', 'tag-flex', '#8fa79a'],
+      ['Hot water, heat pumps', 'Solar soak, 10:00 to 15:00', 2, 2, 'Flexible', 'tag-flex', '#e2632a']
+    ];
+    return {
+      refs: this._refs,
+      uses: rows.map(([name, note, s, j, cls, tag, color]) => ({ name, note, share: s + '%', w: Math.round(s / 34 * 100) + '%', june: j + '%', kwh: Math.round(T * s / 100).toLocaleString('en-IN') + ' kWh', cls, tag, color }))
+    };
+  }
+}
+</script>
+</body>
+</html>

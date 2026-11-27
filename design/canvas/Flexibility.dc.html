@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Orchestration Centre · Flexibility registry</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/eoc.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1b5a33}a:hover{color:#0e3d22}
+.asset-card:focus-visible{outline:2px solid #10231a;outline-offset:3px}
+</style>
+</helmet>
+<div class="eoc eoc-stage">
+<div class="eoc-side"><dc-import name="Sidebar" active="flex" hint-size="100%,1400px"></dc-import></div>
+<main class="eoc-main">
+  <dc-import name="Topbar" heading="Flexibility registry" hint-size="100%,96px"></dc-import>
+
+  <section class="glass glass-lime pad-l" style="border-radius: 36px; display: flex; flex-direction: column; gap: 16px">
+    <div class="between" style="align-items: center">
+      <div class="stack" style="gap: 4px">
+        <div class="lbl" style="font-weight: 600; letter-spacing: .04em">IN ONE LINE</div>
+        <div style="font-size: 24px; font-weight: 400; letter-spacing: -.02em; line-height: 1.3; max-width: 760px">{{ headline }}</div>
+      </div>
+      <div role="group" aria-label="When" class="row" style="gap: 8px">
+        <sc-for list="{{ seasons }}" as="s" hint-placeholder-count="2">
+          <button type="button" class="seg" aria-pressed="{{ s.on }}" onClick="{{ s.pick }}">{{ s.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div role="img" aria-label="{{ barLabel }}" style="display: flex; height: 54px; border-radius: 18px; overflow: hidden; border: 1px solid #ffffff; background: rgba(255,255,255,.5)">
+      <sc-for list="{{ segs }}" as="g" hint-placeholder-count="6">
+        <div style="width: {{ g.w }}; background: {{ g.color }}; display: flex; align-items: center; gap: 6px; padding: 0 10px; overflow: hidden; border-right: 2px solid rgba(255,255,255,.8)">
+          <img src="{{ g.icon }}" alt="" style="width: 20px; height: 20px; flex: none; filter: brightness(0) invert(1)">
+          <span style="font-size: 13px; font-weight: 700; color: #ffffff; white-space: nowrap">{{ g.kw }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); gap: 12px">
+      <div><div class="lbl">Can be held back</div><div class="num-l">{{ total }}<span class="unit">kW</span></div></div>
+      <div><div class="lbl">Assets used</div><div class="num-l">{{ used }}<span class="unit">of 6</span></div></div>
+      <div><div class="lbl">Patient areas touched</div><div class="num-l">0</div></div>
+      <div><div class="lbl">Programme target</div><div class="num-l">600<span class="unit">kW</span></div></div>
+    </div>
+  </section>
+
+  <section aria-label="How to read the registry" class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px">
+    <div class="glass" style="border-radius: 24px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start"><span class="tag tag-flex">Flexible</span><span class="note" style="font-size: 13px; color: #1f3b2b">Can pause or move. Comes back with no effect on patients.</span></div>
+    <div class="glass" style="border-radius: 24px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start"><span class="tag tag-cond">Conditional</span><span class="note" style="font-size: 13px; color: #3b2e10">Can trim inside set limits, for a short time.</span></div>
+    <div class="glass" style="border-radius: 24px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start"><span class="tag tag-prot">Protected</span><span class="note" style="font-size: 13px; color: #2e2140">Clinical air. ergOS watches it and never changes it.</span></div>
+    <div class="glass" style="border-radius: 24px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start"><span class="tag tag-crit">Critical</span><span class="note" style="font-size: 13px; color: #40180f">Life-critical. Wired out of every control.</span></div>
+  </section>
+
+  <section style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+    <div style="flex: 1 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+      <div class="between" style="padding: 0 6px"><span class="ttl">Assets</span><span class="note">Select one to see inside it</span></div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 12px">
+        <sc-for list="{{ assets }}" as="a" hint-placeholder-count="10">
+          <button type="button" class="asset-card" onClick="{{ a.pick }}" aria-pressed="{{ a.on }}" style="font: inherit; color: #10231a; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 10px; padding: 16px 16px 14px; border-radius: 26px; background: {{ a.bg }}; border: {{ a.border }}; box-shadow: {{ a.shadow }}; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px)">
+            <div style="display: flex; align-items: center; gap: 12px; width: 100%">
+              <span style="width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center; background: {{ a.tint }}; border: 1px solid #ffffff; flex: none"><img src="{{ a.icon }}" alt="" style="width: 28px; height: 28px"></span>
+              <div style="flex: 1; min-width: 0"><div style="font-size: 14.5px; font-weight: 700; line-height: 1.25">{{ a.name }}</div><span class="tag {{ a.tag }}" style="margin-top: 4px">{{ a.cls }}</span></div>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 28px; font-weight: 300; letter-spacing: -.03em">{{ a.now }}</span><span style="font-size: 13px; color: #4f5e56">{{ a.of }}</span></div>
+            <div class="track" style="width: 100%"><div class="fill" style="width: {{ a.pct }}; background: {{ a.color }}"></div></div>
+            <div style="font-size: 13px; line-height: 1.4; color: #33443b">{{ a.short }}</div>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+
+    <aside aria-label="Asset detail" class="glass pad-l" style="flex: 1 1 460px; min-width: 0; border-radius: 36px; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 14px">
+        <span style="width: 64px; height: 64px; border-radius: 20px; display: grid; place-items: center; background: {{ sel.tint }}; border: 1px solid #ffffff; flex: none"><img src="{{ sel.icon }}" alt="" style="width: 38px; height: 38px"></span>
+        <div style="min-width: 0"><div class="lbl" style="font-weight: 600; letter-spacing: .04em">DRILL-DOWN</div><div style="font-size: 22px; font-weight: 600; letter-spacing: -.01em; line-height: 1.2">{{ sel.name }}</div><span class="tag {{ sel.tag }}" style="margin-top: 6px">{{ sel.cls }}</span></div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 10px">
+        <div style="border-radius: 20px; padding: 12px 14px; background: rgba(214,240,220,.75); border: 1px solid #ffffff"><div style="font-size: 12px; font-weight: 700; color: #1b5a33; letter-spacing: .04em">WHAT ERGOS DOES</div><div style="font-size: 14px; line-height: 1.45; margin-top: 4px">{{ sel.action }}</div></div>
+        <div style="border-radius: 20px; padding: 12px 14px; background: rgba(255,226,218,.75); border: 1px solid #ffffff"><div style="font-size: 12px; font-weight: 700; color: #8a1f12; letter-spacing: .04em">WHAT IT NEVER DOES</div><div style="font-size: 14px; line-height: 1.45; margin-top: 4px">{{ sel.never }}</div></div>
+      </div>
+
+      <div class="grid-k" style="grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px">
+        <div><div class="lbl">Tonight</div><div class="num-m">{{ sel.nov }}</div></div>
+        <div><div class="lbl">June evening</div><div class="num-m">{{ sel.jun }}</div></div>
+        <div><div class="lbl">Longest hold</div><div class="num-m">{{ sel.dur }}</div></div>
+        <div><div class="lbl">Responds in</div><div class="num-m">{{ sel.resp }}</div></div>
+      </div>
+
+      <div class="stack" style="gap: 8px">
+        <div class="between"><span class="ttl-s">A typical November day</span><span class="note">kW by hour · green hours can be flexed</span></div>
+        <div role="img" aria-label="{{ sel.profileLabel }}" style="display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 3px; align-items: end; height: 110px; padding: 6px 0 0; border-bottom: 1px solid rgba(16,35,26,.18)">
+          <sc-for list="{{ sel.hours }}" as="h" hint-placeholder-count="24">
+            <div style="height: {{ h.ht }}; background: {{ h.color }}; border-radius: 4px 4px 1px 1px; outline: {{ h.mark }}"></div>
+          </sc-for>
+        </div>
+        <div class="between note"><span>00</span><span>06</span><span>12</span><span>17:30 peak</span><span>24</span></div>
+      </div>
+
+      <div class="stack" style="gap: 2px">
+        <div class="ttl-s" style="margin-bottom: 4px">Limits and control</div>
+        <div style="display: grid; grid-template-columns: 22px 130px minmax(0, 1fr); gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(16,35,26,.08); font-size: 13.5px"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#10231a" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 18a8 8 0 1 1 16 0"></path><path d="M12 18l4-5"></path></svg><span class="lbl">Minimum level</span><span>{{ sel.min }}</span></div>
+        <div style="display: grid; grid-template-columns: 22px 130px minmax(0, 1fr); gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(16,35,26,.08); font-size: 13.5px"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#10231a" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"></path><path d="M18 3v4h-4M6 21v-4h4"></path></svg><span class="lbl">Rebound</span><span>{{ sel.reb }}</span></div>
+        <div style="display: grid; grid-template-columns: 22px 130px minmax(0, 1fr); gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(16,35,26,.08); font-size: 13.5px"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#10231a" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg><span class="lbl">Who approves</span><span>{{ sel.auth }}</span></div>
+        <div style="display: grid; grid-template-columns: 22px 130px minmax(0, 1fr); gap: 10px; align-items: center; padding: 8px 0; font-size: 13.5px"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#10231a" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"></rect><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"></path></svg><span class="lbl">Safety interlock</span><span>{{ sel.lock }}</span></div>
+      </div>
+
+      <div class="stack" style="gap: 6px">
+        <div class="ttl-s">Inside this asset</div>
+        <table class="tbl">
+          <thead><tr><th>Equipment</th><th>Rating</th><th class="r">Now</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ sel.subs }}" as="u" hint-placeholder-count="4">
+              <tr><td>{{ u.name }}</td><td>{{ u.spec }}</td><td class="r">{{ u.state }}</td></tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+    </aside>
+  </section>
+
+  <section class="grid-2" style="align-items: stretch">
+    <div class="glass pad-l stack" style="gap: 12px">
+      <div class="ttl">Flexibility through the year</div>
+      <div role="img" aria-label="Verified peak-time flexibility by month: about 75 kW in winter rising to 190 kW from May to September" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 8px; align-items: end; height: 170px; padding-top: 10px">
+        <sc-for list="{{ months }}" as="m" hint-placeholder-count="12">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end">
+            <span style="font-size: 11.5px; color: #4f5e56">{{ m.v }}</span>
+            <div style="width: 100%; max-width: 26px; height: {{ m.h }}; border-radius: 8px 8px 3px 3px; background: linear-gradient(180deg, #8bc63a, #1f7a3c)"></div>
+            <span style="font-size: 12px; font-weight: 600">{{ m.l }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div class="note">kW at the daily peak. Cooling is the biggest flexible load, so summer gives the most room; the heat pumps count only when the peak falls in solar hours.</div>
+    </div>
+    <div class="glass glass-lilac pad-l stack" style="gap: 12px">
+      <div class="ttl">Path to 600 kW</div>
+      <div style="font-size: 14px; line-height: 1.5; color: #33273f">The target equals the whole 600 kVA connection, so switching loads off cannot reach it alone. The verified 190 kW is about a third of the June evening peak; the rest needs new storage, each with its own approval and terms under clause 4.2.</div>
+      <div class="stack" style="gap: 10px">
+        <div class="between" style="font-size: 14px"><span>Verified today</span><span class="num-s">190 kW</span></div>
+        <div class="track" aria-hidden="true" style="height: 12px"><div class="fill" style="width: 32%; height: 12px"></div></div>
+        <div class="between" style="font-size: 14px"><span>Chilled-water storage, 600 TRh (study)</span><span class="num-s">+150 kW</span></div>
+        <div class="between" style="font-size: 14px"><span>LFP battery, 250 kW / 500 kWh (study)</span><span class="num-s">+250 kW</span></div>
+        <div class="between" style="font-size: 14px"><span>With both</span><span class="num-s">590 kW</span></div>
+      </div>
+      <div class="note" style="color: #33273f">Storage sizes are first estimates for a study, not quotes.</div>
+    </div>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sel: 'chiller', season: 'nov' };
+  }
+  renderVals() {
+    const B = (id) => '/_blob/' + id;
+    const CLS = {
+      Flexible: { tag: 'tag-flex', tint: 'rgba(214,240,220,.9)' },
+      Conditional: { tag: 'tag-cond', tint: 'rgba(247,233,198,.9)' },
+      Protected: { tag: 'tag-prot', tint: 'rgba(232,222,247,.9)' },
+      Critical: { tag: 'tag-crit', tint: 'rgba(246,220,212,.9)' }
+    };
+    const A = [
+      { id: 'chiller', name: 'Chiller plant, general zones', cls: 'Conditional', icon: B('98e8ce933e4664857c0bd519ca437825'), color: '#2a78d6', rated: 70, nov: 14, jun: 70,
+        short: 'Lets chilled water run 1.5 °C warmer for wards, OPD and offices.',
+        action: 'Raises the chilled-water set point by 1.5 °C for general zones, and in a summer emergency stops a second chiller starting.',
+        never: 'Touches OT, ICU or isolation cooling, or lets any ward go above 26 °C.',
+        min: 'Chilled water 8.5 °C at most', reb: 'About 20% extra for an hour after', auth: 'Facility manager', lock: 'Clinical zone temperature', dur: '2 h', resp: '5 min',
+        profile: [48,46,45,45,46,48,55,62,70,78,84,88,92,94,94,92,90,88,86,80,72,62,55,50], flex: [12, 21],
+        subs: [['Chiller 1, screw', '160 TR', '92 TR'], ['Chiller 2, screw', '160 TR', 'Standby'], ['Chilled-water pumps', '3 × 15 kW', '2 running'], ['Condenser pumps', '2 × 18.5 kW', '1 running'], ['Cooling tower fans', '2 × 7.5 kW', '1 running']] },
+      { id: 'ahu', name: 'AHUs and fan coils, non-clinical', cls: 'Conditional', icon: B('1fcc2362b655ab0fa10a7b8e230a5689'), color: '#5aa9e6', rated: 30, nov: 16, jun: 30,
+        short: 'Slows fans in OPD, offices and corridors to 70%.',
+        action: 'Trims fan speed to 70% in OPD, admin and corridors while keeping the minimum fresh air.',
+        never: 'Touches the 6 clinical AHUs, or lets CO₂ rise past 1,000 ppm.',
+        min: '70% fan speed, minimum fresh air', reb: 'About 10% for 30 min', auth: 'Facility manager', lock: 'CO₂ under 1,000 ppm', dur: '2 h', resp: '2 min',
+        profile: [14,14,14,14,14,16,22,28,32,34,34,34,34,34,34,34,32,30,28,24,18,16,14,14], flex: [9, 21],
+        subs: [['OPD AHUs 1 to 3', '3 × 11 kW', '82%'], ['Admin AHU', '7.5 kW', '75%'], ['Corridor AHUs', '2 × 5.5 kW', '80%'], ['Cafeteria AHU', '5.5 kW', '90%']] },
+      { id: 'heatpump', name: 'Heat pumps, hot water', cls: 'Flexible', icon: B('01454f1cc2cccb9e49f0a111b53b05b6'), color: '#e2632a', rated: 30, nov: 0, jun: 30,
+        short: 'Runs flat out on solar, 10:00 to 15:00, and is off at the peak.',
+        action: 'Runs both heat pumps at 100% in solar hours to fill the 12,000 L store, then locks them off from 17:30 to 22:00.',
+        never: 'Lets the store serve water below 60 °C, or skips the weekly 70 °C disinfection cycle.',
+        min: 'Store above 60%', reb: 'None, the store is pre-charged', auth: 'Facility manager', lock: 'Outlet 60 °C or more', dur: '5 h', resp: '1 min',
+        profile: [0,0,0,0,0,0,0,0,0,0,30,30,30,30,30,0,0,0,0,0,0,0,0,0], flex: [10, 15],
+        subs: [['Heat pump 1, air source', '15 kW · 51 kW heat', '100%'], ['Heat pump 2, air source', '15 kW · 51 kW heat', '100%'], ['Hot-water tanks', '2 × 6,000 L', '98% at 65 °C'], ['Circulation pump', '1.1 kW', 'Running']] },
+      { id: 'laundry', name: 'Laundry and kitchen', cls: 'Flexible', icon: B('81f03651412ac6be7c6e6512ac4fe2e8'), color: '#1f9a50', rated: 28, nov: 22, jun: 28,
+        short: 'Moves wash and dry cycles out of the evening peak.',
+        action: 'Holds new wash, dry and ironing cycles for the event and runs them after 21:00.',
+        never: 'Delays patient meal service or a cycle already running.',
+        min: 'Meal service protected', reb: 'Full load after the event', auth: 'Housekeeping head', lock: 'Meal times locked', dur: '2.5 h', resp: '15 min',
+        profile: [0,0,0,0,0,0,4,14,22,26,26,24,22,22,24,22,20,22,18,10,4,0,0,0], flex: [7, 21],
+        subs: [['Washer-extractors', '2 × 7.5 kW', '1 running'], ['Tumble dryers', '2 × 6 kW', 'Idle'], ['Flatwork ironer', '6 kW', 'Running'], ['Kitchen dishwasher', '4 kW', 'Idle']] },
+      { id: 'pump', name: 'Water pumping, STP and RO', cls: 'Flexible', icon: B('4fdf5bc87a1891e9e9be74be4eeb76d6'), color: '#5aa9a0', rated: 16, nov: 14, jun: 16,
+        short: 'Fills the overhead tanks before the peak, then pauses.',
+        action: 'Tops up the overhead tanks by 17:00, then pauses transfer pumps, RO and one STP blower.',
+        never: 'Lets the overhead tanks fall below 40%, or touches fire pumps.',
+        min: 'Overhead tanks above 40%', reb: 'Full load after the event', auth: 'Maintenance lead', lock: 'Tank level', dur: '4 h', resp: '1 min',
+        profile: [8,6,6,6,6,10,16,18,16,14,12,12,12,12,12,12,14,16,16,14,12,10,8,8], flex: [0, 24],
+        subs: [['Transfer pumps', '2 × 7.5 kW', '1 running'], ['STP blowers', '2 × 3.7 kW', '2 running'], ['RO plant', '3.7 kW', 'Running']] },
+      { id: 'ev', name: 'EV charging, admin lights, plugs', cls: 'Flexible', icon: B('8ee788ae8a671e325b2da6d85b47b978'), color: '#eda100', rated: 16, nov: 12, jun: 16,
+        short: 'Pauses EV chargers and dims office lighting.',
+        action: 'Pauses the two EV chargers and dims admin lighting to 60%.',
+        never: 'Dims wards, corridors or emergency lighting.',
+        min: 'Emergency lighting untouched', reb: 'None', auth: 'Admin head', lock: 'Emergency circuits separate', dur: '4 h', resp: '1 min',
+        profile: [4,4,4,4,4,4,6,10,14,16,16,16,16,16,16,16,14,12,12,10,6,4,4,4], flex: [8, 22],
+        subs: [['EV chargers', '2 × 7.4 kW', '1 charging'], ['Admin lighting', '8 kW', '100%'], ['Admin plug loads', '6 kW', 'Normal']] },
+      { id: 'clinicalhvac', name: 'Clinical air: OT, ICU, isolation', cls: 'Protected', icon: B('41ad9df50aad51ddb5260f3634e00223'), color: '#6a4fb3', rated: 0, nov: 0, jun: 0,
+        short: 'Watched for safety, never changed.',
+        action: 'Monitors pressure, temperature and humidity, and aborts any event that would move them.',
+        never: 'Changes a set point, fan speed or air-change rate in a clinical room.',
+        min: 'Full duty', reb: '–', auth: 'Medical superintendent', lock: 'Pressure, temperature, humidity', dur: '–', resp: '–',
+        profile: [30,30,30,30,30,30,30,31,32,32,32,32,32,32,32,32,32,31,31,31,30,30,30,30], flex: [0, 0],
+        subs: [['OT AHUs 1 to 4', '4 × 11 kW', '+15 Pa'], ['ICU and NICU AHUs', '2 × 7.5 kW', '22 °C'], ['Isolation exhaust', '2 × 2.2 kW', '−12 Pa']] },
+      { id: 'icu', name: 'ICU, OT, ventilators, life support', cls: 'Critical', icon: B('227b6efec071dd52deff99cd4fd74e2b'), color: '#b3261e', rated: 0, nov: 0, jun: 0,
+        short: 'Never curtailed. Wired out of every control.',
+        action: 'Measures it only, so the ceiling can plan around it.',
+        never: 'Sends any command to these circuits.',
+        min: 'Full duty', reb: '–', auth: 'Never curtailed', lock: 'Hard-wired exclusion', dur: '–', resp: '–',
+        profile: [36,36,36,36,36,36,40,46,52,54,54,54,52,52,50,48,46,44,44,42,40,38,36,36], flex: [0, 0],
+        subs: [['ICU and NICU, 24 beds', 'Essential bus', '38 kW'], ['OT 1 to 4', 'Essential bus', '46 kW'], ['UPS', '2 × 200 kVA', '46% load']] },
+      { id: 'imaging', name: 'MRI, CT, cath lab, X-ray', cls: 'Critical', icon: B('3c22f0ae076e4584d3caf475e0feb5eb'), color: '#b3261e', rated: 0, nov: 0, jun: 0,
+        short: 'Never curtailed. 30 kVA kept spare for scans.',
+        action: 'Keeps 30 kVA spare under the sanction so an unplanned scan never trips the ceiling.',
+        never: 'Delays a scan or touches magnet cooling.',
+        min: 'Full duty', reb: '–', auth: 'Never curtailed', lock: 'Magnet cooling protected', dur: '–', resp: '–',
+        profile: [14,12,12,12,12,14,22,36,52,58,60,60,58,58,56,52,46,40,34,28,22,18,16,14], flex: [0, 0],
+        subs: [['MRI 1.5 T', 'Cold head 9 kW, always on', 'Scanning'], ['CT, 128 slice', '90 kVA peak', 'Idle'], ['Cath lab', '80 kVA peak', 'Case running'], ['Digital X-ray', '50 kVA peak', 'Idle']] },
+      { id: 'medgas', name: 'Medical gas, blood bank, fire', cls: 'Critical', icon: B('9f8aac6768d509532c74325eb0783604'), color: '#b3261e', rated: 0, nov: 0, jun: 0,
+        short: 'Never curtailed. Wired out of every control.',
+        action: 'Measures it only.',
+        never: 'Sends any command to these circuits.',
+        min: 'Full duty', reb: '–', auth: 'Never curtailed', lock: 'Hard-wired exclusion', dur: '–', resp: '–',
+        profile: [22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22], flex: [0, 0],
+        subs: [['Medical vacuum and air plant', '14 kW', 'Normal'], ['Blood bank and cold chain', '6 kW', 'Normal'], ['Fire pumps', 'Diesel driven', 'Standby']] }
+    ];
+    const season = this.state.season;
+    const flexAssets = A.filter((a) => a.rated > 0);
+    const val = (a) => season === 'nov' ? a.nov : a.jun;
+    const total = flexAssets.reduce((s, a) => s + val(a), 0);
+    const used = flexAssets.filter((a) => val(a) > 0).length;
+    const cur = A.find((a) => a.id === this.state.sel) || A[0];
+    const pmax = Math.max(1, ...cur.profile);
+    const seg = flexAssets.filter((a) => val(a) > 0);
+    return {
+      headline: season === 'nov'
+        ? 'Tonight ergOS can hold back 78 kW from 5 assets, without touching any patient area.'
+        : 'On a June evening ergOS can hold back 190 kW from 6 assets, without touching any patient area.',
+      seasons: [['nov', 'Tonight, 17:30'], ['jun', 'June evening']].map(([k, label]) => ({ label, on: String(k === season), pick: () => this.setState({ season: k }) })),
+      total, used,
+      barLabel: 'Flexible kW by asset: ' + seg.map((a) => a.name + ' ' + val(a) + ' kW').join(', '),
+      segs: seg.map((a) => ({ w: (val(a) / total * 100).toFixed(1) + '%', color: a.color, icon: a.icon, kw: val(a) + ' kW' })),
+      assets: A.map((a) => {
+        const on = a.id === cur.id, c = CLS[a.cls], v = val(a);
+        return { name: a.name, cls: a.cls, tag: c.tag, tint: c.tint, icon: a.icon, color: a.color, short: a.short,
+          now: a.rated ? v + ' kW' : 'Locked', of: a.rated ? 'of ' + a.rated + ' kW' : 'never curtailed',
+          pct: a.rated ? Math.round(v / a.rated * 100) + '%' : '0%', on: String(on),
+          bg: on ? 'linear-gradient(155deg, rgba(255,255,255,.95), rgba(255,255,255,.75))' : 'linear-gradient(155deg, rgba(255,255,255,.72), rgba(255,255,255,.42))',
+          border: on ? '2px solid #10231a' : '1px solid rgba(255,255,255,.9)',
+          shadow: on ? '0 20px 40px -24px rgba(16,60,36,.6)' : '0 14px 30px -26px rgba(16,60,36,.45)',
+          pick: () => this.setState({ sel: a.id }) };
+      }),
+      sel: {
+        name: cur.name, cls: cur.cls, tag: CLS[cur.cls].tag, tint: CLS[cur.cls].tint, icon: cur.icon,
+        action: cur.action, never: cur.never, min: cur.min, reb: cur.reb, auth: cur.auth, lock: cur.lock,
+        nov: cur.rated ? cur.nov + ' kW' : '0 kW', jun: cur.rated ? cur.jun + ' kW' : '0 kW', dur: cur.dur, resp: cur.resp,
+        profileLabel: cur.name + ', typical November load by hour, peaking at ' + pmax + ' kW',
+        hours: cur.profile.map((v, i) => ({ ht: Math.max(2, Math.round(v / pmax * 96)) + 'px', color: i >= cur.flex[0] && i < cur.flex[1] ? '#3aa85c' : (cur.rated ? '#c3cbc5' : '#d7cfe8'), mark: i === 14 ? '2px solid #10231a' : 'none' })),
+        subs: cur.subs.map(([name, spec, state]) => ({ name, spec, state }))
+      },
+      months: [['J', 75], ['F', 80], ['M', 100], ['A', 160], ['M', 185], ['J', 190], ['J', 190], ['A', 185], ['S', 180], ['O', 140], ['N', 78], ['D', 75]].map(([l, v]) => ({ l, v, h: Math.round(v / 190 * 120) + 'px' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

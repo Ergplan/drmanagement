@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manual · 8 Running a DR event</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="lib/manual.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="m-page m-tight m-tighter">
+  <dc-import name="ManualHeader" section="8 · Running a DR event" hint-size="666px,56px"></dc-import>
+  <div class="m-body" style="gap: 14px">
+    <div class="m-title-row"><span class="m-num m-num-lilac">8</span><h1 class="m-h1">Running a DR event</h1></div>
+    <p class="m-lede">Eight steps from forecast to report. Each one has a named owner, and nothing moves without approval.</p>
+
+    <div class="m-card" style="gap: 0; padding: 8px 14px">
+      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="8">
+        <div style="display: grid; grid-template-columns: 40px 84px minmax(0, 1fr) 130px; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(16,35,26,.1)">
+          <span class="m-num m-num-s {{ s.cls }}">{{ s.n }}</span>
+          <span style="font-size: 13px; font-weight: 700">{{ s.when }}</span>
+          <span style="font-size: 12.5px; line-height: 1.4"><b>{{ s.t }}.</b> {{ s.d }}</span>
+          <span class="m-tag" style="background: rgba(250,238,200,.95); color: #6b4a00; justify-self: end; text-align: right">{{ s.who }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div class="m-card" style="gap: 4px; padding: 12px 14px">
+      <div class="m-h2" style="font-size: 15px">Who does what</div>
+      <table class="m-tbl">
+        <thead><tr><th>Task</th><th>jouleWise</th><th>Facility manager</th><th>Medical supt.</th><th>Duty engineer</th></tr></thead>
+        <tbody>
+          <tr><td>Forecast and proposal</td><td><b>Does</b></td><td>Told</td><td>–</td><td>Told</td></tr>
+          <tr><td>Approve the event</td><td>Advises</td><td><b>Decides</b></td><td>Told</td><td>Told</td></tr>
+          <tr><td>Any HVAC step beyond fan trim</td><td>Advises</td><td>Asks</td><td><b>Decides</b></td><td>Told</td></tr>
+          <tr><td>Arm at 17:00</td><td>Told</td><td>Told</td><td>–</td><td><b>Does</b></td></tr>
+          <tr><td>Abort or override</td><td>Told</td><td>Can</td><td>Can</td><td><b>Can, anytime</b></td></tr>
+          <tr><td>Event report</td><td><b>Does</b></td><td>Reviews</td><td>Reviews</td><td>–</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="m-grid2">
+      <div class="m-call m-call-note"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1f4f8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.6v.3"></path></svg></span><span><b>Note · a typical event</b><span class="t">60 kW from laundry, pumping, EV, admin lighting and AHU trim, 17:30 to 20:00. The forecast 470 kVA peak lands at 406.</span></span></div>
+      <div class="m-call m-call-action"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1b5a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.7 2.7L16.5 9.5"></path></svg></span><span><b>Action · 12 to 29 Jan 2027</b><span class="t">Run the five simulated events required by clause 2.1 (e), each with a report, before any live trial.</span></span></div>
+    </div>
+  </div>
+  <dc-import name="ManualFooter" page="{{ pg }}" hint-size="666px,62px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = [
+      ['Day before', 'Forecast', 'ergOS forecasts tomorrow’s peak; above the 450 kVA floor, it drafts an event.', 'ergOS', 'm-num-blue'],
+      ['14:00', 'Propose', 'kW, window, assets, expected peak and value appear on the DR optimizer.', 'ergOS', 'm-num-blue'],
+      ['By 16:00', 'Approve', 'Checks plant and the laundry schedule; any chiller step also needs clinical sign-off.', 'Facility manager', ''],
+      ['16:00', 'Pre-condition', 'Overhead tanks pre-filled, general zones pre-cooled 1 °C, hot-water store already full.', 'ergOS', ''],
+      ['17:00', 'Arm', 'Final interlock check. If nobody arms it, the event lapses.', 'Duty engineer', 'm-num-red'],
+      ['17:30', 'Hold', 'Loads held as planned; interlocks checked every 10 seconds.', 'ergOS', 'm-num-lilac'],
+      ['20:00', 'Restore', 'One load every 10 minutes, ceiling armed throughout.', 'ergOS', ''],
+      ['Next day', 'Report', 'Baseline against actual: verified kW, kWh shifted, rebound.', 'jouleWise', 'm-num-blue']
+    ];
+    return { pg: 10, steps: S.map(([when, t, d, who, cls], i) => ({ n: i + 1, when, t, d, who, cls })) };
+  }
+}
+</script>
+</body>
+</html>

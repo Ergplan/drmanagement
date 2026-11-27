@@ -1,0 +1,13 @@
+# UPERC HV-1 tariff as billed by MVVNL. The tariff engine (backend/eoc/domain/tariff.py) is the ONLY place these are applied.
+category: HV-1
+energy_rate_inr_per_kvah: 8.32           # flat, no time of day
+demand_rate_inr_per_kva_month: 430
+electricity_duty_pct: 7.5
+billing_demand_rule: max(actual_md_kva, 0.75 * contracted_kva)   # floor 450 kVA at 600 contracted
+excess_demand:
+  surcharge: 1.0                          # demand above contract charged at 100% extra (i.e. 2x rate on the excess)
+  merge_rule: three consecutive months over contract -> excess merged into sanctioned load
+  auto_revision_2026_07: UPPCL raised sanctioned loads to each consumer's highest monthly demand (July 2026)
+demand_interval_minutes: 15               # MD = highest 15-min average kVA in the billing period
+all_in_inr_per_kvah_nov_2026: 9.16
+source: MVVNL bills + UPERC tariff order; confirm FPPAS each month

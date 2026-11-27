@@ -1,0 +1,42 @@
+# Globe Medicare, Lucknow: site facts used to seed the database. Every value carries its source.
+site:
+  id: globe-lko
+  name: Globe Medicare
+  public_brand: Globe Healthcare          # name on globehealthcare.org; agreement and bills say Globe Medicare
+  address: A-4-5 Nirala Nagar, Lucknow, Uttar Pradesh   # website; agreement and bills show A-3 (to confirm)
+  beds: 200
+  timezone: Asia/Kolkata
+  source: agreement + globehealthcare.org
+connection:
+  utility: MVVNL (Madhyanchal Vidyut Vitran Nigam Ltd)
+  account: 9567-481-000
+  tariff_category: HV-1
+  voltage_kv: 11
+  sanctioned_load_kva: 600
+  billing_floor_kva: 450                  # 75% of contracted load
+  main_meter: UPP72963                    # installed 29-30 Sep 2026
+  interim_meter: SI40022822               # recorded MD 1,260 kVA (dispute evidence)
+  power_factor_billed: 0.94
+  security_deposit_inr: 2700000
+  source: MVVNL bills Sep, Oct, Nov 2026
+solar:
+  capacity_kwp: 285
+  export: false                           # all used on site, zero export
+  inverters: 3
+  source: user, 27 Nov 2026
+thermal:
+  heat_pumps: {count: 2, electrical_kw_each: 15, heat_kw_each: 51, type: air source}
+  hot_water_store: {tanks: 2, litres_each: 6000, setpoint_c: 65, min_serve_c: 60, weekly_disinfection_c: 70}
+  chillers: {count: 2, type: screw, tr_each: 160, typical_load_tr: 92, kw_per_tr: 0.78}
+  clinical_ahus: 6
+  source: modelled (design/canvas/Thermal.dc.html), confirm on site survey
+backup:
+  ups_kva: [200, 200]
+  dg_sets: true                           # never used for ceiling or DR
+programme:
+  agreement_effective: 2026-02-01
+  agreement_end: 2027-01-31
+  target_flexibility_kw: 600
+  fee_inr: 10000                          # + GST
+  demonstration_events: 5                 # simulated, clause 2.1
+  source: jouleWise–Globe Medicare DR and flexibility agreement
