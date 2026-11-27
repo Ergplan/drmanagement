@@ -40,3 +40,6 @@ programme:
   fee_inr: 10000                          # + GST
   demonstration_events: 5                 # simulated, clause 2.1
   source: jouleWise–Globe Medicare DR and flexibility agreement
+emissions:
+  grid_factor_tco2_per_mwh: 0.727        # CEA CO2 Baseline Database v20.0 (FY 2023-24), weighted average incl. RE
+  source: CEA CO2 Baseline Database v20.0; update to v22.0 (Aug 2026) once its weighted average is confirmed

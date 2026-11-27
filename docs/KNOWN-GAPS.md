@@ -11,3 +11,4 @@
 | Address: website A-4-5 Nirala Nagar vs agreement/bills A-3 | Confirm with hospital |
 | Database availability depends on the VM (single instance, no replica) | Stage 8 adds nightly backups to Cloud Storage; a replica if the pilot goes live |
 | Port 5432 reachable from the internet (TLS + SCRAM only) | Narrow when Vercel Static IPs or a private tunnel are adopted |
+| Oct 2026 bill total is ₹7,000 above its energy + demand + FPPAS + duty lines (another charge not in the extract) | Check the bill's other-charges line |

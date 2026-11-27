@@ -1,0 +1,29 @@
+name: ci
+on:
+  push: { branches: [main] }
+  pull_request:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env: { POSTGRES_PASSWORD: ci, POSTGRES_DB: drm }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://postgres:ci@localhost:5432/drm?sslmode=disable
+      DEMO_PASSWORD: ci-demo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm biome check .
+      - run: pnpm -r --if-present typecheck
+      - run: pnpm --filter @drm/db migrate && pnpm --filter @drm/db seed && pnpm --filter @drm/db seed
+      - run: pnpm --filter @drm/domain --filter @drm/db --filter @drm/control --if-present test
+      - run: pnpm --filter @drm/web build
+        env: { AUTH_SECRET: ci-secret }
