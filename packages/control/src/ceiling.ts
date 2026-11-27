@@ -8,7 +8,7 @@ import type { Dispatcher } from './dispatcher';
 export interface StageSpec {
   stage: number;
   triggerKva: number;
-  actions: Array<{ assetId: string; action: string }>;
+  actions: Array<{ assetId: string; action: string; expectKw?: number }>;
   page?: boolean;
 }
 
@@ -27,6 +27,7 @@ export function ceilingFromYaml(c: {
   stages: Array<{
     stage: number;
     trigger_projected_kva: number;
+    expect_kw?: number;
     commands?: Array<{ asset: string; action: string }>;
     page?: boolean;
   }>;
@@ -38,7 +39,11 @@ export function ceilingFromYaml(c: {
     stages: c.stages.map((s) => ({
       stage: s.stage,
       triggerKva: s.trigger_projected_kva,
-      actions: (s.commands ?? []).map((a) => ({ assetId: a.asset, action: a.action })),
+      actions: (s.commands ?? []).map((a) => ({
+        assetId: a.asset,
+        action: a.action,
+        expectKw: (s.expect_kw ?? 0) / Math.max(1, s.commands?.length ?? 1),
+      })),
       page: s.page,
     })),
   };
@@ -93,13 +98,18 @@ export class Ceiling {
       return;
     }
 
-    // Restore one asset at a time, only below Stage 1 and after the step interval.
+    // Restore one asset at a time, after the step interval, and only if bringing it back keeps the projection
+    // below Stage 1 (projected + the load's expected kW), so a restore never triggers the next stage.
+    const last = this.held[this.held.length - 1];
+    const backKw = last
+      ? (this.cfg.stages.find((x) => x.stage === last.stage)?.actions.find((a) => a.assetId === last.assetId)
+          ?.expectKw ?? 0)
+      : 0;
     if (
-      this.held.length &&
-      projectedKva < this.cfg.restoreBelowKva &&
+      last &&
+      projectedKva + backKw < this.cfg.restoreBelowKva &&
       now.getTime() - this.lastRestoreMs >= this.cfg.restoreStepMin * 60000
     ) {
-      const last = this.held[this.held.length - 1]!;
       const stillHeldElsewhere = this.held.filter((h) => h.assetId === last.assetId).length > 1;
       this.held.pop();
       if (!stillHeldElsewhere)

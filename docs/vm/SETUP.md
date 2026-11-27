@@ -164,3 +164,35 @@ Do not stop the VM while the site is in use: the database lives on it. Daily dis
 ## Getting the build kit onto the VM
 
 Easiest: push the kit to the repo from your laptop (or ask Claude to push it to Ergplan/drmanagement), then the bootstrap's clone already has it. Or in Cloud Shell: upload the zip (⋮ → Upload), then `gcloud compute scp drm-build-kit.zip drmanagement:/work/ --zone=asia-south2-b --tunnel-through-iap` and on the VM `cd /work/drmanagement && unzip -o ../drm-build-kit.zip && git add -A && git commit -m "Build kit" && git push`.
+
+## Backups (Cloud Shell, once)
+
+```bash
+( set -e
+P=$(gcloud config get-value project); B="${P}-drm-backups"
+gcloud storage buckets describe gs://$B >/dev/null 2>&1 || gcloud storage buckets create gs://$B --location=asia-south2 --uniform-bucket-level-access
+printf '{"rule":[{"action":{"type":"Delete"},"condition":{"age":30}}]}' > /tmp/lc.json && gcloud storage buckets update gs://$B --lifecycle-file=/tmp/lc.json
+SA=$(gcloud compute instances describe drmanagement --zone asia-south2-b --format='value(serviceAccounts[0].email)')
+gcloud storage buckets add-iam-policy-binding gs://$B --member="serviceAccount:$SA" --role=roles/storage.objectAdmin >/dev/null
+echo "Bucket gs://$B ready (30-day retention); VM account $SA can write to it." )
+```
+
+Then on the VM follow docs/RUNBOOK.md "Backups and restore". If the VM was created with a narrow access scope, `gcloud storage cp` fails with 403: stop the VM, edit "Cloud API access scopes" to allow Storage read/write, start it again.
+
+## Uptime check (Cloud Shell, once)
+
+```bash
+gcloud monitoring uptime create drm-health --resource-type=uptime-url --resource-labels=host=globe.joulewise.tech --path=/api/health --period=5
+```
+
+Add an email notification channel to the check in Cloud Console → Monitoring → Uptime checks.
+
+## Reboot test
+
+```bash
+sudo reboot
+# reconnect after ~1 minute, then:
+cd /work/drmanagement && docker compose -f docker-compose.edge.yml logs --since 3m edge | tail -5
+```
+
+Expect the edge start line and no `uplink failed` lines within 2 minutes of boot.

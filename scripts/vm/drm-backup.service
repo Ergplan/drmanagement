@@ -1,0 +1,9 @@
+[Unit]
+Description=Nightly pg_dump of the ergOS database to Cloud Storage
+After=drm-stack.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/work/drmanagement
+EnvironmentFile=/work/drmanagement/.env.backup
+ExecStart=/bin/bash /work/drmanagement/scripts/vm/backup.sh

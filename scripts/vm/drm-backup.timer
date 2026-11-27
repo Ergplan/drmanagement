@@ -1,0 +1,10 @@
+[Unit]
+Description=Run the ergOS database backup nightly at 02:30 IST
+
+[Timer]
+OnCalendar=*-*-* 21:00:00 UTC
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

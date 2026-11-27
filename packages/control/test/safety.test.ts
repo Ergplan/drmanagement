@@ -166,18 +166,20 @@ describe('demand ceiling (invariant 4)', () => {
     expect(ev).toContain('page:3:null');
   });
   it('restores one load at a time, 10 minutes apart, only below Stage 1', () => {
-    const { d, calls } = rig({ projected: () => 500 });
+    const { d, calls } = rig({ projected: () => 470 });
     const c = new Ceiling(cfg, d, () => {});
     c.step(NOW, 530, true);
     const at = (min: number) => new Date(NOW.getTime() + min * 60000);
-    c.step(at(5), 500, true);
+    c.step(at(5), 470, true);
     expect(calls.filter((x) => x.action === 'restore')).toHaveLength(0);
     c.step(at(10), 525, true);
     expect(calls.filter((x) => x.action === 'restore')).toHaveLength(0);
-    c.step(at(11), 500, true);
-    c.step(at(12), 500, true);
+    // 505 + the load's expected 22.5 kW would cross Stage 1: wait
+    c.step(at(11), 505, true);
+    expect(calls.filter((x) => x.action === 'restore')).toHaveLength(0);
+    c.step(at(12), 470, true);
     expect(calls.filter((x) => x.action === 'restore').map((x) => x.assetId)).toEqual(['ev']);
-    for (let m = 21; m <= 51; m += 10) c.step(at(m), 500, true);
+    for (let m = 22; m <= 52; m += 10) c.step(at(m), 470, true);
     expect(calls.filter((x) => x.action === 'restore').map((x) => x.assetId)).toEqual([
       'ev',
       'pump',
