@@ -82,7 +82,7 @@ Not reopened unless the user agrees and `docs/DECISIONS.md` records why.
 | Repo | `Ergplan/drmanagement`, pnpm workspaces + Turborepo | One repo, shared types between cloud and edge |
 | Language | TypeScript (strict), Node 24 LTS | One language for web, API, edge, control; fastest to build in three days |
 | Web + API | Next.js (latest stable, App Router) on Vercel, project `drmanagement`, domain `globe.joulewise.tech` | The user's chosen host and URL |
-| Database | Neon Postgres via the Vercel Marketplace (region closest to India available), Drizzle ORM + drizzle-kit migrations | Serverless Postgres that Vercel wires up; plain SQL, easy to read |
+| Database | PostgreSQL 17 in Docker on the GCP VM (`docker-compose.db.yml`), TLS-only with a verified certificate, non-superuser app role; Vercel connects with `DATABASE_URL` + `PG_CA_CERT`; Drizzle ORM + drizzle-kit migrations | User's choice (27 Nov): no storage cap, data stays in the jouleWise GCP project |
 | Time series | `reading_1m` partitioned by month (90-day raw retention), `block_15m` and `day_1d` rollups written by the edge, kept forever | 1-minute data for ~400 points without a time-series extension |
 | Edge runtime | `apps/edge`: Node service in Docker Compose on the VM; contains drivers, simulator, ceiling loop, interlocks, dispatcher, DR executor, local SQLite buffer for offline | Mirrors a real on-site gateway; outbound-only connections |
 | Edge ↔ cloud | Edge pushes batches to `POST /api/edge/ingest` every 10 s and pulls `GET /api/edge/intents` every 5 s, HTTPS with a per-device token (HMAC-signed bodies); buffers locally when offline and replays | Works through a hospital firewall: no inbound ports |
@@ -143,7 +143,7 @@ drmanagement/
 
 | When | Stage | What becomes real | Stop point |
 |---|---|---|---|
-| Day 1 AM | 0 | VM, repo, Vercel project + Neon + domain, app shell | Shell live at globe.joulewise.tech |
+| Day 1 AM | 0 | VM, repo, Vercel project, Postgres on the VM, domain, app shell | Shell live at globe.joulewise.tech |
 | Day 1 PM | 1 | Data model, seed, domain engine (tariff, blocks, baselines) | Nov 2026 bill reproduced |
 | Day 1 PM–night | 2 | Edge runtime, drivers, hospital simulator, uplink, 13-month backfill | Bills reproduced from simulated history |
 | Day 2 AM | 3 | Monitoring screens: Overview, Live, Forecast, Solar, Tariffs, HVAC | Six screens live on data |
@@ -160,7 +160,7 @@ drmanagement/
 ### Stage 0 · VM, repo, Vercel, domain, shell
 
 ```
-Goal: everything wired end to end with an empty app: VM ready, repo scaffolded, Vercel project with Neon, globe.joulewise.tech serving the app shell.
+Goal: everything wired end to end with an empty app: VM ready, repo scaffolded, Vercel project, Postgres on the VM, globe.joulewise.tech serving the app shell.
 
 Ask the user once (numbered):
 1. Who manages DNS for joulewise.tech (registrar/provider)? You will give them the exact record to add.
@@ -174,7 +174,7 @@ Build:
 2. Scaffold per section 5: pnpm + turbo + biome + tsconfig refs; CLAUDE.md = sections 2–5 verbatim; living docs; docs/review/REVIEW-PROMPT.md.
 3. apps/web: Next.js App Router. Port design/canvas/lib/eoc.css into styles/tokens.css + glass.css; Manrope via next/font; logos and icons into public/.
 4. Sidebar and Topbar ported from design/canvas/Sidebar.dc.html and Topbar.dc.html. Menu: the 12 screens + a new "Street view" item (cube/walk icon, placed after Overview), all routes stubbed with an empty-state glass card. Copyright line "© 2026 jouleWise Advisory Services Pvt. Ltd. All rights reserved." Top bar: date, IST time, block 1–96, site pill (200 beds · A-4-5 Nirala Nagar, Lucknow · MVVNL a/c 9567-481-000 · HV-1 · 11 kV · 600 kVA), ceiling pill, "Simulated data" badge slot, Simulate event button.
-5. Vercel: `vercel link` to project drmanagement; connect GitHub Ergplan/drmanagement so main deploys production; add Neon from the Marketplace (env vars appear in the project); `vercel env pull` to .env for local dev; add domain globe.joulewise.tech and print the exact DNS record for the user.
+5. Vercel: `vercel link` to project drmanagement; connect GitHub Ergplan/drmanagement so main deploys production; database: run scripts/vm/start-db.sh on the VM and have the user add DATABASE_URL and PG_CA_CERT in Vercel; `vercel env pull` to .env for local dev; add domain globe.joulewise.tech and print the exact DNS record for the user.
 6. Login page (Auth.js) with seeded demo users per role (passwords from env).
 7. apps/edge skeleton + docker-compose.edge.yml; edge heartbeats to /api/edge/ingest with a device token (create it in the DB in Stage 1; stub accepts a token from env now).
 8. scripts/watch.sh; git identity set repo-local.
@@ -212,7 +212,7 @@ Tests: Nov 2026 bill lines within ₹1,000; floor at 392.1 kVA → 450; 642 kVA 
 
 API: GET /api/site, /api/assets, /api/nodes, /api/bills, /api/tariff (typed by packages/contracts).
 
-Done when: migrations from empty work on Neon (and a Neon branch for previews); seed idempotent; domain tests green; append-only and exclusion triggers proven by tests; review; report; tag. STOP.
+Done when: migrations from empty work on the VM database (previews use a separate `drm_preview` database); seed idempotent; domain tests green; append-only and exclusion triggers proven by tests; review; report; tag. STOP.
 ```
 
 ### Stage 2 · Edge runtime, drivers, hospital simulator, backfill
@@ -235,10 +235,10 @@ Simulator (packages/drivers/sim): event-driven physical model, not a replay.
 - Clock: real time; SIM_SPEED and SIM_SCENARIO (normal, hot_june_evening, interlock_trip, stale_meter, outage) for tests; seeded RNG.
 
 Edge runtime (apps/edge): poll drivers (main meter 5 s, others 60 s), validate, write to local SQLite buffer, uplink batches every 10 s, compute block_15m/day_1d locally (packages/domain) and send them; replay buffer after outages; heartbeat with version and health.
-Backfill: scripts/backfill.ts runs the simulator fast from 2025-12-01 to now (1-min for the last 90 days, 15-min blocks before that) and loads Neon in bulk.
+Backfill: scripts/backfill.ts runs the simulator fast from 2025-12-01 to now (1-min for the last 90 days, 15-min blocks before that) and loads the database in bulk.
 API: /api/edge/ingest (token + HMAC, idempotent by batch id), /api/live/main (latest snapshot), /api/day?date=, /api/points/:id/series?from&to&step.
 
-Done when: calibration table in the report meets every tolerance; live data on Neon with < 20 s lag; killing the network for 5 min and restoring loses no data; protocol drivers pass against their simulators; review; report; tag. STOP.
+Done when: calibration table in the report meets every tolerance; live data in the database with < 20 s lag; killing the network for 5 min and restoring loses no data; protocol drivers pass against their simulators; review; report; tag. STOP.
 ```
 
 ### Stage 3 · Monitoring screens
@@ -347,7 +347,7 @@ Goal: prove it and hand it over.
 - Playwright e2e on production: login per role, approve flow, abort, report download, Street View smoke (load, move to 3 nodes, panel values present).
 - API tests for every endpoint; contract tests edge↔cloud.
 - Performance: day chart < 1.5 s with 90 days of 1-min data; 20 concurrent viewers; Street View load < 6 s on a 4G profile.
-- Ops: edge as a systemd-managed compose stack that restarts on boot; Neon point-in-time restore documented; nightly logical backup to GCS; uptime check on /api/health; RUNBOOK.md (start/stop edge, rotate device token, switch a point to a real meter, put the site in manual mode, restore, read the audit log).
+- Ops: edge as a systemd-managed compose stack that restarts on boot; nightly pg_dump to Cloud Storage with 30-day retention and a tested restore; uptime check on /api/health; RUNBOOK.md (start/stop edge, rotate device token, switch a point to a real meter, put the site in manual mode, restore, read the audit log).
 
 Done when: the suite is green twice; e2e green on production; VM reboot → edge back and uplinking < 2 min; review; final report with cost per stage; tag v1.0.0. STOP.
 ```
@@ -412,7 +412,7 @@ Facts to respect: billed PF 0.94; the 450 kVA floor binds in winter; the 600 kW 
 | Stage | Checks before STOP |
 |---|---|
 | 0 | Login + shell live on Vercel (custom domain or vercel.app while DNS propagates); edge heartbeat visible; watcher green; review run |
-| 1 | Migrations from empty on Neon; seed idempotent; Nov 2026 bill lines within ₹1,000; triggers proven; baselines match fixtures |
+| 1 | Migrations from empty on the VM database; seed idempotent; Nov 2026 bill lines within ₹1,000; triggers proven; baselines match fixtures |
 | 2 | Monthly kVAh and MD within ±3% of bills for 12 months; Nov profile r ≥ 0.95; hot June ≈ 642 kVA uncontrolled; uplink lag < 20 s; 5-min outage loses nothing; protocol drivers pass against simulators |
 | 3 | Six screens match renders; no data literals; every figure traced to an API field |
 | 4 | hot_june_evening max block ≤ 570 kVA; 60 kW event lands within ±5% of 406 kVA; zero commands to excluded assets; trip → restore ≤ 60 s; ceiling holds with uplink down |

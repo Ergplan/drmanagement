@@ -63,7 +63,7 @@ Not reopened unless the user agrees and `docs/DECISIONS.md` records why.
 | Repo | `Ergplan/drmanagement`, pnpm workspaces + Turborepo | One repo, shared types between cloud and edge |
 | Language | TypeScript (strict), Node 24 LTS | One language for web, API, edge, control; fastest to build in three days |
 | Web + API | Next.js (latest stable, App Router) on Vercel, project `drmanagement`, domain `globe.joulewise.tech` | The user's chosen host and URL |
-| Database | Neon Postgres via the Vercel Marketplace (region closest to India available), Drizzle ORM + drizzle-kit migrations | Serverless Postgres that Vercel wires up; plain SQL, easy to read |
+| Database | PostgreSQL 17 in Docker on the GCP VM (`docker-compose.db.yml`), TLS-only with a verified certificate, non-superuser app role; Vercel connects with `DATABASE_URL` + `PG_CA_CERT`; Drizzle ORM + drizzle-kit migrations | User's choice (27 Nov): no storage cap, data stays in the jouleWise GCP project |
 | Time series | `reading_1m` partitioned by month (90-day raw retention), `block_15m` and `day_1d` rollups written by the edge, kept forever | 1-minute data for ~400 points without a time-series extension |
 | Edge runtime | `apps/edge`: Node service in Docker Compose on the VM; contains drivers, simulator, ceiling loop, interlocks, dispatcher, DR executor, local SQLite buffer for offline | Mirrors a real on-site gateway; outbound-only connections |
 | Edge ↔ cloud | Edge pushes batches to `POST /api/edge/ingest` every 10 s and pulls `GET /api/edge/intents` every 5 s, HTTPS with a per-device token (HMAC-signed bodies); buffers locally when offline and replays | Works through a hospital firewall: no inbound ports |

@@ -32,7 +32,7 @@ Date: 27 Nov 2026 · Builder: Claude (cloud session) · Commit: see `git log`
 ## Open items for the user (Stage 0 is not tagged done until these are in)
 1. **Connect GitHub:** the Vercel GitHub app is not installed on the Ergplan organisation, so the project could not be linked to the repo. Vercel → project drmanagement → Settings → Git → Connect `Ergplan/drmanagement` (install the app for Ergplan when asked). Every push to main then deploys.
 2. **Secrets in Vercel** (Settings → Environment Variables, all environments): `AUTH_SECRET` (any long random string), `DEMO_PASSWORD` (the shared demo login password), `EDGE_DEVICE_SECRET` (long random hex; the same value goes into `.env` on the VM).
-3. **Neon:** the Neon integration is installed on the team (free plan). Vercel → project → Storage → Connect Database → Neon → create `drmanagement` in the closest region (Singapore if Mumbai is not offered). Needed for Stage 1. The free plan's 1 GB will not hold a year of 1-minute data; plan to move to Launch before Stage 2's backfill, or keep raw data shorter.
+3. **Database (changed 27 Nov: Postgres on the VM, not Neon):** on the VM run `bash scripts/vm/start-db.sh` and add the printed `DATABASE_URL` and `PG_CA_CERT` in Vercel. Needed for Stage 1.
 4. **Edge on the VM:** after VM setup (docs/vm/SETUP.md), in `/work/drmanagement`: `cp .env.example .env`, fill `CLOUD_URL=https://globe.joulewise.tech`, `DEVICE_ID=edge-globe-lko-01`, `DEVICE_SECRET=` (same as Vercel), then `docker compose -f docker-compose.edge.yml up -d --build`.
 
 ## Deviations

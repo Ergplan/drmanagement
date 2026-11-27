@@ -1,0 +1,44 @@
+# Cloud database for globe.joulewise.tech, hosted on the GCP VM (replaces Neon; see docs/DECISIONS.md).
+# Reached by Vercel functions over TLS on port 5432. Start with scripts/vm/start-db.sh, not by hand.
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    env_file: .env.db
+    environment:
+      POSTGRES_DB: drm
+    command:
+      - postgres
+      - -c
+      - ssl=on
+      - -c
+      - ssl_cert_file=/certs/server.crt
+      - -c
+      - ssl_key_file=/certs/server.key
+      - -c
+      - hba_file=/etc/postgresql/pg_hba.conf
+      - -c
+      - password_encryption=scram-sha-256
+      - -c
+      - max_connections=120
+      - -c
+      - shared_buffers=2GB
+      - -c
+      - effective_cache_size=8GB
+      - -c
+      - log_connections=on
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/vm/db/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./scripts/vm/db/init-app-role.sh:/docker-entrypoint-initdb.d/01-app-role.sh:ro
+      - /data/pg-certs:/certs:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d drm"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    shm_size: 512mb
+volumes:
+  pgdata:

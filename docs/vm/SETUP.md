@@ -6,7 +6,7 @@ What needs fixing on the VM as it is now:
 - Boot disk is 10 GB: Docker, node_modules and Playwright fill it within the first stage. Grow it to 50 GB (online, no restart).
 - External IP 34.131.108.75 is ephemeral: it changes if the VM ever stops. Promote it to static (no restart).
 - No network tag and no SSH rule: add tag `drmanagement` and allow SSH only through Google's IAP range.
-- No inbound web ports are needed: the edge only makes outbound connections to Vercel and Neon.
+- Postgres runs on this VM (not Neon), so Vercel must reach port 5432. The rule below opens 5432 to the internet for this VM only; the database accepts TLS connections only (verified certificate for the static IP) with a strong SCRAM password, and the app uses a non-superuser role. The edge itself needs no inbound ports.
 
 ## Step 1 · Cloud Shell: fix up the VM (no downtime)
 
@@ -30,12 +30,17 @@ gcloud compute firewall-rules describe drm-allow-iap-ssh >/dev/null 2>&1 || gclo
 gcloud compute firewall-rules describe drm-deny-other-ssh >/dev/null 2>&1 || gcloud compute firewall-rules create drm-deny-other-ssh \
   --network=default --priority=900 --direction=INGRESS --action=deny --rules=tcp:22 \
   --source-ranges=0.0.0.0/0 --target-tags=drmanagement
+gcloud compute firewall-rules describe drm-allow-postgres >/dev/null 2>&1 || gcloud compute firewall-rules create drm-allow-postgres \
+  --network=default --priority=1000 --direction=INGRESS --action=allow --rules=tcp:5432 \
+  --source-ranges=0.0.0.0/0 --target-tags=drmanagement
 echo "Static IP: $(gcloud compute addresses describe drm-ip --region=$REGION --format='get(address)')  Disk: $(gcloud compute disks describe $DISK --zone=$ZONE --format='get(sizeGb)') GB"
 echo "Done. Next: gcloud compute ssh drmanagement --zone=asia-south2-b --tunnel-through-iap"
 )
 ```
 
 Success looks like: `Static IP: 34.131.108.75  Disk: 50 GB`.
+
+Why 5432 is open to everyone: Vercel functions do not come from fixed addresses (fixed IPs are a paid Vercel add-on). If you enable Vercel Static IPs later, narrow `drm-allow-postgres` to those addresses.
 
 Optional, later: the VM runs as the default compute service account with default scopes. That is acceptable for a build box. Changing it needs a stop; not required for this build.
 
@@ -102,6 +107,51 @@ Run Stage 0 of docs/MASTER-PROMPT.md
 ```
 
 Coming back later from any browser: Cloud Shell → Step 2 line → `tmux attach -t build`. Ctrl+B then D detaches without stopping the agent; Ctrl+B then C opens a second window (for `nano .env`, or the parallel Street View track).
+
+## Step 5 · On the VM: start the database and the edge
+
+```bash
+cd /work/drmanagement && git pull && bash scripts/vm/start-db.sh
+```
+
+It creates the passwords and TLS certificate on the VM, starts PostgreSQL 17, and prints `DATABASE_URL` and `PG_CA_CERT`. Copy those two into Vercel (Settings → Environment Variables, all environments, type Sensitive). They are printed only in your VM terminal; do not paste them into a chat.
+
+Then the edge:
+
+```bash
+cd /work/drmanagement && cp -n .env.example .env && nano .env
+```
+
+Set `CLOUD_URL=https://globe.joulewise.tech`, `DEVICE_ID=edge-globe-lko-01` and `DEVICE_SECRET` (the same value as `EDGE_DEVICE_SECRET` in Vercel). Save with Ctrl+O, Enter, Ctrl+X. Then:
+
+```bash
+docker compose -f docker-compose.edge.yml up -d --build && docker compose -f docker-compose.edge.yml logs -f edge
+```
+
+Expect `heartbeat ok · block NN · …` every 30 seconds. Ctrl+C stops following the log; the edge keeps running.
+
+## Starting, stopping and checking the VM
+
+The VM is running now. Both stacks restart by themselves when the VM boots (`restart: unless-stopped`, Docker starts at boot).
+
+From Cloud Shell:
+
+```bash
+gcloud compute instances start drmanagement --zone=asia-south2-b      # start (keeps the static IP)
+gcloud compute instances stop drmanagement --zone=asia-south2-b       # stop (site goes offline: no database)
+gcloud compute instances describe drmanagement --zone=asia-south2-b --format='get(status)'
+```
+
+On the VM:
+
+```bash
+cd /work/drmanagement
+docker compose -f docker-compose.db.yml ps            # database health
+docker compose -f docker-compose.edge.yml ps          # edge health
+docker compose -f docker-compose.edge.yml logs --tail 20 edge
+```
+
+Do not stop the VM while the site is in use: the database lives on it. Daily disk snapshots (schedule `default-schedule-1`) already cover the disk; Stage 8 adds a nightly database backup to Cloud Storage.
 
 ## Getting the build kit onto the VM
 

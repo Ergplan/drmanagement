@@ -9,3 +9,5 @@
 | HIS feed for occupancy/OT/imaging bookings (simulated now) | Hospital IT integration |
 | Contacts for Globe roles ([NAME], [PHONE]); built-up area | From hospital |
 | Address: website A-4-5 Nirala Nagar vs agreement/bills A-3 | Confirm with hospital |
+| Database availability depends on the VM (single instance, no replica) | Stage 8 adds nightly backups to Cloud Storage; a replica if the pilot goes live |
+| Port 5432 reachable from the internet (TLS + SCRAM only) | Narrow when Vercel Static IPs or a private tunnel are adopted |

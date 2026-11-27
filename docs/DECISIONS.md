@@ -9,3 +9,4 @@
 - 2026-11-27: TypeScript pinned to 5.9 (7.x is the native compiler; Next.js tooling compatibility not verified).
 - 2026-11-27: Vercel functions region bom1 (Mumbai), nearest to Lucknow.
 - 2026-11-27: Secrets are set by the user in Vercel and on the VM; they never pass through chat.
+- 2026-11-27: Database moved from Neon to PostgreSQL 17 on the GCP VM (user). Port 5432 open to the internet for the VM's tag only, TLS required (self-signed certificate for the static IP, verified by the app via PG_CA_CERT), SCRAM passwords, app uses role drm_app. Narrow the firewall if Vercel Static IPs are bought.
