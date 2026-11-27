@@ -1,5 +1,6 @@
-# HTTPS for the dashboard. Caddy fetches and renews the certificate automatically once DNS points here.
-{$SITE_HOST:globe.joulewise.tech} {
+# HTTPS for the dashboard. Caddy fetches and renews the certificates automatically.
+# The sslip.io name resolves to the VM's static IP by itself, so it works before (or without) the globe DNS record.
+{$SITE_HOST:globe.joulewise.tech}, 34-131-108-75.sslip.io {
 	encode zstd gzip
 	reverse_proxy 127.0.0.1:3100
 }
