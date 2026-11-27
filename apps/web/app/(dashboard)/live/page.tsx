@@ -1,5 +1,10 @@
 import { Screen } from '@/components/Screen';
+import { LiveScreen } from '@/components/screens/Live';
 
-export default function LivePage() {
-  return <Screen active="live" />;
+export default function Page() {
+  return (
+    <Screen active="live">
+      <LiveScreen />
+    </Screen>
+  );
 }

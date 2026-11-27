@@ -54,6 +54,9 @@ importers:
       '@drm/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@drm/control':
+        specifier: workspace:*
+        version: link:../../packages/control
       '@drm/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -100,6 +103,19 @@ importers:
       zod:
         specifier: 4.6.7
         version: 4.6.7
+
+  packages/control:
+    dependencies:
+      '@drm/domain':
+        specifier: workspace:*
+        version: link:../domain
+    devDependencies:
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 5.1.2
+        version: 5.1.2(@types/node@22.20.7)(vite@8.4.0(@types/node@22.20.7)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/db:
     dependencies:

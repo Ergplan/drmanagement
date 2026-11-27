@@ -1,17 +1,10 @@
 import Link from 'next/link';
 import { Clock } from './Clock';
+import { LiveStatus } from './LiveStatus';
 import styles from './Topbar.module.css';
 
-/** Ported from design/canvas/Topbar.dc.html. Ceiling status and provenance come from the API from Stage 2. */
-export function Topbar({
-  heading,
-  ceiling,
-  simulated,
-}: {
-  heading: string;
-  ceiling: string | null;
-  simulated: boolean;
-}) {
+/** Ported from design/canvas/Topbar.dc.html. Ceiling status and provenance come from /api/live/main. */
+export function Topbar({ heading }: { heading: string }) {
   return (
     <header className={`eoc ${styles.bar}`}>
       <div className={styles.left}>
@@ -30,11 +23,7 @@ export function Topbar({
             MVVNL 9567-481-000 · HV-1 · 11 kV · 600 kVA
           </div>
         </div>
-        {simulated ? <span className={`pill ${styles.sim}`}>Simulated data</span> : null}
-        <div className={`pill ${ceiling ? 'pill-ok' : ''}`} style={{ minHeight: 44 }}>
-          <span className="dot" style={{ background: ceiling ? '#2e9a55' : '#c3cbc5' }} />
-          {ceiling ?? 'Ceiling · waiting for edge data'}
-        </div>
+        <LiveStatus />
         <Link className="btn btn-green" href="/optimizer">
           Simulate event
         </Link>

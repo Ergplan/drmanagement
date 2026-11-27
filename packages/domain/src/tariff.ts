@@ -85,3 +85,22 @@ export function avoidedDemandCharge(
 export function marginalRatePerKvah(spec: TariffSpec): number {
   return spec.energyRatePerKvah * (1 + spec.dutyPct / 100);
 }
+
+/**
+ * Bill audit: energy billed above what the site normally uses over the same days. Returns the excess kVAh and its
+ * energy-charge value (duty excluded, as disputes are raised on the energy line).
+ */
+export function billAuditExcess(
+  billedKvah: number,
+  days: number,
+  normalKvahPerDay: number,
+  spec: TariffSpec,
+): { excessKvah: number; excessInr: number; ratio: number } {
+  const expected = normalKvahPerDay * days;
+  const excessKvah = Math.max(0, billedKvah - expected);
+  return {
+    excessKvah,
+    excessInr: excessKvah * spec.energyRatePerKvah,
+    ratio: expected > 0 ? billedKvah / expected : 0,
+  };
+}

@@ -1,5 +1,5 @@
 import { getDb, schema } from '@drm/db';
-import { computeBill, type TariffSpec } from '@drm/domain';
+import { billAuditExcess, computeBill, type TariffSpec } from '@drm/domain';
 import { asc, desc } from 'drizzle-orm';
 import { getHandler } from '@/lib/api';
 
@@ -24,16 +24,26 @@ export const GET = getHandler(async () => {
           excessSurcharge: t.excessSurcharge,
         }
       : null;
+  // Audit: compare each bill's kVAh per day with the latest bill that is not flagged as suspect.
+  const days = (b: (typeof bills)[number]) =>
+    Math.max(1, Math.round((new Date(b.periodTo).getTime() - new Date(b.periodFrom).getTime()) / 86400000));
+  const normal = [...bills].reverse().find((b) => !b.note?.toLowerCase().includes('suspect'));
+  const normalPerDay = normal ? normal.kvah / days(normal) : null;
   return {
+    normalKvahPerDay: normalPerDay,
+    normalFrom: normal?.label ?? null,
     bills: bills.map((b) => {
       const ls = lines.filter((l) => l.billId === b.id);
       const fuel = ls.find((l) => l.kind === 'fuel_adj')?.amount ?? 0;
       return {
         ...b,
+        days: days(b),
         lines: ls,
         recomputed: spec
           ? computeBill({ kvah: b.kvah, mdKva: b.billedKva, months: b.months, fuelAdj: fuel }, spec)
           : null,
+        audit:
+          spec && normalPerDay && b.id !== normal?.id ? billAuditExcess(b.kvah, days(b), normalPerDay, spec) : null,
       };
     }),
     billedDemand: demand,

@@ -22,6 +22,7 @@ Outbound only from the edge: POST /api/edge/ingest every 10 s, GET /api/edge/int
 - GET /api/health
 - GET /api/site, /api/assets, /api/nodes, /api/bills, /api/tariff (signed-in users)
 - GET /api/live/main (edge snapshot, ceiling state, today's blocks), /api/day?date=, /api/points/:id/series?from&to
+- GET /api/overview, /api/live/points, /api/forecast, /api/solar
 - POST /api/edge/ingest (HMAC: x-drm-device, x-drm-timestamp, x-drm-signature over `${ts}.${body}`)
 
 ## Data model (Stage 1)
@@ -39,3 +40,4 @@ Outbound only from the edge: POST /api/edge/ingest every 10 s, GET /api/edge/int
 - Stage 0: monorepo scaffold; web shell (Sidebar, Topbar, 13 routes, login); domain blocks; contracts; edge heartbeat.
 - Stage 1: schema + rules migration, seed, domain engine (tariff, blocks, baselines, M&V), DB login, read APIs, CI.
 - Stage 2: drivers package (sim calibrated to bills, Modbus TCP, CSV), edge runtime (registry, collector, SQLite outbox, signed uplink, backfill), batch persistence, live/day/series APIs.
+- Stage 3: monitoring screens (Overview, Live energy, Demand forecast, Solar & backup, Tariffs & cost, HVAC & heat pumps), StrataChart wrapper, live top-bar status, packages/control forecast, bill audit; new folder apps/web/components/screens (one component per screen).

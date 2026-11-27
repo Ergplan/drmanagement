@@ -1,5 +1,10 @@
 import { Screen } from '@/components/Screen';
+import { SolarScreen } from '@/components/screens/Solar';
 
-export default function SolarPage() {
-  return <Screen active="solar" />;
+export default function Page() {
+  return (
+    <Screen active="solar">
+      <SolarScreen />
+    </Screen>
+  );
 }

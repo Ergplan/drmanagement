@@ -11,7 +11,7 @@ export function Screen({ active, children }: { active: NavKey; children?: React.
         <Sidebar active={active} />
       </div>
       <main className="eoc-main">
-        <Topbar heading={TITLES[active]} ceiling={null} simulated={false} />
+        <Topbar heading={TITLES[active]} />
         {children ?? <Placeholder title={TITLES[active]} arrives={ARRIVES[active]} />}
       </main>
     </div>

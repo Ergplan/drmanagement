@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { avoidedDemandCharge, billingDemandKva, computeBill, demandCharge, HV1_GLOBE } from '../src/tariff';
+import {
+  avoidedDemandCharge,
+  billAuditExcess,
+  billingDemandKva,
+  computeBill,
+  demandCharge,
+  HV1_GLOBE,
+} from '../src/tariff';
 
 // Bill figures from reference/bills.yaml (MVVNL a/c 9567-481-000), rounded to ₹1,000 on the bill summary.
 const NEAR = 1000;
@@ -42,5 +49,14 @@ describe('billing demand rules', () => {
   });
   it('avoided charge when the event sets the month peak: 470 → 406 on a month at 420', () => {
     expect(avoidedDemandCharge(470, 406, 420, HV1_GLOBE)).toBe((470 - 450) * 430);
+  });
+});
+
+describe('bill audit', () => {
+  it('October 2026: 2,43,750 kVAh over 13 days vs 6,617 a day → about ₹13.1 L excess', () => {
+    const r = billAuditExcess(243750, 13, 6617, HV1_GLOBE);
+    expect(Math.round(r.excessKvah)).toBe(157729);
+    expect(Math.abs(r.excessInr - 1312305)).toBeLessThan(10);
+    expect(r.ratio).toBeCloseTo(2.83, 2);
   });
 });
