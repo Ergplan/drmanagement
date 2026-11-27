@@ -7,19 +7,22 @@
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "typecheck": "tsc --noEmit",
-    "backfill": "tsx src/backfill.ts"
+    "backfill": "tsx src/backfill.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@drm/contracts": "workspace:*",
-    "@drm/domain": "workspace:*",
-    "tsx": "4.23.15",
-    "zod": "4.6.7",
-    "@drm/drivers": "workspace:*",
+    "@drm/control": "workspace:*",
     "@drm/db": "workspace:*",
-    "yaml": "2.9.1"
+    "@drm/domain": "workspace:*",
+    "@drm/drivers": "workspace:*",
+    "tsx": "4.23.15",
+    "yaml": "2.9.1",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "^22",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "vitest": "5.1.2"
   }
 }

@@ -2,7 +2,7 @@ import { getDb, schema } from '@drm/db';
 import { billingDemandKva, istDate, istMidnightUTC, marginalRatePerKvah } from '@drm/domain';
 import { and, asc, eq, gte } from 'drizzle-orm';
 import { getHandler, SITE_ID } from '@/lib/api';
-import { LADDER, tariffSpec } from '@/lib/site';
+import { siteControl, tariffSpec } from '@/lib/site';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,7 +39,7 @@ export const GET = getHandler(async () => {
     live,
     sanctionKva: t.sanctionKva,
     floorKva: t.floorKva,
-    ladder: LADDER,
+    ladder: (await siteControl(SITE_ID)).ladder,
     ceiling: ceiling ?? null,
     today: {
       kwh: sum(todayBlocks, 'kwh'),

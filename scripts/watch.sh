@@ -7,7 +7,7 @@ run() {
   local failed=()
   { pnpm -s biome check . || failed+=("biome"); } >.watch/log.txt 2>&1
   { pnpm -s -r --if-present typecheck || failed+=("typecheck"); } >>.watch/log.txt 2>&1
-  { pnpm -s --filter @drm/domain --filter @drm/control --if-present test || failed+=("tests"); } >>.watch/log.txt 2>&1
+  { pnpm -s --filter @drm/domain --filter @drm/control --filter @drm/edge --if-present test || failed+=("tests"); } >>.watch/log.txt 2>&1
   local ok=true; [ ${#failed[@]} -eq 0 ] || ok=false
   printf '{"ok": %s, "failed": [%s], "at": "%s"}\n' "$ok" "$(printf '"%s",' "${failed[@]}" | sed 's/,$//')" "$(date -u +%FT%TZ)" > .watch/status.json
   cat .watch/status.json

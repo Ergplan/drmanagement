@@ -99,11 +99,9 @@ export function OverviewScreen() {
             value={num(live?.kva)}
             unit="kVA"
             foot={
-              <>
-                <span>
-                  {num(live?.kw)} kW · PF {num(live?.pf, 2)}
-                </span>
-              </>
+              <span>
+                {num(live?.kw)} kW · PF {num(live?.pf, 2)}
+              </span>
             }
             icon="/icons/icon-meter.svg"
           />

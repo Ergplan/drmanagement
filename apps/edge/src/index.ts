@@ -1,15 +1,17 @@
 /**
  * Edge runtime (VM now, on-site gateway later). Reads drivers every 10 s, keeps 1-minute readings, IST blocks and
- * days in a local outbox, and uplinks signed batches. Stage 4 adds the ceiling loop, interlocks and dispatcher here,
- * so they keep running when the cloud is unreachable.
+ * days in a local outbox, and uplinks signed batches. The control loop (interlocks, ceiling, heat pumps, DR
+ * executors, dispatcher) runs in the same tick, so it keeps running when the cloud is unreachable.
  */
 import { Outbox } from './buffer';
 import { Collector } from './collector';
 import { env, loadConfig } from './config';
+import { EdgeControl } from './control';
 import { DriverSet } from './drivers';
+import { pullIntents, sendAcks } from './intents';
 import { sendBatch } from './uplink';
 
-const VERSION = '0.2.0';
+const VERSION = '0.3.0';
 const started = Date.now();
 const cfg = loadConfig();
 const uplink = { cloudUrl: env('CLOUD_URL'), deviceId: env('DEVICE_ID'), deviceSecret: env('DEVICE_SECRET') };
@@ -21,6 +23,11 @@ const collector = new Collector({
   day: (d) => outbox.push('day', d),
 });
 
+const control = new EdgeControl(
+  () => drivers.forAsset(),
+  (e) => outbox.push('event', e),
+);
+
 const TICK_MS = Number(process.env.EDGE_TICK_MS ?? 10_000);
 const UPLINK_MS = Number(process.env.EDGE_UPLINK_MS ?? 10_000);
 let failures = 0;
@@ -28,7 +35,37 @@ let failures = 0;
 function tick() {
   const now = new Date();
   drivers.poll(now);
-  collector.tick(now, drivers.read(now));
+  const readings = drivers.read(now);
+  collector.tick(now, readings);
+  try {
+    control.step(now, readings, collector.live(now)?.projectedKva);
+  } catch (e) {
+    // A control fault must not leave loads curtailed: restore everything and keep the loop alive.
+    console.error('control step failed; restoring all loads', e);
+    control.dispatcher.abortAndRestoreAll(now, 'control fault');
+    control.ceiling.reset();
+  }
+}
+
+function snapshot(now: Date) {
+  const live = collector.live(now, {
+    armed: control.ceiling.armed,
+    stage: control.ceiling.stage,
+    held: control.ceiling.held.map((h) => h.assetId),
+  });
+  return live ? { ...live, control: control.state(now) } : undefined;
+}
+
+async function syncIntents() {
+  const acks = control.takeAcks();
+  try {
+    if (acks.length) await sendAcks(uplink, acks);
+    control.accept(await pullIntents(uplink), new Date());
+    control.cloudOk = true;
+  } catch {
+    control.requeueAcks(acks);
+    control.cloudOk = false; // running intents and the ceiling carry on locally
+  }
 }
 
 async function flush() {
@@ -44,7 +81,7 @@ async function flush() {
         drivers: drivers.health(),
         bufferedBatches: outbox.size(),
       },
-      live: collector.live(new Date()),
+      live: snapshot(new Date()),
       readings: readings.map((r) => r.payload) as never,
       blocks: blocks.map((r) => r.payload) as never,
       days: days.map((r) => r.payload) as never,
@@ -67,3 +104,4 @@ console.log(
 tick();
 setInterval(tick, TICK_MS);
 setInterval(() => void flush(), UPLINK_MS);
+setInterval(() => void syncIntents(), Number(process.env.EDGE_INTENTS_MS ?? 5_000));

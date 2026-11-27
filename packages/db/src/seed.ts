@@ -68,6 +68,8 @@ export async function seed() {
         backup: site.backup,
         programme: site.programme,
         emissions: site.emissions,
+        control: { ceiling: control.ceiling, dr_event: control.dr_event, heat_pumps: control.heat_pumps },
+        holidays: y('operations.yaml').holidays_2026,
       },
     };
     await tx.insert(s.site).values(siteRow).onConflictDoUpdate({ target: s.site.id, set: siteRow });

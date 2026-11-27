@@ -2,6 +2,7 @@ import { getDb, schema } from '@drm/db';
 import { blockStartIST, istDate, istMidnightUTC } from '@drm/domain';
 import { and, asc, eq, gte } from 'drizzle-orm';
 import { getHandler, SITE_ID } from '@/lib/api';
+import { siteControl } from '@/lib/site';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,6 +39,7 @@ export const GET = getHandler(async () => {
       version: (health as { version?: string } | null)?.version ?? null,
     },
     ceiling: ceiling ?? null,
+    ladder: (await siteControl(SITE_ID)).ladder,
     currentBlockStart: blockStartIST(now).toISOString(),
     blocks,
     simulated: (live as { source?: string } | null)?.source === 'sim' || blocks.some((b) => b.source === 'sim'),

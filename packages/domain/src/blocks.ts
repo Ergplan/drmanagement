@@ -44,5 +44,5 @@ export function projectedBlockKva(elapsedKvah: number, elapsedMin: number, curre
 
 /** Maximum demand over a period: the highest block-average kVA. */
 export function maxDemandKva(blockKva: readonly number[]): number {
-  return blockKva.reduce((m, v) => (v > m ? v : m), 0);
+  return blockKva.reduce((m, v) => Math.max(m, v), 0);
 }

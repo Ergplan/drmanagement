@@ -15,3 +15,8 @@
 | DLMS (IS 15959) for the MVVNL meter, BACnet/IP for the BMS, OCPP for EV chargers, MQTT gateways | Stage 7 real-driver harness |
 | Summer daily load shape is fitted with a strong evening factor; daily totals and peaks match bills | Re-fit from real meter data |
 | Dec–Apr and Oct energy targets are assumptions (no bill / disputed bill) | Load the hospital's other bills |
+| Duty engineer reachability is a manual edge setting, not a paging check | Stage 7 notifications with acknowledgement |
+| Event blockers (mass-casualty alert, OT list overrun, fire alarm, outdoor > 44 °C, MS hold) are listed but not yet wired as inputs | HIS/BMS integration; MS hold button in Stage 5 |
+| Local abort at the edge without the cloud (a physical or local web button) | Stage 7 gateway UI |
+| DB tests write rows into append-only tables; run them only against a test database, never the VM production database | Stage 8 adds a separate test database on the VM |
+| WhatsApp/SMS adapters (console until a provider and keys exist) | Provider choice with the hospital |

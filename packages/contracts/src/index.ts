@@ -30,6 +30,19 @@ export const LiveSnapshot = z.object({
   source: z.string(),
   quality: z.enum(['good', 'estimated', 'stale', 'bad']),
   ceiling: z.object({ armed: z.boolean(), stage: z.number().int(), held: z.array(z.string()) }).optional(),
+  /** edge control state: interlocks, what is curtailed now, heat-pump mode, running DR intents */
+  control: z
+    .object({
+      gateHealthy: z.boolean(),
+      interlocks: z.record(z.string(), z.object({ state: z.enum(['healthy', 'tripped', 'stale']), value: z.string() })),
+      active: z.array(
+        z.object({ assetId: z.string(), action: z.string(), reason: z.string(), since: z.iso.datetime() }),
+      ),
+      heatPump: z.object({ mode: z.string(), why: z.string() }),
+      intents: z.array(z.object({ id: z.string(), eventId: z.string().nullable(), phase: z.string() })),
+      cloudOk: z.boolean(),
+    })
+    .optional(),
 });
 export type LiveSnapshot = z.infer<typeof LiveSnapshot>;
 
@@ -132,3 +145,35 @@ export const EDGE_HEADERS = {
   signature: 'x-drm-signature',
 } as const;
 export const EDGE_MAX_SKEW_S = 300;
+
+/** Approved work the edge pulls (invariant 2). The edge re-validates every field before acting. */
+const IntentAction = z.object({
+  assetId: z.string(),
+  action: z.enum(['shed', 'setpoint', 'lock', 'run', 'restore']),
+  params: z.record(z.string(), z.union([z.number(), z.string(), z.boolean()])).optional(),
+});
+export const EdgeIntent = z.object({
+  id: z.string(),
+  eventId: z.string().nullable(),
+  kind: z.enum(['dr', 'abort']),
+  startsAt: z.iso.datetime(),
+  endsAt: z.iso.datetime(),
+  targetKw: z.number(),
+  actions: z.array(IntentAction).max(20),
+  precondition: z.object({ leadMin: z.number().min(0).max(180), actions: z.array(IntentAction).max(10) }).optional(),
+  approvals: z.object({
+    facilityManager: z.boolean(),
+    medicalSuperintendent: z.boolean().nullable(),
+    armedBy: z.string().nullable(),
+    armedAt: z.iso.datetime().nullable(),
+  }),
+  armBy: z.string().regex(/^\d{2}:\d{2}$/),
+});
+export type EdgeIntent = z.infer<typeof EdgeIntent>;
+export const IntentsResponse = z.object({ intents: z.array(EdgeIntent), at: z.iso.datetime() });
+export const IntentAck = z.object({
+  id: z.string(),
+  result: z.enum(['accepted', 'rejected', 'done', 'aborted']),
+  detail: z.string().nullable(),
+});
+export type IntentAck = z.infer<typeof IntentAck>;

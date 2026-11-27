@@ -3,23 +3,24 @@ ceiling:
   sanction_kva: 600
   ceiling_kva: 570                        # never exceeded in any 15-min interval
   reserve_kva: 30                         # unplanned CT, cath lab or chiller start
-  projection: every 60 s, project the current 15-min block average from elapsed energy + current kVA
+  loop_s: 10
+  projection: every 10 s at the edge, project the current 15-min block average from elapsed energy + current kVA
   stages:
-    - {stage: 1, trigger_projected_kva: 520, shed: [heatpump, laundry, pump, ev], expect_kw: 90, response: 2 min, restore: stagger 10 min apart}
-    - {stage: 2, trigger_projected_kva: 545, shed: [chiller, ahu], actions: ["general-zone chilled water +1.5 C", "AHU fans to 70% / minimum fresh air"], expect_kw: 75, response: 8 min, restore: ramp back over 20 min}
-    - {stage: 3, trigger_projected_kva: 565, actions: ["lock out second general-zone chiller start", "page duty engineer"], expect_kw: 25, response: immediate, restore: engineer releases}
+    - {stage: 1, trigger_projected_kva: 520, shed: [heatpump, laundry, pump, ev], commands: [{asset: heatpump, action: shed}, {asset: laundry, action: shed}, {asset: pump, action: shed}, {asset: ev, action: shed}], expect_kw: 90, response: 2 min, restore: stagger 10 min apart}
+    - {stage: 2, trigger_projected_kva: 545, shed: [chiller, ahu], commands: [{asset: chiller, action: setpoint}, {asset: ahu, action: shed}], actions: ["general-zone chilled water +1.5 C", "AHU fans to 70% / minimum fresh air"], expect_kw: 75, response: 8 min, restore: ramp back over 20 min}
+    - {stage: 3, trigger_projected_kva: 565, commands: [{asset: chiller, action: lock}], page: true, actions: ["lock out second general-zone chiller start", "page duty engineer"], expect_kw: 25, response: immediate, restore: engineer releases}
   restore_when_projected_below_kva: 520
   restore_step_minutes: 10
 interlocks:                               # any trip => abort events, restore all loads, block new commands
-  - {id: ot-pressure, name: OT 1 to 4 pressure, limit: ">= +15 Pa", sample: "+16 to +19 Pa"}
-  - {id: icu-temp, name: ICU and NICU temperature, limit: "21 to 23 C", sample: "22.1 C"}
-  - {id: isolation-pressure, name: Isolation rooms, limit: "<= -10 Pa", sample: "-12 Pa"}
-  - {id: clinical-rh, name: Clinical humidity, limit: "45 to 60 % RH", sample: "54 %"}
-  - {id: hot-water, name: Hot water outlet, limit: ">= 60 C", sample: "64 C"}
-  - {id: med-gas, name: Medical gas and vacuum, limit: within line pressure, sample: Normal}
-  - {id: bms-fresh, name: BMS telemetry, limit: "age < 60 s", sample: "12 s"}
-  - {id: meter-fresh, name: Main meter feed, limit: "age < 15 s", sample: "4 s"}
-  - {id: engineer-armed, name: Duty engineer override, limit: armed and reachable, sample: Armed}
+  - {id: ot-pressure, name: OT 1 to 4 pressure, limit: ">= +15 Pa", sample: "+16 to +19 Pa", points: [ot.pressure_pa_ot1, ot.pressure_pa_ot2, ot.pressure_pa_ot3, ot.pressure_pa_ot4], min: 15, fresh_s: 120, unit: Pa}
+  - {id: icu-temp, name: ICU and NICU temperature, limit: "21 to 23 C", sample: "22.1 C", points: [icu.temp_c], min: 21, max: 23, fresh_s: 120, unit: °C}
+  - {id: isolation-pressure, name: Isolation rooms, limit: "<= -10 Pa", sample: "-12 Pa", points: [isolation.pressure_pa], max: -10, fresh_s: 120, unit: Pa}
+  - {id: clinical-rh, name: Clinical humidity, limit: "45 to 60 % RH", sample: "54 %", points: [ot.rh_pct, icu.rh_pct], min: 45, max: 60, fresh_s: 120, unit: "%"}
+  - {id: hot-water, name: Hot water outlet, limit: ">= 60 C", sample: "64 C", points: [hw-tanks.outlet_c], min: 60, fresh_s: 120, unit: °C}
+  - {id: med-gas, name: Medical gas and vacuum, limit: within line pressure, sample: Normal, points: [medgas.line_pressure_ok], min: 1, fresh_s: 120, unit: flag}
+  - {id: bms-fresh, name: BMS telemetry, limit: "age < 60 s", sample: "12 s", points: [ot.temp_c, icu.temp_c], fresh_s: 60, unit: age}
+  - {id: meter-fresh, name: Main meter feed, limit: "age < 15 s", sample: "4 s", points: [ht-meter.kva], fresh_s: 15, unit: age}
+  - {id: engineer-armed, name: Duty engineer override, limit: armed and reachable, sample: Armed, points: [], unit: armed}
 dr_event:
   approval_chain: [ergos_proposes, facility_manager_approves, medical_superintendent_signs_if_hvac, duty_engineer_arms_by_1700]
   lapse_if_not_armed_by: "17:00"

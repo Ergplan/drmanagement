@@ -40,3 +40,21 @@ export function istStamp(d: Date | string): string {
   const t = new Date(new Date(d).getTime() + 330 * 60000).toISOString();
   return t.slice(0, 16);
 }
+
+/** Display stamp "27 Nov · 16:03" in IST. */
+export function istWhen(d: Date | string | null | undefined): string {
+  if (!d) return '–';
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    })
+      .formatToParts(new Date(d))
+      .map((x) => [x.type, x.value]),
+  );
+  return `${p.day} ${p.month} · ${p.hour}:${p.minute}`;
+}

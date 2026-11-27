@@ -201,3 +201,58 @@ export function pointSeries(
     icons: false,
   };
 }
+
+/** Grid kVA for one IST day: forecast without the plan, with the plan, metered, against the ceiling ladder. */
+export function planChart(
+  rows: Array<{ date: string; blockNo: number; without: number | null; with: number | null; metered?: number | null }>,
+  ladder: { stage1: number; ceiling: number; sanction: number },
+  opt: { title: string; band?: { start: string; end: string; label: string }; height?: number },
+) {
+  return {
+    time: 'date',
+    data: rows.map((r) => ({
+      date: `${r.date}T${blockTime(r.blockNo)}`,
+      metered: r.metered ?? null,
+      without: r.without,
+      with: r.with,
+      stage1: ladder.stage1,
+      ceiling: ladder.ceiling,
+      sanction: ladder.sanction,
+    })),
+    columns: {
+      metered: 'metered',
+      without: 'without',
+      with: 'with',
+      stage1: 'stage1',
+      ceiling: 'ceiling',
+      sanction: 'sanction',
+    },
+    series: [
+      { key: 'metered', label: 'Metered', color: C.grid },
+      { key: 'without', label: 'Forecast without the plan', type: 'line', dash: '5 4', width: 1.75, color: C.ink },
+      { key: 'with', label: 'With the plan', type: 'line', width: 2.25, color: C.green },
+      { key: 'stage1', label: `Stage 1 at ${ladder.stage1}`, type: 'line', dash: '1 5', width: 2, color: C.amber },
+      { key: 'ceiling', label: `Ceiling ${ladder.ceiling}`, type: 'line', dash: '6 3', width: 1.75, color: C.red },
+      {
+        key: 'sanction',
+        label: `Sanction ${ladder.sanction}`,
+        type: 'line',
+        width: 1.25,
+        color: '#7a1b14',
+        legend: false,
+      },
+    ],
+    kind: 'number',
+    hero: false,
+    axisUnit: 'kVA',
+    title: opt.title,
+    readout: 'tooltip',
+    view: 'day',
+    periods: ['hour'],
+    period: 'hour',
+    bands: opt.band ? [opt.band] : [],
+    tools: ['table', 'download'],
+    height: opt.height ?? 300,
+    icons: false,
+  };
+}

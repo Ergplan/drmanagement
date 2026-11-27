@@ -13,3 +13,10 @@
 - 2026-11-27: Simulator calibration fits only what the bills support: per-month MD (evening factor), May–Sep and Nov energy; cooling rates are physical priors; heat-wave response 6%/°C.
 - 2026-11-27: Backfill reuses the live driver + collector minute by minute, so history and live data come from one code path.
 - 2026-11-27: Edge offline buffer uses Node's built-in node:sqlite (no native dependency).
+- 2026-11-27: Interlock limits and the ceiling ladder's commands are structured fields in reference/control.yaml (points, min, max, fresh_s; commands per stage); the edge reads them, the database keeps them in site.facts.control. No thresholds in code.
+- 2026-11-27: The ceiling owns any asset it holds: DR and the heat-pump scheduler cannot change or release it. Anything that adds load back (restore, run) waits while projected block kVA ≥ Stage 1; only an interlock or control-fault abort forces restores (clinical safety beats savings).
+- 2026-11-27: No projection (meter missing) is treated as being at the ceiling, so nothing is added back; the meter-fresh interlock then blocks new commands.
+- 2026-11-27: Edge refusals aimed at protected/critical assets are stored in audit_log, because the command table's trigger refuses those asset ids outright.
+- 2026-11-27: The DR planner skips loads whose longest safe hold is shorter than the window (e.g. chiller and AHU, 2 h, for a 2.5 h event) rather than planning a mid-event release; the plan says so.
+- 2026-11-27: Intent pull is a signed GET as locked; acks go in a separate signed POST /api/edge/intents/ack.
+- 2026-11-27: The duty-engineer-armed interlock is an edge setting (ENGINEER_ARMED) until a paging integration reports reachability.

@@ -37,7 +37,7 @@ function same(a: string, b: string) {
 async function fromDatabase(email: string, password: string) {
   const { db } = getDb();
   const [u] = await db.select().from(schema.appUser).where(eq(schema.appUser.email, email)).limit(1);
-  if (!u || !u.active || !(await verify(u.passwordHash, password))) return null;
+  if (!u?.active || !(await verify(u.passwordHash, password))) return null;
   return { id: u.id, email: u.email, name: u.name, role: u.role as Role };
 }
 

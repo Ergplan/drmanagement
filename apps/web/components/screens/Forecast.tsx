@@ -16,6 +16,7 @@ interface Fc {
   peak: { date: string; blockNo: number; p50: number; p90: number };
   exceedCeilingPct: number;
   exceedStage1Pct: number;
+  ladder: { stage1: number; ceiling: number };
   floorKva: number;
   sanctionKva: number;
   method: string;
@@ -76,10 +77,14 @@ export function ForecastScreen() {
           }
         />
         <Kpi
-          title="Chance of passing 570 kVA"
+          title={`Chance of passing ${num(data.ladder.ceiling)} kVA`}
           value={num(data.exceedCeilingPct, 1)}
           unit="%"
-          foot={<span>Stage 1 at 520: {num(data.exceedStage1Pct, 1)}%</span>}
+          foot={
+            <span>
+              Stage 1 at {num(data.ladder.stage1)}: {num(data.exceedStage1Pct, 1)}%
+            </span>
+          }
           tone={data.exceedCeilingPct > 5 ? 'alert' : 'mint'}
         />
       </div>

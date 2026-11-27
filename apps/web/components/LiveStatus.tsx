@@ -6,6 +6,7 @@ interface LiveMain {
   live: { kva: number; projectedKva: number; source: string; quality: string } | null;
   edge: { online: boolean; ageS: number | null };
   ceiling: { armed: boolean; stage: number } | null;
+  ladder?: { stage1: number; ceiling: number };
   simulated: boolean;
 }
 
@@ -15,12 +16,13 @@ export function LiveStatus() {
   const live = data?.live;
   const online = data?.edge.online ?? false;
   const stage = data?.ceiling?.stage ?? 0;
-  const ceilingKva = 570;
+  const ceilingKva = data?.ladder?.ceiling ?? Number.NaN;
+  const stage1 = data?.ladder?.stage1 ?? Number.NaN;
   let cls = 'pill';
   let dot = '#c3cbc5';
   let text = error ? 'No live data' : 'Waiting for edge data';
   if (live && online) {
-    const high = live.projectedKva >= 520 || stage > 0;
+    const high = live.projectedKva >= stage1 || stage > 0;
     cls = high ? 'pill pill-warn' : 'pill pill-ok';
     dot = high ? '#b4541a' : '#2e9a55';
     text =

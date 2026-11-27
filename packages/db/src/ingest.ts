@@ -69,6 +69,16 @@ export async function persistBatch(
         await tx
           .insert(s.interlockEvent)
           .values({ interlockId: e.interlockId, at: new Date(e.at), state: e.state, value: e.value });
+      else if (e.kind === 'command' && e.result === 'refused' && e.detail?.startsWith('clinical exclusion'))
+        // The command table's trigger refuses excluded assets outright; the edge's refusal is kept in the audit log.
+        await tx.insert(s.auditLog).values({
+          actor: `edge:${deviceId}`,
+          action: 'command_refused',
+          entity: 'asset',
+          entityId: e.assetId,
+          after: { ...e },
+          at: new Date(e.sentAt),
+        });
       else if (e.kind === 'command')
         await tx
           .insert(s.command)
@@ -94,10 +104,15 @@ export async function persistBatch(
           assetId: e.assetId,
           projectedKva: e.projectedKva,
         });
-      else if (e.kind === 'dr_log')
+      else if (e.kind === 'dr_log') {
         await tx
           .insert(s.drEventLog)
           .values({ eventId: e.eventId, at: new Date(e.at), kind: e.entry, detail: e.detail });
+        const st = ({ event: 'running', done: 'completed', aborted: 'aborted', rejected: 'rejected' } as const)[
+          e.entry as 'event'
+        ];
+        if (st) await tx.update(s.drEvent).set({ status: st }).where(sql`${s.drEvent.id} = ${e.eventId}`);
+      }
     }
     if (b.live?.ceiling) {
       await tx
